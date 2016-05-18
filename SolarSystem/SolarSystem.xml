@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<SolarSystem TimeStep="300">
+	<Body Name="Sun"     Radius="696342000" Mass="1.98855E30" IsSun="yes" R="255" G="255" B="128" skin="Textures\\sunmap.jpg" RotationPeriod="25.05" Scale="50"/>
+	<Body Name="Mercury" Radius="2439700"   Mass="3.3011E23"  XPosition="57909050000"  YVelocity="47362" R="128" G="128" B="128" skin="Textures\\mercurymap.jpg" RotationPeriod="58.646" Scale="1000"/>
+	<Body Name="Venus"   Radius="6051800"   Mass="4.8675E24"  XPosition="108208000000" YVelocity="35020" R="128" G="128" B="128" skin="Textures\\venusmap.jpg" Tilt="2.64" RotationPeriod="-243.025" Scale="1000"/>
+	<Body Name="Earth"   Radius="6971000"   Mass="5.97237E24" XPosition="149598023000" YVelocity="29780" R="0" G="0" B="255"     skin="Textures\\earthmap1k.jpg" Tilt="23.44" RotationPeriod="0.99726968" Scale="1000"/>
+    <Body Name="Moon"    Radius="1731100"   Mass="7.342E22"   XPosition="149982422000" YVelocity="30902" R="255" G="255" B="0"   skin="Textures\\moonmap4k.jpg" IsMoon="Yes" Tilt="6.687" RotationPeriod="27.321661" Scale="1000" ScaleDistance="30"/>
+	<Body Name="Mars"    Radius="3389500"   Mass="6.4171E23"  XPosition="227939200000" YVelocity="24077" R="255" G="0" B="0"     skin="Textures\\marsmap1k.jpg" Tilt="25.19" RotationPeriod="1.025957" Scale="1000"/>
+    <Body Name="Phobos"  Radius="11266"     Mass="1.0659E16"  XPosition="227948576000" YVelocity="26215" R="255" G="255" B="0"   skin="Textures\\phobosbump.jpg" IsMoon="Yes" Tilt="0" RotationPeriod="1.025957" Scale="20000" ScaleDistance="600"/>
+    <Body Name="Deimos"  Radius="6200"      Mass="1.4762E15"  XPosition="227962663000" YVelocity="25428" R="255" G="255" B="0"   skin="Textures\\deimosbump.jpg" IsMoon="Yes" Tilt="0" RotationPeriod="1.025957" Scale="20000" ScaleDistance="600"/>
+	<Body Name="Jupiter" Radius="69911000"  Mass="1.8986E27"  XPosition="778.299E9"    YVelocity="13070" R="255" G="255" B="0"   skin="Textures\\jupitermap.jpg" Tilt="3.13" RotationPeriod="0.4135" Scale="1000"/>	
+    <Body Name="Ganymede" Radius="2634100"  Mass="1.4819E23"  XPosition="779369400000" YVelocity="23950" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0.2" RotationPeriod="7.154" Scale="1000" ScaleDistance="150"/>
+    <Body Name="Callisto" Radius="2410300"  Mass="1.0759E23"  XPosition="780181700000" YVelocity="21274" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0.2" RotationPeriod="16.689" Scale="1000" ScaleDistance="150"/>
+    <Body Name="Io"       Radius="1821600"  Mass="8.93193E22" XPosition="778720700000" YVelocity="30404" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0.05" RotationPeriod="1.769" Scale="1000" ScaleDistance="180"/>
+    <Body Name="Europa"   Radius="1560800"  Mass="4.79984E22" XPosition="778969900000" YVelocity="26810" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0.5" RotationPeriod="3.55" Scale="1000" ScaleDistance="180"/>	
+	<Body Name="Saturn"  Radius="58232000"  Mass="5.6836E26"  XPosition="1429.39E9"    YVelocity="9690"  R="255" G="255" B="0"   skin="Textures\\saturnmap.jpg" Tilt="26.73" RotationPeriod="0.44" Scale="1000"/>
+    <Body Name="Tethys"   Radius="531100"  Mass="6.174E20"  XPosition="1429684619000" YVelocity="21040" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="1.887" Scale="1000" ScaleDistance="200"/>	
+    <Body Name="Rhea"     Radius="763800"  Mass="2.306E21"  XPosition="1429917108000" YVelocity="18870" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="4.518" Scale="1000" ScaleDistance="200"/>	
+    <Body Name="Titan"    Radius="2575500" Mass="1.3452E23" XPosition="1430611870000" YVelocity="15260" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="15.945" Scale="1000" ScaleDistance="200"/>	
+    <Body Name="Iapetus"  Radius="734500"  Mass="1.805E21"  XPosition="1432950820000" YVelocity="12950" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="79.32" Scale="1000" ScaleDistance="200"/>	
+	<Body Name="Uranus"  Radius="25362000"  Mass="8.6810E25"  XPosition="2875.04E9"    YVelocity="6800"  R="255" G="255" B="0"   skin="Textures\\uranusmap.jpg" Tilt="97.77" RotationPeriod="0.718" Scale="1000"/>	
+	<Body Name="Neptune" Radius="24622000"  Mass="1.0243E26"  XPosition="4504.45E9"    YVelocity="5430"  R="255" G="255" B="0"   skin="Textures\\neptunemap.jpg" Tilt="28.32" RotationPeriod="0.6713" Scale="1000"/>	
+	<Body Name="Pluto"   Radius="1187000"   Mass="1.303E22"   XPosition="5915E9"       YVelocity="4760"  R="255" G="255" B="0"   skin="Textures\\plutomap2k.jpg" Tilt="119.591" RotationPeriod="6.387230" Scale="1000"/>		
+</SolarSystem>

@@ -1,0 +1,870 @@
+
+// SolarSystemView.cpp : implementation of the CSolarSystemView class
+//
+
+#include "stdafx.h"
+// SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
+// and search filter handlers and allows sharing of document code with that project.
+#ifndef SHARED_HANDLERS
+#include "SolarSystem.h"
+#endif
+
+#include "SolarSystemDoc.h"
+#include "SolarSystemView.h"
+#include "MainFrm.h"
+#include "MFCToolBarSlider.h"
+
+#include "Constants.h"
+
+#include "SolarSystem.h"
+
+#include <GL\glew.h>
+#include <gl\gl.h>      // OpenGL Libraries
+#include <gl\glu.h>     // GLU OpenGL Libraries
+
+
+
+#include <gtc\matrix_transform.hpp>
+#include <gtc\type_ptr.hpp>
+
+
+#include "MatrixPush.h"
+
+#include "Cube.h"
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+
+
+const double AGLU = (149597870700. / 100.);
+
+
+CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights)
+{
+	USES_CONVERSION;
+
+	// lights
+
+	if (nrlights == 0)
+	{
+		program.lights[0].lightPos = glm::vec3(-farPlaneDistance, -farPlaneDistance, 0);
+	}
+	else
+	{
+		unsigned int light = 0;
+
+		auto pit = m_SolarSystem.m_BodyProperties.begin();
+		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		{
+			if (pit->isSun)
+			{
+				program.lights[light].lightPos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+				++light;
+			}
+		}
+	}
+
+	glUniform1f(program.farPlaneLoc, (float)farPlaneDistance);
+
+	glUniform1i(program.textureLoc, 0);
+
+	// this is for shadow
+	glUniform1i(program.depthMapLoc, 1);
+	glUniform1i(program.calcShadowsLoc, theApp.options.drawShadows ? 1 : 0);
+	glUniform3f(program.lightPosLoc, program.lights[0].lightPos.x, program.lights[0].lightPos.y, program.lights[0].lightPos.z);
+}
+
+
+CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights)
+{
+	// light
+	glm::vec3 lightPos;
+
+	if (nrlights == 0) lightPos = glm::vec3(-farPlaneDistance, -farPlaneDistance, 0);
+	else {
+		auto pit = m_SolarSystem.m_BodyProperties.begin();
+		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		{
+			if (pit->isSun)
+			{
+				lightPos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+				break;
+			}
+		}
+	}
+
+	program.SetLightAndFarPlanePosition(lightPos);
+}
+
+
+// CSolarSystemView
+
+IMPLEMENT_DYNCREATE(CSolarSystemView, CView)
+
+BEGIN_MESSAGE_MAP(CSolarSystemView, CView)
+	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_SIZE()
+	ON_WM_ERASEBKGND()
+	ON_WM_QUERYNEWPALETTE()
+	ON_WM_PALETTECHANGED()
+	ON_WM_TIMER()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_LBUTTONDOWN()
+END_MESSAGE_MAP()
+
+// CSolarSystemView construction/destruction
+
+CSolarSystemView::CSolarSystemView()
+	: timer(NULL), program(NULL), sphere(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
+	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
+	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
+	Width(0), Height(0)
+{
+}
+
+CSolarSystemView::~CSolarSystemView()
+{
+	delete sphere;
+	ClearProgram();
+	ClearShadowProgram();
+	ClearSkyBoxProgram();
+}
+
+
+
+bool CSolarSystemView::SetupShaders()
+{
+	program = new SolarSystemGLProgram();
+
+	CSolarSystemDoc *doc = GetDocument();
+	unsigned int nrlights = 0;
+
+	for (auto &body : doc->m_SolarSystem.m_BodyProperties)
+		if (body.isSun) ++nrlights;
+
+	return program->SetupShaders(nrlights);
+}
+
+
+bool CSolarSystemView::SetupSkyBox()
+{
+	if (!theApp.options.showSkyBox) return true;
+
+	if (NULL == skyBoxProgram)
+	{
+		skyBoxProgram = new OpenGL::SkyBoxCubeMapProgram();
+		if (!skyBoxProgram->SetShaders())
+		{
+			ClearSkyBoxProgram();
+			
+			return false;
+		}
+
+		if (skyBoxProgram->getStatus() == false)
+		{
+			AfxMessageBox(CString("SkyBox CubeMap compile: ") + CString(skyBoxProgram->getStatusMessage()));
+			ClearSkyBoxProgram();
+
+			return false;
+		}
+
+		if (!skyBoxProgram->LoadTextures())
+		{
+			ClearSkyBoxProgram();
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool CSolarSystemView::SetupShadows()
+{
+	if (!theApp.options.drawShadows) return true;
+
+	if (NULL == shadowProgram)
+	{
+		shadowProgram = new OpenGL::ShadowCubeMapProgram();
+		if (!shadowProgram->SetShaders())
+		{
+			ClearShadowProgram();
+
+			return false;
+		}
+
+
+		if (shadowProgram->getStatus() == false)
+		{
+			AfxMessageBox(CString("Shadow CubeMap compile: ") + CString(shadowProgram->getStatusMessage()));
+			ClearShadowProgram();
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+void CSolarSystemView::Setup()
+{
+	if (inited) return;
+
+	if (!m_hRC)
+	{
+		m_hRC = wglCreateContext(m_hDC);
+		VERIFY(wglMakeCurrent(m_hDC, m_hRC));
+
+		glewInit();
+		
+		glClearColor(0, 0, 0, 0);
+
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_POLYGON_SMOOTH);
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_RANGE);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LEQUAL);
+
+		glShadeModel(GL_SMOOTH);
+
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		if (theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glMatrixMode(GL_MODELVIEW);	
+
+		CRect rect;
+		GetClientRect(rect);
+		Height = rect.Height();
+		Width = rect.Width();
+	}
+	else {
+		wglMakeCurrent(m_hDC, m_hRC);
+
+		if (theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
+		else glDisable(GL_FRAMEBUFFER_SRGB);
+	}
+
+	CSolarSystemDoc *doc = GetDocument();
+
+	sphere = new OpenGL::Sphere();
+
+	if (!SetupShaders()) {
+		ClearProgram();
+		return;
+	}
+	program->SetupLights(doc->m_SolarSystem.m_BodyProperties);
+
+	if (theApp.options.drawTextures) doc->m_SolarSystem.LoadTextures();
+
+	SetupSkyBox();
+
+	SetupShadows();
+		
+	wglMakeCurrent(NULL, NULL);
+	inited = true;	
+}
+
+void CSolarSystemView::MoonHack(BodyPropList::iterator& pit,BodyList::iterator& it, glm::vec3& pos)
+{
+	CSolarSystemDoc *doc = GetDocument();
+	
+	auto pmit = doc->m_SolarSystem.m_BodyProperties.begin();
+	for (auto mit = doc->m_SolarSystem.m_Bodies.begin(); mit != doc->m_SolarSystem.m_Bodies.end(); ++mit, ++pmit)
+	{
+		if (pmit->isMoon || pmit->isSun) continue; // ignore a collision with another moon or with the sun
+
+		glm::vec3 mpos = glm::vec3(mit->m_Position.X / AGLU, mit->m_Position.Y / AGLU, mit->m_Position.Z / AGLU);
+		glm::vec3 fromvec = pos - mpos;
+		double dist = glm::length(fromvec);
+
+		if (dist <= (mit->m_Radius * pmit->scale + it->m_Radius * pit->scale) / AGLU)
+		{
+			pos = mpos + glm::vec3(fromvec.x*pit->scaleDistance, fromvec.y*pit->scaleDistance, fromvec.z*pit->scaleDistance);
+			break;
+		}
+	}
+}
+
+void CSolarSystemView::RenderScene()
+{
+	if (NULL == program) return;
+
+	CSolarSystemDoc *doc = GetDocument();
+	if (!doc) return;
+
+	glm::mat4 mat = perspectiveMatrix*(glm::mat4)camera;
+
+	program->Use();
+
+	if (shadowProgram) shadowProgram->depthCubemap.Bind();
+
+	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
+
+	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
+	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	{
+		glm::mat4 modelMat(1);
+		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+
+		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
+		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
+
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+
+		// ****************************************************************************************************************************
+
+
+		modelMat = glm::translate(modelMat, pos);
+
+		float scale = (float)(it->m_Radius * pit->scale / AGLU);
+		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
+		modelMat = glm::rotate(modelMat, (float)(pit->tilt * M_PI / 180.), glm::vec3(0, 1, 0));
+		modelMat = glm::rotate(modelMat, (float)(it->rotation), glm::vec3(0, 0, 1));
+
+		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
+
+		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat*modelMat));
+		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+		glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);
+		glUniform3f(program->viewPosLocation, (float)(camera.eyePos.X/AGLU), (float)(camera.eyePos.Y/AGLU), (float)(camera.eyePos.Z/AGLU));
+
+
+		for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
+		{
+			glm::vec3 lightDir = program->lights[i].lightPos - pos;
+
+			float atten = (float)(1. / (1. + 0.0025*glm::length(lightDir)));
+
+			lightDir = glm::normalize(lightDir);
+			glUniform3f(program->lights[i].lightDirPos, lightDir.x,lightDir.y,lightDir.z);
+			glUniform1f(program->lights[i].attenPos, atten);
+		}
+
+		
+		if (pit->texture && theApp.options.drawTextures)
+		{
+			pit->texture->Bind();
+			glUniform1i(program->useTextLocation, 1);
+		}
+		else		
+		{
+			glUniform4f(program->colorLocation, (float)(GetRValue(pit->color) / 255.), (float)(GetGValue(pit->color) / 255.), (float)(GetBValue(pit->color) / 255.), 1.);
+			glUniform1i(program->useTextLocation, 0);
+		}
+		
+
+		sphere->Draw();
+	}
+
+	program->UnUse();
+}
+
+void CSolarSystemView::RenderShadowScene()
+{
+	if (NULL == shadowProgram) return;
+
+	CSolarSystemDoc *doc = GetDocument();
+	if (!doc) return;
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+
+	shadowProgram->depthMapFBO.Bind();
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	glCullFace(GL_FRONT);
+
+	shadowProgram->Use();
+
+	ShadowUniforms params(doc->m_SolarSystem, *shadowProgram, program->nrlights);
+
+	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
+	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	{
+		if (pit->isSun) continue; // Suns don't drop a shadow, don't render them
+
+		glm::mat4 modelMat(1);
+		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
+		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
+
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+
+		// ****************************************************************************************************************************
+
+		modelMat = glm::translate(modelMat, pos);
+		float scale = (float)(it->m_Radius * pit->scale / AGLU);
+		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
+
+		glUniformMatrix4fv(shadowProgram->getMatLocation(), 1, GL_FALSE, value_ptr(modelMat));
+
+		sphere->Draw();
+	}
+	
+	glCullFace(GL_BACK);
+	shadowProgram->depthMapFBO.UnBind();
+	shadowProgram->UnUse();
+}
+
+
+
+void CSolarSystemView::RenderSkybox()
+{
+	if (skyBoxProgram)
+	{
+		glUniform1i(glGetUniformLocation(*skyBoxProgram, "Texture"), 0);
+
+		// remove translation from the camera matrix		
+		glm::mat4 mat = glm::mat4(glm::mat3((glm::mat4)camera));		
+		mat = perspectiveMatrix * mat;
+		mat = glm::scale(mat, glm::vec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
+
+		skyBoxProgram->Draw(mat);
+	}
+}
+
+void CSolarSystemView::Resize(GLsizei h, GLsizei w)
+{	
+	if (h == 0) return;
+
+	glViewport(0, 0, w, h);
+
+	const double ar = (double)w / (double)h;	
+	perspectiveMatrix = glm::perspective(cameraAngle, ar, nearPlaneDistance, farPlaneDistance);
+}
+
+BOOL CSolarSystemView::PreCreateWindow(CREATESTRUCT& cs)
+{
+	cs.style |= (WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+	cs.style &= ~WS_BORDER;
+	if (!CView::PreCreateWindow(cs)) return FALSE;
+
+	WNDCLASS wndcls;
+	HINSTANCE hInst = AfxGetInstanceHandle();
+
+	const wchar_t *className = L"OpenGLClass";
+	if (!(::GetClassInfo(hInst, className, &wndcls)))
+	{
+		if (::GetClassInfo(hInst, cs.lpszClass, &wndcls))
+		{
+			wndcls.lpszClassName = className;
+			wndcls.style |= CS_OWNDC;
+			wndcls.hbrBackground = NULL;
+
+			if (!AfxRegisterClass(&wndcls))
+				return FALSE;
+		}
+		else return FALSE;
+	}
+
+	return TRUE;
+}
+
+// CSolarSystemView drawing
+
+void CSolarSystemView::OnDraw(CDC* /*pDC*/)
+{	
+	if (inited)
+	{		
+		wglMakeCurrent(m_hDC, m_hRC);
+			
+		RenderShadowScene();			
+
+		Resize(Height, Width);
+				
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		
+		RenderScene();		
+		RenderSkybox();
+
+		glFlush();
+		SwapBuffers(m_hDC);
+		wglMakeCurrent(m_hDC, NULL);
+	}	
+}
+
+
+
+// CSolarSystemView diagnostics
+
+#ifdef _DEBUG
+void CSolarSystemView::AssertValid() const
+{
+	CView::AssertValid();
+}
+
+void CSolarSystemView::Dump(CDumpContext& dc) const
+{
+	CView::Dump(dc);
+}
+
+CSolarSystemDoc* CSolarSystemView::GetDocument() const // non-debug version is inline
+{
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CSolarSystemDoc)));
+	return (CSolarSystemDoc*)m_pDocument;
+}
+#endif //_DEBUG
+
+
+// CSolarSystemView message handlers
+
+
+int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	int nPixelFormat;
+	m_hDC = ::GetDC(m_hWnd);
+
+	static PIXELFORMATDESCRIPTOR pfd = {
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+		PFD_TYPE_RGBA,
+		24,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,
+		32,
+		0,
+		0,
+		PFD_MAIN_PLANE,
+		0,0,0,0 };
+
+	nPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
+	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
+
+	// 50 frames/sec
+	timer = SetTimer(1, 20, NULL);
+
+	return 0;
+}
+
+
+void CSolarSystemView::OnDestroy()
+{
+	if (inited)
+	{
+		wglDeleteContext(m_hRC);
+		::ReleaseDC(m_hWnd, m_hDC);
+
+		KillTimer(timer);
+	}
+
+	CView::OnDestroy();
+}
+
+
+void CSolarSystemView::OnSize(UINT nType, int cx, int cy)
+{
+	CView::OnSize(nType, cx, cy);
+
+	if (inited)
+	{
+	   Height = cy;
+	   Width = cx;
+	}
+}
+
+
+BOOL CSolarSystemView::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return FALSE;
+}
+
+
+// Initializes the CPalette object
+void CSolarSystemView::InitializePalette(void)
+{
+	PIXELFORMATDESCRIPTOR pfd;
+	LOGPALETTE *pPal;
+	int nPixelFormat;
+	WORD nColors;
+
+	BYTE RedRng, GreenRng, BlueRng;
+
+	nPixelFormat = GetPixelFormat(m_hDC);
+	DescribePixelFormat(m_hDC, nPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+	if (!(pfd.dwFlags & PFD_NEED_PALETTE)) return;
+
+	nColors = (WORD)(1 << pfd.cColorBits);
+
+	pPal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + nColors*sizeof(PALETTEENTRY));
+
+	pPal->palVersion = 0x300;
+	pPal->palNumEntries = nColors;
+
+	RedRng = (BYTE)((1 << pfd.cRedBits) - 1);
+	GreenRng = (BYTE)((1 << pfd.cGreenBits) - 1);
+	BlueRng = (BYTE)((1 << pfd.cBlueBits) - 1);
+
+	for (unsigned int i = 0; i < nColors; i++)
+	{
+		pPal->palPalEntry[i].peRed = (BYTE)((i >> pfd.cRedShift) & RedRng);
+		pPal->palPalEntry[i].peRed = (unsigned char)((double)pPal->palPalEntry[i].peRed * 255.0 / RedRng);
+		pPal->palPalEntry[i].peGreen = (BYTE)((i >> pfd.cGreenShift) & GreenRng);
+		pPal->palPalEntry[i].peGreen = (unsigned char)((double)pPal->palPalEntry[i].peGreen * 255.0 / GreenRng);
+		pPal->palPalEntry[i].peBlue = (BYTE)((i >> pfd.cBlueShift) & BlueRng);
+		pPal->palPalEntry[i].peBlue = (unsigned char)((double)pPal->palPalEntry[i].peBlue * 255.0 / BlueRng);
+		pPal->palPalEntry[i].peFlags = (unsigned char)NULL;
+	}
+
+	m_GLPalette.CreatePalette(pPal);
+	SelectPalette(m_hDC, (HPALETTE)m_GLPalette, FALSE);
+	RealizePalette(m_hDC);
+
+	free(pPal);
+}
+
+
+BOOL CSolarSystemView::OnQueryNewPalette()
+{
+	if ((HPALETTE)m_GLPalette)
+	{
+		SelectPalette(m_hDC, (HPALETTE)m_GLPalette, FALSE);
+		unsigned int nRet = RealizePalette(m_hDC);
+		InvalidateRect(NULL, FALSE);
+		
+		return nRet ? TRUE : FALSE;
+	}
+
+	return CView::OnQueryNewPalette();
+}
+
+
+void CSolarSystemView::OnPaletteChanged(CWnd* pFocusWnd)
+{
+	if (((HPALETTE)m_GLPalette != NULL) && (pFocusWnd != this))
+	{
+		SelectPalette(m_hDC, (HPALETTE)m_GLPalette, FALSE);
+		RealizePalette(m_hDC);
+		UpdateColors(m_hDC);
+		return;
+	}
+
+	CView::OnPaletteChanged(pFocusWnd);
+}
+
+
+BOOL CSolarSystemView::PreTranslateMessage(MSG* pMsg)
+{
+	if (!KeyPressHandler(pMsg)) return CView::PreTranslateMessage(pMsg);
+	
+	return TRUE;
+}
+
+
+bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
+{
+	bool handled = false;
+
+	if(pMsg->message == WM_KEYDOWN)
+	{
+		keyDown = true;
+		ctrl = ((::GetKeyState(VK_CONTROL) & 0x8000) != 0 ? true : false);
+		shift = ((::GetKeyState(VK_SHIFT) & 0x8000) != 0 ? true : false);
+
+		// pMSG->wParam contains the key code
+		switch (pMsg->wParam)
+		{
+		case VK_UP:
+			if (ctrl) movement = OpenGL::Camera::Movements::pitchUp;
+			else if (shift) movement = OpenGL::Camera::Movements::moveUp;
+			else movement = OpenGL::Camera::Movements::moveForward;
+			handled = true;
+			break;
+		case VK_DOWN:
+			if (ctrl) movement = OpenGL::Camera::Movements::pitchDown;
+			else if (shift) movement = OpenGL::Camera::Movements::moveDown;
+			else movement = OpenGL::Camera::Movements::moveBackward;
+			handled = true;
+			break;
+		case VK_LEFT:
+			if (ctrl) movement = OpenGL::Camera::Movements::yawLeft;
+			else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
+			else movement = OpenGL::Camera::Movements::moveLeft;
+			handled = true;
+			break;
+		case VK_RIGHT:
+			if (ctrl) movement = OpenGL::Camera::Movements::yawRight;
+			else if (shift) movement = OpenGL::Camera::Movements::rollRight;
+			else movement = OpenGL::Camera::Movements::moveRight;
+			handled = true;
+			break;
+		case VK_ADD:
+		case VK_OEM_PLUS:
+			{
+				CSolarSystemDoc *doc = GetDocument();
+				if (doc->nrsteps < MAX_NRSTEPS)
+				{
+					++doc->nrsteps;
+					CMFCToolBarSlider::SetPos(ID_SLIDER, (int)doc->nrsteps);
+				}
+			}
+			handled = true;
+			break;
+		case VK_SUBTRACT:
+		case VK_OEM_MINUS:
+			{
+				CSolarSystemDoc *doc = GetDocument();
+				if (doc->nrsteps > 1)
+				{
+					--doc->nrsteps;
+					CMFCToolBarSlider::SetPos(ID_SLIDER, (int)doc->nrsteps);
+				}
+			}
+			handled = true;
+			break;
+		case VK_SPACE:
+			{
+				CMainFrame *frame = (CMainFrame*)theApp.m_pMainWnd;
+				frame->OnSimulateRun();
+			}
+			handled = true;
+			break;
+		default:
+			movement = OpenGL::Camera::Movements::noMove;
+		}
+
+		Invalidate();
+	}
+	else if (pMsg->message == WM_KEYUP) keyDown = false;
+
+	return handled;
+}
+
+
+void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
+{
+	if (inited)
+	{
+		CSolarSystemDoc *doc = GetDocument();
+		if (doc) {
+			doc->GetData();
+
+			doc->m_Thread.SetNrSteps(doc->nrsteps);
+			if (!doc->stopped) doc->m_Thread.SignalWantMore();
+		}
+
+		camera.Tick();
+		if (keyDown) camera.Move(movement);
+
+		Invalidate();
+	}
+
+	CView::OnTimer(nIDEvent);
+}
+
+
+BOOL CSolarSystemView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{	
+	wheelAccumulator += zDelta;
+
+	int distanceTicks = abs(wheelAccumulator);
+
+	if (distanceTicks >= WHEEL_DELTA) {
+		distanceTicks /= WHEEL_DELTA;
+		bool forward = (wheelAccumulator > 0 ? true : false);
+		wheelAccumulator %= WHEEL_DELTA;
+
+		camera.ProgressiveMove(forward ? OpenGL::Camera::Movements::moveForward : OpenGL::Camera::Movements::moveBackward, distanceTicks, true);
+	}
+
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+void CSolarSystemView::Reset()
+{
+	delete sphere;
+	sphere = NULL;
+
+	ClearProgram();
+	ClearShadowProgram();
+	ClearSkyBoxProgram();
+
+	inited = false;
+
+	Setup();
+}
+
+
+Vector3D<double> CSolarSystemView::GetTowardsVector(CPoint& point, Vector3D<double>& forward)
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	double pixelSize = 2.*nearPlaneDistance*tan(cameraAngle / 2.) / rect.Height();
+
+	point.x -= rect.Width() / 2;
+	point.y -= rect.Height() / 2;
+	point.y = -point.y;
+	
+	Vector3D<double> right = (forward % camera.up).Normalize();
+	Vector3D<double> up = (right % forward).Normalize();
+
+	return (nearPlaneDistance*forward + pixelSize * point.x * right + pixelSize * point.y * up).Normalize();
+}
+
+
+void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	Vector3D<double> forward = (camera.lookAt - camera.eyePos).Normalize();
+	Vector3D<double> towards = GetTowardsVector(point, forward);
+
+	double angle = acos(towards * forward);
+	int numticks = (int)(angle / camera.GetRotateAngle());
+
+	camera.RotateTowards(angle - numticks * camera.GetRotateAngle(), towards);
+	camera.ProgressiveRotate(towards, numticks);
+
+	CView::OnLButtonDown(nFlags, point);
+}
+
+
+void CSolarSystemView::ClearProgram()
+{
+	delete program;
+	program = NULL;
+}
+
+
+void CSolarSystemView::ClearSkyBoxProgram()
+{
+	delete skyBoxProgram;
+	skyBoxProgram = NULL;
+}
+
+
+void CSolarSystemView::ClearShadowProgram()
+{
+	delete shadowProgram;
+	shadowProgram = NULL;
+}
+
+
+void CSolarSystemView::SetSpeeds(double translate, double rotate)
+{
+	camera.SetSpeeds(translate, rotate);
+}
