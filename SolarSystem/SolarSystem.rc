@@ -7,9 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#ifndef APSTUDIO_INVOKED
 #include "targetver.h"
-#endif
 #include "afxres.h"
 #include "verrsrc.h"
 
@@ -36,9 +34,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
-    "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "#include ""verrsrc.h""\r\n"
     "\0"
@@ -204,7 +200,6 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "Solar System, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2016",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
