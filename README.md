@@ -12,8 +12,11 @@ LIBRARIES
 For this project you'll need to download glm and glew. I installed them in C:\LIBs, if you use other paths you'll need to change the project settings accordingly.
 
 OpenGL
+
 mfc: included with Visual Studio
+
 glm : http://glm.g-truc.net/0.9.7/index.html
+
 glew: http://glew.sourceforge.net/
 
 CLASSES
@@ -73,6 +76,9 @@ LINKS
 Those are some links to some OpenGL tutorials I visited while refreshing my memory about OpenGL and implementing the OpenGL code:
 
 http://www.learnopengl.com/
+
 http://alfonse.bitbucket.org/oldtut/
+
 http://www.opengl-tutorial.org/
+
 http://www.tomdalling.com/blog/category/modern-opengl/
