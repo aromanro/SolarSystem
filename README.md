@@ -11,9 +11,12 @@ LIBRARIES
 
 For this project you'll need to download glm and glew. I installed them in C:\LIBs, if you use other paths you'll need to change the project settings accordingly.
 
-OpenGL, 
-mfc: included with Visual Studio, 
-glm : http://glm.g-truc.net/0.9.7/index.html ,
+OpenGL
+
+mfc: included with Visual Studio
+ 
+glm : http://glm.g-truc.net/0.9.7/index.html
+
 glew: http://glew.sourceforge.net/
 
 CLASSES
@@ -67,15 +70,18 @@ HOW TO USE
 
 Start and stop the simulation pressing space or by clicking the 'run' toolbar button or use the menu entry. Load a different xml file using File | Open. Change settings with View | Options. Enter Full Screen with View | Full Screen, exit with the escape key. Turn the camera towards a point by clicking on it. Move the camera forward or backward by using up and down keys, or you can use the scroll mouse wheel. Keep shift pressed and the camera will move up or down instead of forward or backward. With control key pressed, it will rotate up or down (pitch up or down). Left and right arrows will move the camera towards left or right, unless the control key is pressed, when the camera will yaw left or right. With shift, it will roll left or right. You can increase/decrease the speed of the simulation using the slider on the toolbar or +/- keys.
 
+The SolarSystem.xml file:
+
+The structure is self-explanatory but I must say that the values are scaled in the committed file: The Sun size is increased 50 times, all planets are scaled up 1000 times, some moons (like Phobos and Deimos) are scaled up even more. Because of scaling many moons would be inside of the planet so I had to scale the distance between the planet and the moons, too (see the 'moon hack'). The Solar System is a very big place and one would have a hard time seeing the planets and moons without the scaling so I did this just to look nicer on screen. Those changes should affect the visuals only. Due of laziness I put all planets and moons in the ecliptic plane, to have a realistic simulation requires more calculations than I'm willing to do. There might be a lot of mistakes in the values, too, I didn't pay much attention to inclination and rotation period, for example, but others could be wrong as well. I used only average orbital speed and the semi-major axis for setting the velocity and distance and all bodies start aligned.
 
 LINKS
 
 Those are some links to some OpenGL tutorials I visited while refreshing my memory about OpenGL and implementing the OpenGL code:
 
-http://www.learnopengl.com/ ,
+http://www.learnopengl.com/ 
 
-http://alfonse.bitbucket.org/oldtut/ ,
+http://alfonse.bitbucket.org/oldtut/ 
 
-http://www.opengl-tutorial.org/ ,
+http://www.opengl-tutorial.org/ 
 
 http://www.tomdalling.com/blog/category/modern-opengl/
