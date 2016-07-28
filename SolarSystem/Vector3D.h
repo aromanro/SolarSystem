@@ -43,7 +43,8 @@ public:
 	template<typename O, typename A> Vector3D RotateTowards(const Vector3D<O>& other, A angle) const;
 };
 
-template<typename T> Vector3D<T> operator*(T o, Vector3D<T>& t) { return t*o; }
+template<typename T> Vector3D<T> operator*(T o, const Vector3D<T>& t) { return t*o; }
+template<typename T> bool operator==(const Vector3D<T>& f, const Vector3D<T>& t) { return f.X == t.X && f.Y == t.Y && f.Z == t.Z; }
 
 #ifndef _VECTOR_3D_IMPL
 #include "Vector3D.inl"
