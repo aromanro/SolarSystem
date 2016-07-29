@@ -37,7 +37,6 @@ public:
 
 	T Length() const;
 	Vector3D Normalize() const;
-	Vector3D UnitVector() const;
 
 	template<typename O, typename A> Vector3D RotateAround(const Vector3D<O>& other, A angle) const;
 	template<typename O, typename A> Vector3D RotateTowards(const Vector3D<O>& other, A angle) const;

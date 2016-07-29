@@ -131,15 +131,6 @@ template<typename T> Vector3D<T> Vector3D<T>::Normalize() const
 	return *this;
 }
 
-template<typename T> Vector3D<T> Vector3D<T>::UnitVector() const
-{
-	T len = Length();
-
-	if (len != 0)
-		return Vector3D<T>(X / len, Y / len, Z / len);
-
-	return Vector3D<T>(X, Y, Z);
-}
 
 template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::RotateAround(const Vector3D<O>& other, A angle) const
 {
