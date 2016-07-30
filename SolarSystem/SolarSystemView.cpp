@@ -321,7 +321,7 @@ void CSolarSystemView::RenderScene()
 	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
 
 	glUniform3f(program->viewPosLocation, (float)(camera.eyePos.X / AGLU), (float)(camera.eyePos.Y / AGLU), (float)(camera.eyePos.Z / AGLU));
-
+	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
@@ -347,7 +347,6 @@ void CSolarSystemView::RenderScene()
 
 		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
 
-		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat*modelMat));
 		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 		glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);

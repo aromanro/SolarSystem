@@ -121,7 +121,7 @@ bool SolarSystemGLProgram::SetupVertexShader()
 
 		void main()
 		{
-			gl_Position = transformMat * vec4(position.x, position.y, position.z, 1.0);
+			gl_Position = transformMat * modelMat * vec4(position.x, position.y, position.z, 1.0);
 			TexCoord = texCoord;
 			Normal = normalize(transpInvModelMat * normal);
 			FragPos = vec3(modelMat * vec4(position, 1.0f));
