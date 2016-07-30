@@ -320,6 +320,9 @@ void CSolarSystemView::RenderScene()
 
 	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
 
+	glUniform3f(program->viewPosLocation, (float)(camera.eyePos.X / AGLU), (float)(camera.eyePos.Y / AGLU), (float)(camera.eyePos.Z / AGLU));
+
+
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
@@ -348,7 +351,6 @@ void CSolarSystemView::RenderScene()
 		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 		glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);
-		glUniform3f(program->viewPosLocation, (float)(camera.eyePos.X/AGLU), (float)(camera.eyePos.Y/AGLU), (float)(camera.eyePos.Z/AGLU));
 
 
 		for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
@@ -374,7 +376,6 @@ void CSolarSystemView::RenderScene()
 			glUniform1i(program->useTextLocation, 0);
 		}
 		
-
 		sphere->Draw();
 	}
 
