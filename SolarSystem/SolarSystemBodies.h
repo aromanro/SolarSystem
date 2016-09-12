@@ -5,7 +5,7 @@
 #include "Body.h"
 #include "BodyProperties.h"
 
-typedef std::vector<Body> BodyList;
+typedef std::vector<MolecularDynamics::Body> BodyList;
 typedef std::vector<BodyProperties> BodyPropList;
 
 

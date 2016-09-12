@@ -212,7 +212,7 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		//for each group in the xml file
 		while (pRecordNode)
 		{
-			m_SolarSystem.m_Bodies.push_back(Body());
+			m_SolarSystem.m_Bodies.push_back(MolecularDynamics::Body());
 			m_SolarSystem.m_BodyProperties.push_back(BodyProperties());
 
 			LoadBodyXml(pRecordNode, m_SolarSystem.m_Bodies.back(), m_SolarSystem.m_BodyProperties.back());
@@ -226,7 +226,7 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 }
 
 
-void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, Body& body, BodyProperties& props)
+void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics::Body& body, BodyProperties& props)
 {
 	props.isSun = GetXmlBoolValue(node, L"IsSun", false);
 	props.isMoon = GetXmlBoolValue(node, L"IsMoon", false);

@@ -17,7 +17,7 @@ protected: // create from serialization only
 	DECLARE_DYNCREATE(CSolarSystemDoc)
 
 
-	ComputationThread m_Thread;
+	MolecularDynamics::ComputationThread m_Thread;
 
 // Attributes
 public:
@@ -59,7 +59,7 @@ protected:
 
 protected:
 	void ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument);
-	void LoadBodyXml(MSXML::IXMLDOMNodePtr& node, Body& body, BodyProperties& props);
+	void LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics::Body& body, BodyProperties& props);
 	static CString GetXmlValue(MSXML::IXMLDOMNodePtr pNode, const bstr_t& name, const CString& def = L"");
 	static bool GetXmlBoolValue(MSXML::IXMLDOMNodePtr pNode, const bstr_t& name, bool def = false);
 	static double GetXmlDoubleValue(MSXML::IXMLDOMNodePtr pNode, const bstr_t& name, double def = 0.);

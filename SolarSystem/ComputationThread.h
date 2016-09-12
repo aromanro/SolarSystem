@@ -8,41 +8,44 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace MolecularDynamics {
 
-class ComputationThread
-{
-private:
-	std::mutex mtx; // protect an_event and cv
-	std::condition_variable cv;
-	unsigned int an_event; // 0, no event, 1 want more data, 2 finish
 
-	std::atomic_uint nrsteps;
+	class ComputationThread
+	{
+	private:
+		std::mutex mtx; // protect an_event and cv
+		std::condition_variable cv;
+		unsigned int an_event; // 0, no event, 1 want more data, 2 finish
 
-	BodyList m_SharedBodies;
+		std::atomic_uint nrsteps;
 
-	std::mutex m_DataSection;
+		BodyList m_SharedBodies;
 
-	std::thread Thread;
-public:
-	unsigned int m_timestep;
+		std::mutex m_DataSection;
 
-	ComputationThread();
-	~ComputationThread();
+		std::thread Thread;
+	public:
+		unsigned int m_timestep;
 
-	void EndThread();
-	void StartThread();
+		ComputationThread();
+		~ComputationThread();
 
-	void SignalWantMore();
+		void EndThread();
+		void StartThread();
 
-	void SetNrSteps(unsigned int nr);
+		void SignalWantMore();
 
-	void SetBodies(const BodyList& bodies);
-	void GetBodies(BodyList& bodies);
+		void SetNrSteps(unsigned int nr);
 
-protected:
-	inline static void CalculateAcceleration(BodyList::iterator& it, BodyList& Bodies);
-	inline static void VelocityVerletStep(BodyList& Bodies, double period, double period2);
-	inline static void CalculateRotations(BodyList& Bodies, double period);
-	void Compute();
-};
+		void SetBodies(const BodyList& bodies);
+		void GetBodies(BodyList& bodies);
 
+	protected:
+		inline static void CalculateAcceleration(BodyList::iterator& it, BodyList& Bodies);
+		inline static void VelocityVerletStep(BodyList& Bodies, double period, double period2);
+		inline static void CalculateRotations(BodyList& Bodies, double period);
+		void Compute();
+	};
+
+}
