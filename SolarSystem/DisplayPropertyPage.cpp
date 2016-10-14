@@ -14,10 +14,10 @@
 
 // DisplayPropertyPage dialog
 
-IMPLEMENT_DYNAMIC(DisplayPropertyPage, CPropertyPage)
+IMPLEMENT_DYNAMIC(DisplayPropertyPage, CMFCPropertyPage)
 
 DisplayPropertyPage::DisplayPropertyPage()
-	: CPropertyPage(IDD_DISPLAYPROPERTYPAGE)
+	: CMFCPropertyPage(IDD_DISPLAYPROPERTYPAGE)
 {
 	m_Gamma = (theApp.options.gammaCorrection ? 1 : 0);
 	m_Shadows = (theApp.options.drawShadows ? 1 : 0);
@@ -31,7 +31,7 @@ DisplayPropertyPage::~DisplayPropertyPage()
 
 void DisplayPropertyPage::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
+	CMFCPropertyPage::DoDataExchange(pDX);
 
 	DDX_Check(pDX, IDC_CHECK1, m_Gamma);
 	DDX_Check(pDX, IDC_CHECK2, m_SkyBox);
@@ -40,7 +40,7 @@ void DisplayPropertyPage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(DisplayPropertyPage, CPropertyPage)
+BEGIN_MESSAGE_MAP(DisplayPropertyPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_CHECK1, &DisplayPropertyPage::OnBnClickedCheck1)
 	ON_BN_CLICKED(IDC_CHECK2, &DisplayPropertyPage::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK3, &DisplayPropertyPage::OnBnClickedCheck3)
@@ -57,7 +57,7 @@ BOOL DisplayPropertyPage::OnApply()
 
 	ApplyValues();
 
-	return CPropertyPage::OnApply();
+	return CMFCPropertyPage::OnApply();
 }
 
 

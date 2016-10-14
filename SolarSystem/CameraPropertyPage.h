@@ -5,7 +5,7 @@
 
 // CameraPropertyPage dialog
 
-class CameraPropertyPage : public CPropertyPage
+class CameraPropertyPage : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(CameraPropertyPage)
 

@@ -11,16 +11,16 @@
 
 // OptionsPropertySheet
 
-IMPLEMENT_DYNAMIC(OptionsPropertySheet, CPropertySheet)
+IMPLEMENT_DYNAMIC(OptionsPropertySheet, CMFCPropertySheet)
 
 OptionsPropertySheet::OptionsPropertySheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage), hIcon(0)
+	:CMFCPropertySheet(nIDCaption, pParentWnd, iSelectPage), hIcon(0)
 {
 
 }
 
 OptionsPropertySheet::OptionsPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), hIcon(0)
+	:CMFCPropertySheet(pszCaption, pParentWnd, iSelectPage), hIcon(0)
 {
 
 }
@@ -31,7 +31,7 @@ OptionsPropertySheet::~OptionsPropertySheet()
 }
 
 
-BEGIN_MESSAGE_MAP(OptionsPropertySheet, CPropertySheet)
+BEGIN_MESSAGE_MAP(OptionsPropertySheet, CMFCPropertySheet)
 END_MESSAGE_MAP()
 
 
@@ -40,7 +40,7 @@ END_MESSAGE_MAP()
 
 BOOL OptionsPropertySheet::OnInitDialog()
 {
-	BOOL bResult = CPropertySheet::OnInitDialog();
+	BOOL bResult = CMFCPropertySheet::OnInitDialog();
 
 	hIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
 

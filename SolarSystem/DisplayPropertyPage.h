@@ -3,7 +3,7 @@
 
 // DisplayPropertyPage dialog
 
-class DisplayPropertyPage : public CPropertyPage
+class DisplayPropertyPage : public CMFCPropertyPage
 {
 	DECLARE_DYNAMIC(DisplayPropertyPage)
 

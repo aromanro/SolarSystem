@@ -4,7 +4,7 @@
 
 // OptionsPropertySheet
 
-class OptionsPropertySheet : public CPropertySheet
+class OptionsPropertySheet : public CMFCPropertySheet
 {
 	DECLARE_DYNAMIC(OptionsPropertySheet)
 
