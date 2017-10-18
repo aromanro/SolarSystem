@@ -39,7 +39,7 @@ namespace OpenGL {
 		glBindVertexArray(0);
 	}
 
-	GLuint VertexArrayObject::getType()
+	GLuint VertexArrayObject::getType() const
 	{
 		return GL_VERTEX_ARRAY;
 	}
@@ -66,7 +66,7 @@ namespace OpenGL {
 		glBindBuffer(getType(), 0);
 	}
 
-	GLuint BufferObject::getType()
+	GLuint BufferObject::getType() const
 	{
 		return GL_BUFFER;
 	}
@@ -82,17 +82,17 @@ namespace OpenGL {
 		glBufferSubData(getType(), index, len, data);
 	}
 
-	GLuint VertexBufferObject::getType()
+	GLuint VertexBufferObject::getType() const
 	{
 		return GL_ARRAY_BUFFER;
 	}
 
-	GLuint ElementBufferObject::getType()
+	GLuint ElementBufferObject::getType() const
 	{
 		return GL_ELEMENT_ARRAY_BUFFER;
 	}
 
-	GLuint UniformBufferObject::getType()
+	GLuint UniformBufferObject::getType() const
 	{
 		return GL_UNIFORM_BUFFER;
 	}
@@ -119,7 +119,7 @@ namespace OpenGL {
 		glBindFramebuffer(getType(), 0);
 	}
 
-	GLuint FrameBufferObject::getType()
+	GLuint FrameBufferObject::getType() const
 	{
 		return GL_FRAMEBUFFER;
 	}

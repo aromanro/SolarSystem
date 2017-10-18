@@ -233,7 +233,7 @@ namespace OpenGL {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 
-	GLuint SkyBoxCubeMapProgram::CubeMapTexture::getType()
+	GLuint SkyBoxCubeMapProgram::CubeMapTexture::getType() const
 	{
 		return GL_TEXTURE_CUBE_MAP;
 	}

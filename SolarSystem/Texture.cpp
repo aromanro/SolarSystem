@@ -29,7 +29,7 @@ namespace OpenGL {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	GLuint Texture::getType()
+	GLuint Texture::getType() const
 	{
 		return GL_TEXTURE_2D;
 	}

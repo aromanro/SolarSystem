@@ -37,7 +37,7 @@ namespace OpenGL {
 		DetachShaders();
 	}
 	
-	GLuint Program::getType()
+	GLuint Program::getType() const
 	{
 		return GL_PROGRAM;
 	}
@@ -49,13 +49,13 @@ namespace OpenGL {
 	}
 
 
-	bool Program::getStatus()
+	bool Program::getStatus() const
 	{
 		GLint Result = GL_FALSE;
 
 		glGetProgramiv(ID, GL_LINK_STATUS, &Result);
 
-		return Result == GL_TRUE ? true : false;
+		return Result == GL_TRUE;
 	}
 
 	const char* Program::getStatusMessage()

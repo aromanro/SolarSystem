@@ -28,13 +28,13 @@ namespace OpenGL {
 	}
 
 
-	bool Shader::getStatus()
+	bool Shader::getStatus() const
 	{
 		GLint Result = GL_FALSE;
 
 		glGetShaderiv(ID, GL_COMPILE_STATUS, &Result);
 
-		return Result == GL_TRUE ? true : false;
+		return Result == GL_TRUE;
 	}
 
 	const char* Shader::getStatusMessage()
@@ -65,7 +65,7 @@ namespace OpenGL {
 	{
 	}
 
-	GLuint VertexShader::getType() 
+	GLuint VertexShader::getType() const 
 	{ 
 		return GL_VERTEX_SHADER; 
 	}
@@ -75,7 +75,7 @@ namespace OpenGL {
 	{
 	}
 
-	GLuint FragmentShader::getType() 
+	GLuint FragmentShader::getType() const 
 	{ 
 		return GL_FRAGMENT_SHADER; 
 	}
@@ -85,7 +85,7 @@ namespace OpenGL {
 	{
 	}
 
-	GLuint GeometryShader::getType()
+	GLuint GeometryShader::getType() const
 	{
 		return GL_GEOMETRY_SHADER;
 	}
@@ -95,7 +95,7 @@ namespace OpenGL {
 	{
 	}
 
-	GLuint ComputeShader::getType()
+	GLuint ComputeShader::getType() const
 	{
 		return GL_COMPUTE_SHADER;
 	}

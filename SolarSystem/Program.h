@@ -18,7 +18,7 @@ namespace OpenGL {
 		virtual ~Program();
 
 		virtual void Bind(); // it's actually a link
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 
 		void Use();
 		void UnUse();
@@ -27,7 +27,7 @@ namespace OpenGL {
 
 		void Attach(Shader& shader);
 
-		virtual bool getStatus();
+		virtual bool getStatus() const;
 		virtual const char* getStatusMessage();
 	};
 

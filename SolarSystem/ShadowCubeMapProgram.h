@@ -45,7 +45,7 @@ namespace OpenGL {
 
 			virtual void Bind();
 			virtual void UnBind();
-			virtual GLuint getType();
+			virtual GLuint getType() const;
 		};
 
 		FrameBufferObject depthMapFBO;

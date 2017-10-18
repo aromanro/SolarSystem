@@ -35,7 +35,7 @@ namespace OpenGL {
 
 			virtual void Bind();
 			virtual void UnBind();
-			virtual GLuint getType();
+			virtual GLuint getType() const;
 
 			void setDataLeft(void *data, int width, int height);
 			void setDataRight(void *data, int width, int height);

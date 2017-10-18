@@ -17,10 +17,14 @@ namespace OpenGL {
 
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
-		virtual GLuint getType() = 0;
+		virtual GLuint getType() const = 0;
 
 		GLuint getID() const { return ID; }
 		operator GLuint() const { return getID(); }
+
+	private: 
+		OpenGLObject(const OpenGLObject&);
+		OpenGLObject& operator=(const OpenGLObject&);
 	};
 
 
@@ -32,7 +36,7 @@ namespace OpenGL {
 
 		virtual void Bind();
 		virtual void UnBind();
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 	};
 
 
@@ -43,7 +47,7 @@ namespace OpenGL {
 
 		virtual void Bind();
 		virtual void UnBind();
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 
 		void setData(void *data, unsigned int len, GLenum type = GL_STATIC_DRAW);
 		void setSubData(void *data, unsigned int len, unsigned int index = 0);
@@ -52,19 +56,19 @@ namespace OpenGL {
 	class VertexBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 	};
 
 	class ElementBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 	};
 
 	class UniformBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 	};
 
 	class FrameBufferObject : public OpenGLObject
@@ -75,7 +79,7 @@ namespace OpenGL {
 
 		virtual void Bind();
 		virtual void UnBind();
-		virtual GLuint getType();
+		virtual GLuint getType() const;
 	};
 
 }

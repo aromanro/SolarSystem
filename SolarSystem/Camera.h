@@ -75,8 +75,8 @@ namespace OpenGL {
 
 		void ShiftCameraPosition(const Vector3D<double>& shiftVec);
 
-		Vector3D<double> getNormalizedForward();
-		Vector3D<double> getNormalizedUp();
+		Vector3D<double> getNormalizedForward() const;
+		Vector3D<double> getNormalizedUp() const;
 
 		void Move(Movements movement, bool fromMouse = false);
 
