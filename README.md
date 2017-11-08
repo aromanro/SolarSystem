@@ -1,7 +1,7 @@
 # SolarSystem
 A solar system simulator with velocity Verlet, using OpenGL for displaying.
 
-A detailed description of the project is on the computational physics blog: http://compphys.go.ro/newtonian-gravity/
+A detailed description of the project is on the computational physics blog: https://compphys.go.ro/newtonian-gravity/
 
 ### PROGRAM IN ACTION
 
