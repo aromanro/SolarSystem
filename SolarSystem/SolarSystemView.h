@@ -108,7 +108,7 @@ private:
 	
 	void MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::vec3& pos);
 
-	Vector3D<double> GetTowardsVector(CPoint& point, Vector3D<double>& forward);
+	Vector3D<double> GetTowardsVector(CPoint& point, const Vector3D<double>& forward);
 
 	bool SetupShaders();
 	bool SetupSkyBox();

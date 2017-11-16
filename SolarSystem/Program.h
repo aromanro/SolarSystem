@@ -25,7 +25,7 @@ namespace OpenGL {
 
 		virtual void UnBind(); // same as UnUse
 
-		void Attach(Shader& shader);
+		void Attach(const Shader& shader);
 
 		virtual bool getStatus() const;
 		virtual const char* getStatusMessage();

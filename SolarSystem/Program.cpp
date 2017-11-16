@@ -42,7 +42,7 @@ namespace OpenGL {
 		return GL_PROGRAM;
 	}
 
-	void Program::Attach(Shader& shader)
+	void Program::Attach(const Shader& shader)
 	{
 		glAttachShader(ID, shader.getID());
 		shaders.push_back(shader.getID());
@@ -65,7 +65,7 @@ namespace OpenGL {
 
 		if (InfoLength > 0)
 		{
-			ErrorMsg.resize((unsigned int)InfoLength + 1);
+			ErrorMsg.resize(static_cast<unsigned int>(InfoLength + 1));
 			ErrorMsg[0] = 0;
 			glGetProgramInfoLog(ID, InfoLength, NULL, &ErrorMsg[0]);
 

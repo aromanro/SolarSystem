@@ -66,7 +66,7 @@ CSolarSystemView* CSolarSystemDoc::GetMainView(void)
 	{
 		CView* pView = GetNextView(pos);
 		if (pView->IsKindOf(RUNTIME_CLASS(CSolarSystemView)))
-			return (CSolarSystemView*)pView;
+			return dynamic_cast<CSolarSystemView*>(pView);
 	}
 
 	return NULL;
@@ -197,7 +197,7 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		{
 			pSolarSystem->reset();
 			MSXML::IXMLDOMNodePtr pRecordNode = pSolarSystem->nextNode();
-			m_Thread.m_timestep = (unsigned int)GetXmlIntValue(pRecordNode, L"TimeStep", 300);
+			m_Thread.m_timestep = static_cast<unsigned int>(GetXmlIntValue(pRecordNode, L"TimeStep", 300));
 		}
 	}
 

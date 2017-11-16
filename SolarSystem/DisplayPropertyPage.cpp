@@ -72,7 +72,7 @@ void DisplayPropertyPage::ApplyValues()
 
 		theApp.options.Save();
 
-		CMainFrame *mainFrm = (CMainFrame*)theApp.m_pMainWnd;
+		CMainFrame *mainFrm = dynamic_cast<CMainFrame*>(theApp.m_pMainWnd);
 
 		if (mainFrm)
 		{

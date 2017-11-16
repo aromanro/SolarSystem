@@ -86,9 +86,9 @@ namespace OpenGL {
 	public:
 		void Tick();
 		void ProgressiveMove(Movements movement, int nrticks = 5, bool fromMouse = false);
-		void ProgressiveRotate(Vector3D<double>& towards, int nrticks);
+		void ProgressiveRotate(const Vector3D<double>& towards, int nrticks);
 
-		void RotateTowards(double angle, Vector3D<double>& towards);
+		void RotateTowards(double angle, const Vector3D<double>& towards);
 
 
 		inline glm::mat4 getMatrix() const {

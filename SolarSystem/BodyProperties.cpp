@@ -30,12 +30,12 @@ bool BodyProperties::LoadTexture()
 			if (skin.IsNull()) return false;
 			
 			texture = new OpenGL::Texture();
-			unsigned char* buf;
+			unsigned char* buf = NULL;
 
 			if (skin.GetPitch() < 0)
-				buf = (unsigned char*)skin.GetPixelAddress(0, skin.GetHeight() - 1);
+				buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
 			else 
-				buf = (unsigned char*)skin.GetBits();
+				buf = static_cast<unsigned char*>(skin.GetBits());
 
 			texture->setData(buf, skin.GetWidth(), skin.GetHeight());
 

@@ -180,7 +180,7 @@ namespace OpenGL {
 		vbo->setData((void*)skyBoxVert, sizeof(skyBoxVert));
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
 
 		UnBind();
 	}
@@ -238,32 +238,32 @@ namespace OpenGL {
 		return GL_TEXTURE_CUBE_MAP;
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataLeft(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataLeft(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}	
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataRight(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataRight(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataTop(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataTop(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBottom(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBottom(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataFront(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataFront(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBack(void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBack(const void *data, int width, int height)
 	{
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
 	}

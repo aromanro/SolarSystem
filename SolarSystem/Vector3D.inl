@@ -151,7 +151,7 @@ template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::R
 
 template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::RotateTowards(const Vector3D<O>& other, A angle) const
 {
-	Vector3D<T> a = this->operator%(other);
+	const Vector3D<T> a = this->operator%(other);
 
 	return RotateAround(a, angle);
 }

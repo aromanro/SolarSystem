@@ -22,16 +22,16 @@ Options::~Options()
 
 bool Options::Load()
 {
-	int res = (int)theApp.GetProfileInt(L"options", L"gamma", 0);
+	int res = static_cast<int>(theApp.GetProfileInt(L"options", L"gamma", 0));
 	gammaCorrection = (res != 0 ? true : false);
 
-	res = (int)theApp.GetProfileInt(L"options", L"skyBox", 1);
+	res = static_cast<int>(theApp.GetProfileInt(L"options", L"skyBox", 1));
 	showSkyBox = (res != 0 ? true : false);
 
-	res = (int)theApp.GetProfileInt(L"options", L"shadows", 1);
+	res = static_cast<int>(theApp.GetProfileInt(L"options", L"shadows", 1));
 	drawShadows = (res != 0 ? true : false);
 
-	res = (int)theApp.GetProfileInt(L"options", L"textures", 1);
+	res = static_cast<int>(theApp.GetProfileInt(L"options", L"textures", 1));
 	drawTextures = (res != 0 ? true : false);
 
 	translationSpeed = theApp.GetProfileInt(L"options", L"translationSpeed", 100);

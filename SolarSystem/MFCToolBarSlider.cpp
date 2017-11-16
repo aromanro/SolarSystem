@@ -43,7 +43,7 @@ int CMFCToolBarSlider::GetPos(UINT uiCmd)
 	{
 		for (POSITION pos = listButtons.GetHeadPosition(); pos;)
 		{
-			CMFCToolBarSlider* pSlider = DYNAMIC_DOWNCAST(CMFCToolBarSlider, listButtons.GetNext(pos));
+			const CMFCToolBarSlider* pSlider = DYNAMIC_DOWNCAST(CMFCToolBarSlider, listButtons.GetNext(pos));
 			if (pSlider) return pSlider->slider.position;
 		}
 	}
@@ -180,7 +180,7 @@ SIZE CMFCToolBarSlider::OnCalculateSize(CDC* /*pDC*/, const CSize& /*sizeDefault
 	if (GetHwnd() && !IsHidden())
 	{
 		slider.ShowWindow(SW_SHOWNOACTIVATE);
-		slider.ModifyStyle((DWORD)(bHorz ? TBS_VERT : TBS_HORZ), (DWORD)(bHorz ? TBS_HORZ : TBS_VERT));
+		slider.ModifyStyle(static_cast<DWORD>(bHorz ? TBS_VERT : TBS_HORZ), static_cast<DWORD>(bHorz ? TBS_HORZ : TBS_VERT));
 	}
 
 	return CSize(bHorz ? slider.width : 24, bHorz ? 24 : slider.width);
@@ -190,7 +190,7 @@ void CMFCToolBarSlider::OnChangeParentWnd(CWnd* pWndParent)
 {
 	if (GetHwnd())
 	{
-		CWnd* pWndParentCurr = slider.GetParent();
+		const CWnd* pWndParentCurr = slider.GetParent();
 
 		if (pWndParent && pWndParentCurr &&	pWndParentCurr->GetSafeHwnd() == pWndParent->GetSafeHwnd())
 			return;

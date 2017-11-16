@@ -22,19 +22,19 @@ namespace OpenGL {
 		buffer.resize(length); 
 
 		for (unsigned int i = 0; i < lats; ++i) {
-			double lat0 = M_PI * (-0.5 + ((double)i) / (double)lats);
-			double z0 = r*sin(lat0);
-			double r0 = r*cos(lat0);
+			const double lat0 = M_PI * (-0.5 + ((double)i) / (double)lats);
+			const double z0 = r*sin(lat0);
+			const double r0 = r*cos(lat0);
 
-			double lat1 = M_PI * (-0.5 + ((double)(i + 1)) / (double)lats);
-			double z1 = r*sin(lat1);
-			double r1 = r*cos(lat1);
+			const double lat1 = M_PI * (-0.5 + ((double)(i + 1)) / (double)lats);
+			const double z1 = r*sin(lat1);
+			const double r1 = r*cos(lat1);
 
 			for (unsigned int j = 0; j <= longs; ++j) {
-				double longitude = 2. * M_PI * ((double)j) / (double)longs;
+				const double longitude = 2. * M_PI * ((double)j) / (double)longs;
 
-				double c = cos(longitude);
-				double s = sin(longitude);
+				const double c = cos(longitude);
+				const double s = sin(longitude);
 
 				double x = r0 * c;
 				double y = r0 * s;
@@ -101,7 +101,7 @@ namespace OpenGL {
 		VertexBufferRenderable::Bind();
 
 		for (unsigned int i = 0; i < m_lats; ++i)			
-			glDrawArrays(GL_TRIANGLE_STRIP, (GLint)(i * (m_longs + 1) * 2 ) , (GLsizei)(2 * (m_longs + 1)));
+			glDrawArrays(GL_TRIANGLE_STRIP, static_cast<GLint>(i * (m_longs + 1) * 2 ) , static_cast<GLsizei>(2 * (m_longs + 1)));
 
 		//VertexBufferRenderable::UnBind();
 	}

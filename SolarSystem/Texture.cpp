@@ -34,7 +34,7 @@ namespace OpenGL {
 		return GL_TEXTURE_2D;
 	}
 
-	void Texture::setData(void *data, int width, int height)
+	void Texture::setData(const void *data, int width, int height)
 	{
 		Bind();
 

@@ -37,12 +37,12 @@ namespace OpenGL {
 			virtual void UnBind();
 			virtual GLuint getType() const;
 
-			void setDataLeft(void *data, int width, int height);
-			void setDataRight(void *data, int width, int height);
-			void setDataFront(void *data, int width, int height);
-			void setDataBack(void *data, int width, int height);
-			void setDataTop(void *data, int width, int height);
-			void setDataBottom(void *data, int width, int height);
+			void setDataLeft(const void *data, int width, int height);
+			void setDataRight(const void *data, int width, int height);
+			void setDataFront(const void *data, int width, int height);
+			void setDataBack(const void *data, int width, int height);
+			void setDataTop(const void *data, int width, int height);
+			void setDataBottom(const void *data, int width, int height);
 
 			bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 		};

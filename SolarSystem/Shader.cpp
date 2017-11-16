@@ -44,9 +44,9 @@ namespace OpenGL {
 
 		if (InfoLength > 0)
 		{
-			ErrorMsg.resize((unsigned int)InfoLength + 1);
+			ErrorMsg.resize(static_cast<unsigned int>(InfoLength + 1));
 			ErrorMsg[0] = 0;
-			glGetShaderInfoLog(ID, (GLsizei)InfoLength, NULL, &ErrorMsg[0]);
+			glGetShaderInfoLog(ID, static_cast<GLsizei>(InfoLength), NULL, &ErrorMsg[0]);
 
 			return &ErrorMsg[0];
 		}

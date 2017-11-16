@@ -58,16 +58,16 @@ BOOL CameraPropertyPage::OnApply()
 
 void CameraPropertyPage::ApplyValues()
 {
-	theApp.options.translationSpeed = (unsigned int)m_Slider1.GetPos();
-	theApp.options.rotationSpeed = (unsigned int)m_Slider2.GetPos();
-	theApp.options.scrollSpeed = (unsigned int)m_Slider3.GetPos();
+	theApp.options.translationSpeed = static_cast<unsigned int>(m_Slider1.GetPos());
+	theApp.options.rotationSpeed = static_cast<unsigned int>(m_Slider2.GetPos());
+	theApp.options.scrollSpeed = static_cast<unsigned int>(m_Slider3.GetPos());
 
 	theApp.options.Save();
 
-	CMainFrame *mainFrm = (CMainFrame*)theApp.m_pMainWnd;
+	CMainFrame *mainFrm = dynamic_cast<CMainFrame*>(theApp.m_pMainWnd);
 	if (!mainFrm) return;
 
-	CSolarSystemDoc* doc = (CSolarSystemDoc*)mainFrm->GetActiveDocument();
+	CSolarSystemDoc* doc = dynamic_cast<CSolarSystemDoc*>(mainFrm->GetActiveDocument());
 	if (!doc) return;
 
 	CSolarSystemView *view = doc->GetMainView();
@@ -88,9 +88,9 @@ BOOL CameraPropertyPage::OnInitDialog()
 	m_Slider2.SetRange(25, 400);
 	m_Slider3.SetRange(10, 400);
 
-	m_Slider1.SetPos((int)theApp.options.translationSpeed);
-	m_Slider2.SetPos((int)theApp.options.rotationSpeed);
-	m_Slider3.SetPos((int)theApp.options.scrollSpeed);
+	m_Slider1.SetPos(static_cast<int>(theApp.options.translationSpeed));
+	m_Slider2.SetPos(static_cast<int>(theApp.options.rotationSpeed));
+	m_Slider3.SetPos(static_cast<int>(theApp.options.scrollSpeed));
 
 	CString str;
 	str.Format(L"%d%%", theApp.options.translationSpeed);

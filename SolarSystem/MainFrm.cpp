@@ -59,7 +59,7 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
-	theApp.m_nAppLook = (UINT)theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
+	theApp.m_nAppLook = static_cast<UINT>(theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008));
 }
 
 CMainFrame::~CMainFrame()
@@ -70,8 +70,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
-	BOOL bNameValid;
 
 	if (!m_wndMenuBar.Create(this))
 	{
@@ -85,14 +83,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCPopupMenu::SetForceMenuFocus(FALSE);
 
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
-		!m_wndToolBar.LoadToolBar((UINT)(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME)))
+		!m_wndToolBar.LoadToolBar(static_cast<UINT>(theApp.m_bHiColorIcons ? IDR_MAINFRAME_256 : IDR_MAINFRAME)))
 	{
 		TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
 	}
 
 	CString strToolBarName;
-	bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
+	BOOL bNameValid = strToolBarName.LoadString(IDS_TOOLBAR_STANDARD);
 	ASSERT(bNameValid);
 	m_wndToolBar.SetWindowText(strToolBarName);
 
@@ -338,7 +336,7 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 	CSolarSystemView* view = getView();
 	if (view)
 	{
-		bool handled = view->KeyPressHandler(pMsg);
+		const bool handled = view->KeyPressHandler(pMsg);
 		if (handled) return TRUE;
 	}
 
@@ -359,7 +357,7 @@ void CMainFrame::OnViewFullscreen()
 		POSITION pos = lstBars.GetHeadPosition();
 		while (pos != NULL)
 		{
-			CWnd* wnd = (CWnd*)lstBars.GetNext(pos);
+			const CWnd* wnd = (CWnd*)lstBars.GetNext(pos);
 			if (wnd->IsKindOf(RUNTIME_CLASS(CMFCToolBar)) && !wnd->IsKindOf(RUNTIME_CLASS(CMFCStatusBar)) && !wnd->IsKindOf(RUNTIME_CLASS(CMFCMenuBar)) && wnd->GetSafeHwnd() != m_wndToolBar.GetSafeHwnd())
 				wnd->GetParent()->ShowWindow(SW_HIDE);			
 		}
@@ -380,7 +378,7 @@ void CMainFrame::OnSimulateRun()
 
 	if (pWndMain)
 	{
-		CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
+		CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
 
 		pDoc->stopped = !pDoc->stopped;
 	}
@@ -393,7 +391,7 @@ void CMainFrame::OnUpdateSimulateRun(CCmdUI *pCmdUI)
 
 	if (pWndMain)
 	{
-		CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
+		const CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
 
 		pCmdUI->Enable();
 		pCmdUI->SetCheck(!pDoc->stopped);
@@ -403,7 +401,7 @@ void CMainFrame::OnUpdateSimulateRun(CCmdUI *pCmdUI)
 
 afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 {
-	UINT uiToolBarId = (UINT)wp;
+	const UINT uiToolBarId = static_cast<UINT>(wp);
 	if (uiToolBarId == IDR_MAINFRAME || uiToolBarId == IDR_MAINFRAME_256)
 	{
 		CMFCToolBarSlider btnSlider(ID_SLIDER);		
@@ -411,8 +409,8 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 		CWnd* pWndMain = AfxGetMainWnd();
 		if (pWndMain)
 		{
-			CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
-			if (pDoc) btnSlider.SetPos(ID_SLIDER, (int)pDoc->nrsteps);
+			const CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
+			if (pDoc) btnSlider.SetPos(ID_SLIDER, static_cast<int>(pDoc->nrsteps));
 		}
 
 		m_wndToolBar.ReplaceButton(ID_SLIDER, btnSlider);
@@ -431,11 +429,11 @@ void CMainFrame::OnSlider()
 
 	if (GetAsyncKeyState(VK_LBUTTON) == 0)
 	{
-		int npos = CMFCToolBarSlider::GetPos(ID_SLIDER);
+		const int npos = CMFCToolBarSlider::GetPos(ID_SLIDER);
 
-		CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
+		CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
 		
-		pDoc->nrsteps = (unsigned int)npos;
+		pDoc->nrsteps = static_cast<unsigned int>(npos);
 	}
 }
 
@@ -464,11 +462,11 @@ void CMainFrame::OnFileOpen()
 
 		if (pWndMain)
 		{
-			CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
+			CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
 		
 			if (pDoc)
 			{
-				bool saveStopped = pDoc->stopped;
+				const bool saveStopped = pDoc->stopped;
 				pDoc->stopped = true; // stop requesting data from computation thread
 				pDoc->StopThread();
 			
@@ -477,7 +475,7 @@ void CMainFrame::OnFileOpen()
 				POSITION pos = pDoc->GetFirstViewPosition();
 				if (pos)
 				{
-					CSolarSystemView* view = (CSolarSystemView*)pDoc->GetNextView(pos);
+					CSolarSystemView* view = dynamic_cast<CSolarSystemView*>(pDoc->GetNextView(pos));
 					view->Reset();
 				}
 
@@ -514,13 +512,13 @@ CSolarSystemView* CMainFrame::getView()
 
 	if (pWndMain)
 	{
-		CDocument* pDoc = ((CFrameWnd*)pWndMain)->GetActiveDocument();
+		const CDocument* pDoc = dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument();
 		if (pDoc)
 		{
 			POSITION pos = pDoc->GetFirstViewPosition();
 			if (pos)
 			{
-				return (CSolarSystemView*)pDoc->GetNextView(pos);
+				return dynamic_cast<CSolarSystemView*>(pDoc->GetNextView(pos));
 			}
 		}
 	}

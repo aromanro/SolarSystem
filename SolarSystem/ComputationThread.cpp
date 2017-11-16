@@ -18,9 +18,6 @@ namespace MolecularDynamics {
 	{
 		static const double EPS2 = EPS*EPS;
 
-		Vector3D<double> r21;
-		double length;
-
 		it->m_PrevAcceleration = it->m_Acceleration;
 		it->m_Acceleration = Vector3D<double>(0., 0., 0.);
 
@@ -28,8 +25,8 @@ namespace MolecularDynamics {
 		{
 			if (cit == it) continue;
 
-			r21 = cit->m_Position - it->m_Position;
-			length = r21.Length();
+			const Vector3D<double> r21 = cit->m_Position - it->m_Position;
+			const double length = r21.Length();
 
 			it->m_Acceleration += r21 * cit->m_Mass / ((length*length + EPS2) * length);
 		}
@@ -56,7 +53,7 @@ namespace MolecularDynamics {
 	{
 		for (auto &body : Bodies)
 		{
-			double angular_speed = TWO_M_PI / body.rotationPeriod;
+			const double angular_speed = TWO_M_PI / body.rotationPeriod;
 			body.rotation += angular_speed * timestep;
 			if (body.rotation >= TWO_M_PI) body.rotation -= TWO_M_PI;
 			else if (body.rotation < 0) body.rotation += TWO_M_PI;
@@ -66,7 +63,6 @@ namespace MolecularDynamics {
 
 	void ComputationThread::Compute()
 	{
-		unsigned int local_nrsteps;
 		const double timestep = m_timestep;
 		const double timestep2 = timestep*timestep;
 
@@ -78,7 +74,7 @@ namespace MolecularDynamics {
 
 		for (;;)
 		{
-			local_nrsteps = nrsteps;
+			const unsigned int local_nrsteps = nrsteps;
 
 			// do computations
 			for (unsigned int i = 0; i < local_nrsteps; ++i)

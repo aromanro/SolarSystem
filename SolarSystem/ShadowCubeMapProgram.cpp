@@ -53,6 +53,7 @@ namespace OpenGL {
 	}
 
 	ShadowCubeMapProgram::ShadowCubeMapProgram()
+		: matLocation(0), shadowMatPos(0), lightPosLoc(0), farPlaneLoc(0)
 	{
 		depthMapFBO.Bind();
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
@@ -181,7 +182,7 @@ void OpenGL::ShadowCubeMapProgram::SetLightAndFarPlanePosition(glm::vec3& lightP
 	std::vector<glm::mat4> shadowTransforms;
 	shadowTransforms.reserve(6);
 
-	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, (float)nearPlaneDistance, (float)farPlaneDistance);
+	const glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, (float)nearPlaneDistance, (float)farPlaneDistance);
 
 	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)));
 	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)));

@@ -11,7 +11,9 @@
 
 
 SolarSystemGLProgram::SolarSystemGLProgram()
-	: nrlights(0)
+	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
+	colorLocation(0), useTextLocation(0), isSunLocation(0), viewPosLocation(0), farPlaneLoc(0),
+	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), depthMapLoc(0)
 {
 }
 
@@ -27,7 +29,7 @@ void SolarSystemGLProgram::SetupLights(BodyPropList& BodyProperties)
 	lights.clear();
 
 
-	for (auto &body : BodyProperties)
+	for (const auto &body : BodyProperties)
 		if (body.isSun) {
 			lights.push_back(Light());
 		}

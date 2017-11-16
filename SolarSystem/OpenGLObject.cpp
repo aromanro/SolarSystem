@@ -71,13 +71,13 @@ namespace OpenGL {
 		return GL_BUFFER;
 	}
 
-	void BufferObject::setData(void *data, unsigned int len, GLenum type)
+	void BufferObject::setData(const void *data, unsigned int len, GLenum type)
 	{
 		Bind();
 		glBufferData(getType(), len, data, type);
 	}
 
-	void BufferObject::setSubData(void *data, unsigned int len, unsigned int index)
+	void BufferObject::setSubData(const void *data, unsigned int len, unsigned int index)
 	{
 		glBufferSubData(getType(), index, len, data);
 	}

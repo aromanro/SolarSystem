@@ -128,9 +128,9 @@ void CEmbeddedSlider::RetrievePos()
 	CWnd* pWndMain = AfxGetMainWnd();
 	if (pWndMain)
 	{
-		CSolarSystemDoc* pDoc = (CSolarSystemDoc*)((CFrameWnd*)pWndMain)->GetActiveDocument();
+		const CSolarSystemDoc* pDoc = dynamic_cast<CSolarSystemDoc*>(dynamic_cast<CFrameWnd*>(pWndMain)->GetActiveDocument());
 		if (pDoc) {
-			position = (int)pDoc->nrsteps;
+			position = static_cast<int>(pDoc->nrsteps);
 			if (GetSafeHwnd()) SetPos(position);
 		}
 	}

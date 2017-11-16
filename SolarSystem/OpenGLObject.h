@@ -49,8 +49,8 @@ namespace OpenGL {
 		virtual void UnBind();
 		virtual GLuint getType() const;
 
-		void setData(void *data, unsigned int len, GLenum type = GL_STATIC_DRAW);
-		void setSubData(void *data, unsigned int len, unsigned int index = 0);
+		void setData(const void *data, unsigned int len, GLenum type = GL_STATIC_DRAW);
+		void setSubData(const void *data, unsigned int len, unsigned int index = 0);
 	};
 
 	class VertexBufferObject : public BufferObject
