@@ -22,16 +22,16 @@ namespace OpenGL {
 		buffer.resize(length); 
 
 		for (unsigned int i = 0; i < lats; ++i) {
-			const double lat0 = M_PI * (-0.5 + ((double)i) / (double)lats);
+			const double lat0 = M_PI * (-0.5 + static_cast<double>(i) / lats);
 			const double z0 = r*sin(lat0);
 			const double r0 = r*cos(lat0);
 
-			const double lat1 = M_PI * (-0.5 + ((double)(i + 1)) / (double)lats);
+			const double lat1 = M_PI * (-0.5 + static_cast<double>(i + 1) / lats);
 			const double z1 = r*sin(lat1);
 			const double r1 = r*cos(lat1);
 
 			for (unsigned int j = 0; j <= longs; ++j) {
-				const double longitude = 2. * M_PI * ((double)j) / (double)longs;
+				const double longitude = 2. * M_PI * static_cast<double>(j) / longs;
 
 				const double c = cos(longitude);
 				const double s = sin(longitude);
@@ -39,9 +39,9 @@ namespace OpenGL {
 				double x = r0 * c;
 				double y = r0 * s;
 
-				double XTex = ((double)j) / ((double)longs);
-				double YTex0 = ((double)i) / ((double)lats);
-				double YTex1 = (((double)i) + 1.) / ((double)lats);
+				double XTex = static_cast<double>(j) / longs;
+				double YTex0 = static_cast<double>(i) / lats;
+				double YTex1 = (static_cast<double>(i) + 1.) / lats;
 
 				double lng = sqrt(x*x + y*y + z0*z0);
 
@@ -50,33 +50,33 @@ namespace OpenGL {
 				double lng1 = sqrt(x1*x1 + y1*y1 + z1*z1);
 
 				// vertex
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE] = (float)x1;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 1] = (float)y1;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 2] = (float)z1;
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE] = static_cast<float>(x1);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 1] = static_cast<float>(y1);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 2] = static_cast<float>(z1);
 
 				// normal
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 3] = (float)(x1 / lng1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 4] = (float)(y1 / lng1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 5] = (float)(z1 / lng1);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 3] = static_cast<float>(x1 / lng1);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 4] = static_cast<float>(y1 / lng1);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 5] = static_cast<float>(z1 / lng1);
 
 				// texture coordinate
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 6] = (float)XTex;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 7] = (float)YTex1;
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 6] = static_cast<float>(XTex);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 7] = static_cast<float>(YTex1);
 
 
 				// vertex 
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 8] = (float)x;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 9] = (float)y;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 10] = (float)z0;
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 8] = static_cast<float>(x);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 9] = static_cast<float>(y);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 10] = static_cast<float>(z0);
 
 				// normal
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 11] = (float)(x / lng);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 12] = (float)(y / lng);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 13] = (float)(z0 / lng);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 11] = static_cast<float>(x / lng);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 12] = static_cast<float>(y / lng);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 13] = static_cast<float>(z0 / lng);
 
 				// texture coordinate
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 14] = (float)XTex;
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 15] = (float)YTex0;		
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 14] = static_cast<float>(XTex);
+				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 15] = static_cast<float>(YTex0);
 			}
 		}
 
