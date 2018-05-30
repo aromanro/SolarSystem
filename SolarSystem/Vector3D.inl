@@ -4,12 +4,8 @@
 
 #include "Vector3D.h"
 
-#include <math.h>
+#include <cmath>
 
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
 
 template<typename T> Vector3D<T>::Vector3D() 
 	: X(0), Y(0), Z(0) 
@@ -116,14 +112,14 @@ template<typename T> Vector3D<T>& Vector3D<T>::operator/=(T s)
 
 template<typename T> T Vector3D<T>::Length() const
 {
-	T w = *this * *this;
+	const T w = *this * *this;
 
 	return sqrt(w);
 }
 
 template<typename T> Vector3D<T> Vector3D<T>::Normalize() const
 {
-	T len = Length();
+	const T len = Length();
 
 	if (len != 0)
 		return *this / len;
@@ -131,15 +127,14 @@ template<typename T> Vector3D<T> Vector3D<T>::Normalize() const
 	return *this;
 }
 
-
 template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::RotateAround(const Vector3D<O>& other, A angle) const
 {
 	Vector3D<T> result;
-	Vector3D<O> u = other.Normalize();
+	const Vector3D<O> u = other.Normalize();
 
-	T sinAngle = sin(angle);
-	T cosAngle = cos(angle);
-	T oneMinus = 1. - cosAngle;
+	const T sinAngle = sin(angle);
+	const T cosAngle = cos(angle);
+	const T oneMinus = 1. - cosAngle;
 
 	result.X = (cosAngle + oneMinus * u.X * u.X)       * X + (oneMinus * u.X * u.Y - u.Z * sinAngle) * Y + (oneMinus * u.X * u.Z + u.Y * sinAngle) * Z;
 	result.Y = (oneMinus * u.X * u.Y + u.Z * sinAngle) * X + (cosAngle + oneMinus * u.Y * u.Y)       * Y + (oneMinus * u.Y * u.Z - u.X * sinAngle) * Z;
@@ -147,7 +142,6 @@ template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::R
 
 	return result;
 }
-
 
 template<typename T> template<typename O, typename A> Vector3D<T> Vector3D<T>::RotateTowards(const Vector3D<O>& other, A angle) const
 {
