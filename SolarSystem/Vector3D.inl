@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
+
 #define _VECTOR_3D_IMPL
+
 
 #include "Vector3D.h"
 
@@ -110,9 +112,9 @@ template<typename T> Vector3D<T>& Vector3D<T>::operator/=(T s)
 }
 
 
-template<typename T> T Vector3D<T>::Length() const
+template<typename T> double Vector3D<T>::Length() const
 {
-	const T w = *this * *this;
+	const double w = *this * *this;
 
 	return sqrt(w);
 }
