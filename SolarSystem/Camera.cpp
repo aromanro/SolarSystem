@@ -210,14 +210,14 @@ void OpenGL::Camera::Tick()
 void OpenGL::Camera::ProgressiveMove(Movements movement, int nrticks, bool fromMouse)
 {
 	if (movements.size() < 10)
-		movements.push_back(Movement(movement, nrticks, fromMouse));
+		movements.emplace_back(Movement(movement, nrticks, fromMouse));
 }
 
 void OpenGL::Camera::ProgressiveRotate(const Vector3D<double>& towards, int nrticks)
 {
 	if (movements.size() == 0)
 	{
-		movements.push_back(Movement(rotateTowards, nrticks));
+		movements.emplace_back(Movement(rotateTowards, nrticks));
 		movements.back().towardsVec = towards;
 	}
 }

@@ -184,12 +184,12 @@ void OpenGL::ShadowCubeMapProgram::SetLightAndFarPlanePosition(glm::vec3& lightP
 
 	const glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, (float)nearPlaneDistance, (float)farPlaneDistance);
 
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)));
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)));
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)));
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)));
-	shadowTransforms.push_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)));
+	shadowTransforms.emplace_back(shadowProj *	glm::lookAt(lightPosition, lightPosition + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)));
 	
 	glUniformMatrix4fv(shadowMatPos, 6, GL_FALSE, glm::value_ptr(shadowTransforms[0]));
 

@@ -45,7 +45,7 @@ namespace OpenGL {
 	void Program::Attach(const Shader& shader)
 	{
 		glAttachShader(ID, shader.getID());
-		shaders.push_back(shader.getID());
+		shaders.emplace_back(shader.getID());
 	}
 
 

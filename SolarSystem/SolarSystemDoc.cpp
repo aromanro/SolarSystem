@@ -212,8 +212,8 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		//for each group in the xml file
 		while (pRecordNode)
 		{
-			m_SolarSystem.m_Bodies.push_back(MolecularDynamics::Body());
-			m_SolarSystem.m_BodyProperties.push_back(BodyProperties());
+			m_SolarSystem.m_Bodies.emplace_back(MolecularDynamics::Body());
+			m_SolarSystem.m_BodyProperties.emplace_back(BodyProperties());
 
 			LoadBodyXml(pRecordNode, m_SolarSystem.m_Bodies.back(), m_SolarSystem.m_BodyProperties.back());
 			

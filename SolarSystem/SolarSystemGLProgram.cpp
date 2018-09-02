@@ -31,10 +31,10 @@ void SolarSystemGLProgram::SetupLights(BodyPropList& BodyProperties)
 
 	for (const auto &body : BodyProperties)
 		if (body.isSun) {
-			lights.push_back(Light());
+			lights.emplace_back(Light());
 		}
 
-	if (0 == nrlights) lights.push_back(Light());
+	if (0 == nrlights) lights.emplace_back(Light());
 
 	USES_CONVERSION;
 
