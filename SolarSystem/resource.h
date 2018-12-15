@@ -38,7 +38,9 @@
 #define IDC_SLIDER3                     1006
 #define IDC_STATIC1                     1007
 #define IDC_STATIC2                     1008
+#define IDC_MFCLINK1                    1008
 #define IDC_STATIC3                     1009
+#define IDC_MFCLINK2                    1009
 #define ID_VIEW_FULLSCREEN              32771
 #define ID_SIMULATE_RUN                 32772
 #define ID_SLIDER                       32776
@@ -49,9 +51,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        312
+#define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32782
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif
