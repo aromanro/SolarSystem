@@ -760,7 +760,7 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 	{
 		CSolarSystemDoc *doc = GetDocument();
 		if (doc) {
-			doc->GetData();
+			doc->RetrieveData();
 
 			doc->m_Thread.SetNrSteps(doc->nrsteps);
 			if (!doc->stopped) doc->m_Thread.SignalWantMore();
@@ -823,7 +823,7 @@ Vector3D<double> CSolarSystemView::GetTowardsVector(CPoint& point, const Vector3
 	const Vector3D<double> right = (forward % camera.up).Normalize();
 	const Vector3D<double> up = (right % forward).Normalize();
 
-	return (nearPlaneDistance*forward + pixelSize * point.x * right + pixelSize * point.y * up).Normalize();
+	return (nearPlaneDistance * forward + pixelSize * point.x * right + pixelSize * point.y * up).Normalize();
 }
 
 

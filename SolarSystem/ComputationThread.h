@@ -39,7 +39,7 @@ namespace MolecularDynamics {
 		void SetNrSteps(unsigned int nr);
 
 		void SetBodies(const BodyList& bodies);
-		void GetBodies(BodyList& bodies);
+		BodyList GetBodies();
 
 	protected:
 		inline static void CalculateAcceleration(BodyList::iterator& it, BodyList& Bodies);

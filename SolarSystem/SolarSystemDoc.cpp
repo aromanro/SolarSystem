@@ -318,9 +318,9 @@ void CSolarSystemDoc::LoadXmlFile(const CString& name)
 }
 
 
-void CSolarSystemDoc::GetData()
+void CSolarSystemDoc::RetrieveData()
 {
-	m_Thread.GetBodies(m_SolarSystem.m_Bodies);
+	m_SolarSystem.m_Bodies = m_Thread.GetBodies();
 }
 
 

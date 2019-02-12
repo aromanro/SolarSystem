@@ -66,8 +66,7 @@ namespace MolecularDynamics {
 		const double timestep = m_timestep;
 		const double timestep2 = timestep*timestep;
 
-		BodyList m_Bodies;
-		GetBodies(m_Bodies);
+		BodyList m_Bodies(GetBodies());
 
 		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it)
 			CalculateAcceleration(it, m_Bodies);
@@ -97,7 +96,7 @@ namespace MolecularDynamics {
 
 
 	ComputationThread::ComputationThread()
-		: nrsteps(1), m_timestep(300), an_event(0)
+		: an_event(0), nrsteps(1), m_timestep(300)
 	{
 	}
 
@@ -152,11 +151,13 @@ namespace MolecularDynamics {
 	}
 
 
-	void ComputationThread::GetBodies(BodyList& bodies)
+	BodyList ComputationThread::GetBodies()
 	{
 		std::lock_guard<std::mutex> lock(m_DataSection);
 
-		bodies = m_SharedBodies;
+		BodyList bodies(m_SharedBodies);
+
+		return std::move(bodies);
 	}
 
 }
