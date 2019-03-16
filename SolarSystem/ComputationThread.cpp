@@ -10,30 +10,62 @@
 const double G = 6.67408E-11;
 const double TWO_M_PI = 2.*M_PI;
 
-#define EPS 0.01
+#define EPS 1E-8
 
 namespace MolecularDynamics {
 
-	inline void ComputationThread::CalculateAcceleration(BodyList::iterator& it, BodyList& Bodies)
+
+	ComputationThread::ComputationThread()
+		: an_event(0), nrsteps(1), m_timestep(300)
+	{
+	}
+
+
+	ComputationThread::~ComputationThread()
+	{
+		EndThread();
+	}
+
+
+
+	inline Vector3D<double> ComputationThread::CalculateAcceleration(BodyList::const_iterator& it, BodyList& Bodies)
 	{
 		static const double EPS2 = EPS*EPS;
 
-		it->m_PrevAcceleration = it->m_Acceleration;
-		it->m_Acceleration = Vector3D<double>(0., 0., 0.);
+		Vector3D<double> acceleration(0., 0., 0.);
 
-		for (auto cit = Bodies.begin(); cit != Bodies.end(); ++cit)
+		for (auto cit = Bodies.cbegin(); cit != Bodies.cend(); ++cit)
 		{
 			if (cit == it) continue;
 
 			const Vector3D<double> r21 = cit->m_Position - it->m_Position;
 			const double length = r21.Length();
 
-			it->m_Acceleration += r21 * cit->m_Mass / ((length*length + EPS2) * length);
+			acceleration += r21 * cit->m_Mass / ((length*length + EPS2) * length);
 		}
 
-		it->m_Acceleration *= G;
+		return G * acceleration;
 	}
 
+#ifdef USE_VERLET
+
+	inline void ComputationThread::VerletStep(BodyList& Bodies, double timestep, double timestep2)
+	{
+		std::vector<Vector3D<double>> accelerations(Bodies.size());
+		int i = 0;
+		for (auto it = Bodies.cbegin(); it != Bodies.cend(); ++it, ++i)
+			accelerations[i] = CalculateAcceleration(it, Bodies);
+
+		i = 0;
+		for (auto it = Bodies.begin(); it != Bodies.end(); ++it, ++i)
+		{
+			const Vector3D<double> savePosition = it->m_Position;
+			it->m_Position = 2. * it->m_Position - it->m_PrevPosition + accelerations[i] * timestep2;
+			it->m_PrevPosition = savePosition;
+		}
+	}
+
+#else
 
 
 	inline void ComputationThread::VelocityVerletStep(BodyList& Bodies, double timestep, double timestep2)
@@ -43,11 +75,15 @@ namespace MolecularDynamics {
 
 		for (auto it = Bodies.begin(); it != Bodies.end(); ++it)
 		{
-			CalculateAcceleration(it, Bodies);
+			it->m_PrevAcceleration = it->m_Acceleration;
+			it->m_Acceleration = CalculateAcceleration(it, Bodies);
 
 			it->m_Velocity += (it->m_Acceleration + it->m_PrevAcceleration) * timestep * 0.5;
 		}
 	}
+
+#endif
+
 
 	inline void ComputationThread::CalculateRotations(BodyList& Bodies, double timestep)
 	{
@@ -61,15 +97,38 @@ namespace MolecularDynamics {
 	}
 
 
+	void ComputationThread::Initialize(BodyList& m_Bodies) const
+	{
+#ifdef USE_VERLET
+		const double timestep = m_timestep;
+		const double timestep2 = timestep*timestep;
+
+		std::vector<Vector3D<double>> accelerations(m_Bodies.size());
+		int i = 0;
+		for (auto it = m_Bodies.cbegin(); it != m_Bodies.cend(); ++it, ++i)
+			accelerations[i] = CalculateAcceleration(it, m_Bodies);
+
+		i = 0;
+		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it, ++i)
+		{
+			it->m_PrevPosition = it->m_Position;
+			it->m_Position += it->m_Velocity * timestep + 0.5 * accelerations[i] * timestep2;
+		}
+#else // VelocityVerlet
+		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it)
+			it->m_Acceleration = CalculateAcceleration(it, m_Bodies);
+#endif	
+	}
+
+
+
 	void ComputationThread::Compute()
 	{
 		const double timestep = m_timestep;
 		const double timestep2 = timestep*timestep;
 
 		BodyList m_Bodies(GetBodies());
-
-		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it)
-			CalculateAcceleration(it, m_Bodies);
+		Initialize(m_Bodies);
 
 		for (;;)
 		{
@@ -77,7 +136,11 @@ namespace MolecularDynamics {
 
 			// do computations
 			for (unsigned int i = 0; i < local_nrsteps; ++i)
+#ifdef USE_VERLET
+				VerletStep(m_Bodies, timestep, timestep2);
+#else
 				VelocityVerletStep(m_Bodies, timestep, timestep2);
+#endif
 
 			CalculateRotations(m_Bodies, local_nrsteps*timestep);
 
@@ -92,18 +155,6 @@ namespace MolecularDynamics {
 				an_event = 0;
 			}
 		}
-	}
-
-
-	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), m_timestep(300)
-	{
-	}
-
-
-	ComputationThread::~ComputationThread()
-	{
-		EndThread();
 	}
 
 	void ComputationThread::EndThread()

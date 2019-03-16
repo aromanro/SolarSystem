@@ -42,8 +42,15 @@ namespace MolecularDynamics {
 		BodyList GetBodies();
 
 	protected:
-		inline static void CalculateAcceleration(BodyList::iterator& it, BodyList& Bodies);
+		void Initialize(BodyList& m_Bodies) const;
+
+		inline static Vector3D<double> CalculateAcceleration(BodyList::const_iterator& it, BodyList& Bodies);
+
+#ifdef USE_VERLET
+		inline static void VerletStep(BodyList& Bodies, double period, double period2);
+#else
 		inline static void VelocityVerletStep(BodyList& Bodies, double period, double period2);
+#endif
 		inline static void CalculateRotations(BodyList& Bodies, double period);
 		void Compute();
 	};
