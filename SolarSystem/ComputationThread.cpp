@@ -59,9 +59,9 @@ namespace MolecularDynamics {
 		i = 0;
 		for (auto it = Bodies.begin(); it != Bodies.end(); ++it, ++i)
 		{
-			const Vector3D<double> savePosition = it->m_Position;
-			it->m_Position = 2. * it->m_Position - it->m_PrevPosition + accelerations[i] * timestep2;
-			it->m_PrevPosition = savePosition;
+			const Vector3D<double> nextPosition = 2. * it->m_Position - it->m_PrevPosition + accelerations[i] * timestep2;
+			it->m_PrevPosition = it->m_Position;
+			it->m_Position = nextPosition;
 		}
 	}
 
