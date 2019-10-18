@@ -29,6 +29,7 @@ END_MESSAGE_MAP()
 // CSolarSystemApp construction
 
 CSolarSystemApp::CSolarSystemApp()
+	: m_nAppLook(0)
 {
 	m_bHiColorIcons = TRUE;
 

@@ -65,7 +65,7 @@ namespace OpenGL {
 
 		if (InfoLength > 0)
 		{
-			ErrorMsg.resize(static_cast<unsigned int>(InfoLength + 1));
+			ErrorMsg.resize(static_cast<unsigned int>(InfoLength + 1ULL));
 			ErrorMsg[0] = 0;
 			glGetProgramInfoLog(ID, InfoLength, NULL, &ErrorMsg[0]);
 

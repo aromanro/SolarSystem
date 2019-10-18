@@ -148,44 +148,44 @@ namespace OpenGL {
 	{
 		switch (movement)
 		{
-		case pitchUp:
+		case Movements::pitchUp:
 			PitchUp(rotateAngle);
 			break;
-		case moveUp:
+		case Movements::moveUp:
 			MoveUp(translateDist);
 			break;
-		case moveForward:
+		case Movements::moveForward:
 			MoveForward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
 			break;
-		case pitchDown:
+		case Movements::pitchDown:
 			PitchDown(rotateAngle);
 			break;
-		case moveDown:
+		case Movements::moveDown:
 			MoveDown(translateDist);
 			break;
-		case moveBackward:
+		case Movements::moveBackward:
 			MoveBackward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
 			break;
-		case yawLeft:
+		case Movements::yawLeft:
 			YawLeft(rotateAngle);
 			break;
-		case rollLeft:
+		case Movements::rollLeft:
 			RollLeft(rotateAngle);
 			break;
-		case moveLeft:
+		case Movements::moveLeft:
 			MoveLeft(translateDist);
 			break;
-		case yawRight:
+		case Movements::yawRight:
 			YawRight(rotateAngle);
 			break;
-		case rollRight:
+		case Movements::rollRight:
 			RollRight(rotateAngle);
 			break;
-		case moveRight:
+		case Movements::moveRight:
 			MoveRight(translateDist);
 			break;		
-		case rotateTowards:
-		case noMove:
+		case Movements::rotateTowards:
+		case Movements::noMove:
 			break;
 		}
 	}
@@ -197,7 +197,7 @@ void OpenGL::Camera::Tick()
 {
 	if (movements.size() > 0)
 	{
-		if (movements.front().movement == rotateTowards) RotateTowards(rotateAngle, movements.front().towardsVec);
+		if (movements.front().movement == Movements::rotateTowards) RotateTowards(rotateAngle, movements.front().towardsVec);
 		else Move(movements.front().movement, movements.front().fromMouse);
 		
 		--movements.front().ticks;
@@ -217,7 +217,7 @@ void OpenGL::Camera::ProgressiveRotate(const Vector3D<double>& towards, int nrti
 {
 	if (movements.size() == 0)
 	{
-		movements.emplace_back(Movement(rotateTowards, nrticks));
+		movements.emplace_back(Movement(Movements::rotateTowards, nrticks));
 		movements.back().towardsVec = towards;
 	}
 }

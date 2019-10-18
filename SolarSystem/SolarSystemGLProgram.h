@@ -17,8 +17,8 @@ public:
 	void SetupLights(BodyPropList& BodyProperties);
 
 	struct Light {
-		GLint lightDirPos;
-		GLint attenPos;
+		GLint lightDirPos = 0;
+		GLint attenPos = 0;
 		glm::vec3 lightPos;
 	};
 

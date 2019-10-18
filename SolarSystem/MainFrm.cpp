@@ -495,14 +495,15 @@ void CMainFrame::OnFileOpen()
 
 void CMainFrame::OnSimulateOptions()
 {
-	OptionsPropertySheet sheet(L"Options");
+	OptionsPropertySheet* sheet = new OptionsPropertySheet(L"Options");
 	DisplayPropertyPage page1;
 	CameraPropertyPage page2;
 
-	sheet.AddPage(&page1);
-	sheet.AddPage(&page2);
+	sheet->AddPage(&page1);
+	sheet->AddPage(&page2);
 
-	sheet.DoModal();
+	sheet->DoModal();
+	delete sheet;
 }
 
 

@@ -21,16 +21,16 @@ namespace OpenGL {
 		unsigned int length = (lats + 1) * (longs + 1) * STEP_SIZE;
 		buffer.resize(length); 
 
-		for (unsigned int i = 0; i < lats; ++i) {
+		for (size_t i = 0; i < lats; ++i) {
 			const double lat0 = M_PI * (-0.5 + static_cast<double>(i) / lats);
 			const double z0 = r*sin(lat0);
 			const double r0 = r*cos(lat0);
 
-			const double lat1 = M_PI * (-0.5 + static_cast<double>(i + 1) / lats);
+			const double lat1 = M_PI * (-0.5 + (i + 1.) / lats);
 			const double z1 = r*sin(lat1);
 			const double r1 = r*cos(lat1);
 
-			for (unsigned int j = 0; j <= longs; ++j) {
+			for (size_t j = 0; j <= longs; ++j) {
 				const double longitude = 2. * M_PI * static_cast<double>(j) / longs;
 
 				const double c = cos(longitude);
@@ -50,33 +50,34 @@ namespace OpenGL {
 				double lng1 = sqrt(x1*x1 + y1*y1 + z1*z1);
 
 				// vertex
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE] = static_cast<float>(x1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 1] = static_cast<float>(y1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 2] = static_cast<float>(z1);
+				const size_t base = i * (longs + 1ULL) * STEP_SIZE + j * STEP_SIZE;
+				buffer[base] = static_cast<float>(x1);
+				buffer[base + 1] = static_cast<float>(y1);
+				buffer[base + 2] = static_cast<float>(z1);
 
 				// normal
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 3] = static_cast<float>(x1 / lng1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 4] = static_cast<float>(y1 / lng1);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 5] = static_cast<float>(z1 / lng1);
+				buffer[base + 3] = static_cast<float>(x1 / lng1);
+				buffer[base + 4] = static_cast<float>(y1 / lng1);
+				buffer[base + 5] = static_cast<float>(z1 / lng1);
 
 				// texture coordinate
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 6] = static_cast<float>(XTex);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 7] = static_cast<float>(YTex1);
+				buffer[base + 6] = static_cast<float>(XTex);
+				buffer[base + 7] = static_cast<float>(YTex1);
 
 
 				// vertex 
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 8] = static_cast<float>(x);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 9] = static_cast<float>(y);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 10] = static_cast<float>(z0);
+				buffer[base + 8] = static_cast<float>(x);
+				buffer[base + 9] = static_cast<float>(y);
+				buffer[base + 10] = static_cast<float>(z0);
 
 				// normal
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 11] = static_cast<float>(x / lng);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 12] = static_cast<float>(y / lng);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 13] = static_cast<float>(z0 / lng);
+				buffer[base + 11] = static_cast<float>(x / lng);
+				buffer[base + 12] = static_cast<float>(y / lng);
+				buffer[base + 13] = static_cast<float>(z0 / lng);
 
 				// texture coordinate
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 14] = static_cast<float>(XTex);
-				buffer[i*(longs + 1) * STEP_SIZE + j * STEP_SIZE + 15] = static_cast<float>(YTex0);
+				buffer[base + 14] = static_cast<float>(XTex);
+				buffer[base + 15] = static_cast<float>(YTex0);
 			}
 		}
 

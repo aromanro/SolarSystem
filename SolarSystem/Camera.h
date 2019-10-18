@@ -13,7 +13,7 @@ namespace OpenGL {
 	class Camera
 	{
 	public:
-		typedef enum Movements {
+		enum class Movements {
 			noMove,
 			moveForward,
 			moveBackward,
@@ -28,7 +28,7 @@ namespace OpenGL {
 			yawLeft,
 			yawRight,
 			rotateTowards
-		} Movements;
+		};
 
 	protected:
 		double rotateAngle;
