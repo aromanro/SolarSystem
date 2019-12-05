@@ -2,6 +2,8 @@
 
 #include "stdafx.h"
 
+#include <tuple>
+
 template<typename T> class Vector3D
 {
 public:
