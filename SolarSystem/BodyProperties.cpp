@@ -28,7 +28,18 @@ bool BodyProperties::LoadTexture()
 			skin.Load(imgFile);
 
 			if (skin.IsNull()) return false;
-			
+			else if (skin.GetBPP() != 24) return false;
+
+			// ideally they should be power of 2 but even values should do
+
+			// check if it's even
+			unsigned int dim = skin.GetWidth();
+			if (dim % 2) return false;
+
+			// check if it's even
+			dim = skin.GetHeight();
+			if (dim % 2) return false;
+
 			texture = new OpenGL::Texture();
 			unsigned char* buf = NULL;
 
