@@ -80,6 +80,13 @@ The SolarSystem.xml file:
 
 The structure is self-explanatory but I must say that the values are scaled in the committed file: The Sun size is increased 50 times, all planets are scaled up 1000 times, some moons (like Phobos and Deimos) are scaled up even more. Because of scaling many moons would be inside of the planet so I had to scale the distance between the planet and the moons, too (see the 'moon hack'). The Solar System is a very big place and one would have a hard time seeing the planets and moons without the scaling so I did this just to look nicer on screen. Those changes should affect the visuals only. Due of laziness I put all planets and moons in the ecliptic plane, to have a realistic simulation requires more calculations than I'm willing to do. There might be a lot of mistakes in the values, too, I didn't pay much attention to inclination and rotation period, for example, but others could be wrong as well. I used only average orbital speed and the semi-major axis for setting the velocity and distance and all bodies start aligned.
 
+### TEXTURES
+
+They are not included in the project, you'll have to download them from here:
+http://planetpixelemporium.com/planets.html
+Convert them to 24bpp, ensure they have power of 2 dimensions and put them in the /Textures folder.
+Currently the link where I downloaded the skybox http://www.custommapmakers.org/skyboxes.php is not available, so you'll need to provide another one or not use a skybox.
+
 ### LINKS
 
 Those are some links to some OpenGL tutorials I visited while refreshing my memory about OpenGL and implementing the OpenGL code:
