@@ -12,7 +12,7 @@
 
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
-	colorLocation(0), useTextLocation(0), isSunLocation(0), viewPosLocation(0), farPlaneLoc(0),
+	colorLocation(0), useTextLocation(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
 	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), depthMapLoc(0)
 {
 }
@@ -71,6 +71,7 @@ void SolarSystemGLProgram::getUniformsLocations()
 	colorLocation = glGetUniformLocation(getID(), "theColor");
 	useTextLocation = glGetUniformLocation(getID(), "UseTexture");
 	isSunLocation = glGetUniformLocation(getID(), "IsSun");
+	useAlphaBlend = glGetUniformLocation(getID(), "UseAlphaBlend");
 	viewPosLocation = glGetUniformLocation(getID(), "viewPos");
 
 	farPlaneLoc = glGetUniformLocation(getID(), "farPlane");
@@ -161,6 +162,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform vec4 theColor;
 		uniform int UseTexture;
 		uniform int IsSun;
+		uniform int UseAlphaBlend;
 		uniform vec3 viewPos;
 		uniform float farPlane;
 		uniform vec3 lightPos;
@@ -278,7 +280,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				}
 			}
 
-			outputColor = vec4(light, 1);
+			outputColor = vec4(light, UseAlphaBlend == 1 ? color[3] : 1); // also allow alpha blending, useful if I'll add a billboard
 		}
 
 	)), nrlights == 0 ? 1 : nrlights);

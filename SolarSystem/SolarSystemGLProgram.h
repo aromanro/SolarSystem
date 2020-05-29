@@ -35,6 +35,7 @@ public:
 	GLint colorLocation;
 	GLint useTextLocation;
 	GLint isSunLocation;
+	GLint useAlphaBlend;
 	GLint viewPosLocation;
 	GLint farPlaneLoc;
 	GLint lightPosLoc;

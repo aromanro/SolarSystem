@@ -222,6 +222,7 @@
     <ClInclude Include="DisplayPropertyPage.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OptionsPropertySheet.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="SkyBoxCubeMapProgram.h" />
     <ClInclude Include="EmbeddedSlider.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="DisplayPropertyPage.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="OptionsPropertySheet.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="SkyBoxCubeMapProgram.cpp" />
     <ClCompile Include="EmbeddedSlider.cpp" />

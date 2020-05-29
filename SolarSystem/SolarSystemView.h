@@ -16,6 +16,7 @@
 #include "SkyBoxCubeMapProgram.h"
 #include "ShadowCubeMapProgram.h"
 #include "Sphere.h"
+#include "Rectangle.h"
 
 #include "SolarSystemBodies.h"
 #include "SolarSystemGLProgram.h"
@@ -53,6 +54,8 @@ private:
 	SolarSystemGLProgram *program;
 
 	OpenGL::Sphere *sphere;
+
+	OpenGL::Rectangle* rectangle;
 	
 	OpenGL::SkyBoxCubeMapProgram *skyBoxProgram;
 	OpenGL::ShadowCubeMapProgram *shadowProgram;

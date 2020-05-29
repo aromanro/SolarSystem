@@ -120,7 +120,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), program(NULL), sphere(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
+	: timer(NULL), program(NULL), sphere(NULL), rectangle(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -130,6 +130,7 @@ CSolarSystemView::CSolarSystemView()
 CSolarSystemView::~CSolarSystemView()
 {
 	delete sphere;
+	delete rectangle;
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyBoxProgram();
@@ -199,7 +200,7 @@ bool CSolarSystemView::SetupShadows()
 		}
 
 
-		if (shadowProgram->getStatus() == false)
+		if (!shadowProgram->getStatus())
 		{
 			AfxMessageBox(CString("Shadow CubeMap compile: ") + CString(shadowProgram->getStatusMessage()));
 			ClearShadowProgram();
@@ -267,6 +268,7 @@ void CSolarSystemView::Setup()
 	CSolarSystemDoc *doc = GetDocument();
 
 	sphere = new OpenGL::Sphere();
+	rectangle = new OpenGL::Rectangle(2.5);
 
 	if (!SetupShaders()) {
 		ClearProgram();
@@ -320,8 +322,10 @@ void CSolarSystemView::RenderScene()
 
 	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
 
-	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
+	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
 	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
+
+	glUniform1i(program->useAlphaBlend, 0);
 
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
@@ -337,7 +341,6 @@ void CSolarSystemView::RenderScene()
 
 		// ****************************************************************************************************************************
 
-
 		modelMat = glm::translate(modelMat, pos);
 
 		const float scale = static_cast<float>(it->m_Radius * pit->scale / AGLU);
@@ -350,19 +353,20 @@ void CSolarSystemView::RenderScene()
 		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 		glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);
-
-
-		for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
+		
+		if (!pit->isSun)
 		{
-			glm::vec3 lightDir = program->lights[i].lightPos - pos;
+			for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
+			{
+				glm::vec3 lightDir = program->lights[i].lightPos - pos;
 
-			const float atten = static_cast<float>(1. / (1. + 0.0025*glm::length(lightDir)));
+				const float atten = static_cast<float>(1. / (1. + 0.0025 * glm::length(lightDir)));
 
-			lightDir = glm::normalize(lightDir);
-			glUniform3f(program->lights[i].lightDirPos, lightDir.x, lightDir.y, lightDir.z);
-			glUniform1f(program->lights[i].attenPos, atten);
+				lightDir = glm::normalize(lightDir);
+				glUniform3f(program->lights[i].lightDirPos, lightDir.x, lightDir.y, lightDir.z);
+				glUniform1f(program->lights[i].attenPos, atten);
+			}
 		}
-
 
 		if (pit->texture && theApp.options.drawTextures)
 		{
@@ -373,10 +377,47 @@ void CSolarSystemView::RenderScene()
 		{
 			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
 			glUniform1i(program->useTextLocation, 0);
-		}
+		}		
 
 		sphere->Draw();
 	}
+
+
+	// display a 'billboard'
+	/*
+	{
+		glm::mat4 modelMat(1);
+
+		modelMat *= glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
+
+		glm::vec3 pos = glm::vec3(0, -0.07, -0.2);
+
+		modelMat = glm::translate(modelMat, pos);
+
+		const float scale = 0.015f;
+		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
+
+		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
+
+		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+		
+		glUniform1i(program->isSunLocation, 1); // don't use lightning on it
+
+		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.6f); // blue with alpha blending for now
+		glUniform1i(program->useTextLocation, 0); // no texture for now
+
+		glUniform1i(program->useAlphaBlend, 1);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+
+		rectangle->Draw();
+
+		glDisable(GL_BLEND);
+	}
+	*/
 
 	program->UnUse();
 }
@@ -798,6 +839,9 @@ void CSolarSystemView::Reset()
 {
 	delete sphere;
 	sphere = NULL;
+
+	delete rectangle;
+	rectangle = NULL;
 
 	ClearProgram();
 	ClearShadowProgram();
