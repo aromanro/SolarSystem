@@ -137,6 +137,8 @@ public:
 	void ClearSkyBoxProgram();
 	void ClearShadowProgram();
 	void SetSpeeds(double translate, double rotate);
+	void EnableAntialias();
+	void DisableAntialias();
 };
 
 #ifndef _DEBUG  // debug version in SolarSystemView.cpp

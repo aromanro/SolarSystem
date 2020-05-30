@@ -226,12 +226,11 @@ void CSolarSystemView::Setup()
 
 		glClearColor(0, 0, 0, 0);
 
+		EnableAntialias();
+
 		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_POLYGON_SMOOTH);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_DEPTH_RANGE);
@@ -242,6 +241,7 @@ void CSolarSystemView::Setup()
 
 		glShadeModel(GL_SMOOTH);
 
+
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -250,6 +250,7 @@ void CSolarSystemView::Setup()
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT, GL_FILL);
 
 		glMatrixMode(GL_MODELVIEW);
 
@@ -390,11 +391,11 @@ void CSolarSystemView::RenderScene()
 
 		modelMat *= glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
 
-		glm::vec3 pos = glm::vec3(0, -0.07, -0.2);
+		glm::vec3 pos = glm::vec3(0, -0.038, -0.101);
 
 		modelMat = glm::translate(modelMat, pos);
 
-		const float scale = 0.015f;
+		const float scale = 0.006f;
 		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
 
 		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
@@ -404,18 +405,24 @@ void CSolarSystemView::RenderScene()
 		
 		glUniform1i(program->isSunLocation, 1); // don't use lightning on it
 
-		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.6f); // blue with alpha blending for now
+		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.8f); // blue with alpha blending for now
 		glUniform1i(program->useTextLocation, 0); // no texture for now
 
 		glUniform1i(program->useAlphaBlend, 1);
 
+		DisableAntialias(); // otherwise a diagonal line is shown over the rectangle sometimes, with alpha blending on
+
 		glEnable(GL_BLEND);
+		//glDisable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBlendEquation(GL_FUNC_ADD);
 
 		rectangle->Draw();
 
 		glDisable(GL_BLEND);
+		
+		EnableAntialias();
+		//glEnable(GL_DEPTH_TEST);
 	}
 	*/
 
@@ -910,4 +917,24 @@ void CSolarSystemView::ClearShadowProgram()
 void CSolarSystemView::SetSpeeds(double translate, double rotate)
 {
 	camera.SetSpeeds(translate, rotate);
+}
+
+
+void CSolarSystemView::EnableAntialias()
+{
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_DITHER);
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_MULTISAMPLE_ARB);
+}
+
+
+void CSolarSystemView::DisableAntialias()
+{
+	glDisable(GL_LINE_SMOOTH);
+	glDisable(GL_POLYGON_SMOOTH);
+	glDisable(GL_DITHER);
+	glDisable(GL_POINT_SMOOTH);
+	glDisable(GL_MULTISAMPLE_ARB);
 }

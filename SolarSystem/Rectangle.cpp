@@ -17,8 +17,6 @@ namespace OpenGL {
 			-0.5f * aspectRatio, -0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
 			 0.5f * aspectRatio,  0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
 			 0.5f * aspectRatio, -0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right
-			//-0.5f * aspectRatio, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
-			 //0.5f * aspectRatio,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
 		};
 
 		Renderable::Bind();
@@ -41,7 +39,7 @@ namespace OpenGL {
 
 	void Rectangle::Draw()
 	{
-		// Render Cube
+		// Render rectangle
 		VertexBufferRenderable::Bind();
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
