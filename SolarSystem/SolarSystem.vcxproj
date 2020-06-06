@@ -220,6 +220,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DisplayPropertyPage.h" />
+    <ClInclude Include="MemoryBitmap.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OptionsPropertySheet.h" />
     <ClInclude Include="Rectangle.h" />
@@ -254,6 +255,7 @@
     <ClCompile Include="ComputationThread.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DisplayPropertyPage.cpp" />
+    <ClCompile Include="MemoryBitmap.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="OptionsPropertySheet.cpp" />
     <ClCompile Include="Rectangle.cpp" />
