@@ -156,8 +156,8 @@ void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD 
 	// paint the whole thing black
 	RECT rect;
 	rect.left = rect.top = 0;
-	rect.bottom = m_width;
-	rect.right = m_height;
+	rect.bottom = m_height;
+	rect.right = m_width;
 	dcMemory.FillSolidRect(&rect, RGB(0,0,0));
 
 	int nOldBkMode = dcMemory.SetBkMode(TRANSPARENT);
