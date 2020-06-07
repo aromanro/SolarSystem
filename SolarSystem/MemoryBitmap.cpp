@@ -148,7 +148,8 @@ void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD 
 	dcMemory.CreateCompatibleDC(pDC);
 	bitmap.CreateCompatibleBitmap(pDC, m_width, m_height);
 	pDC->DeleteDC();
-	
+
+
 	CBitmap* pOldBitmap = dcMemory.SelectObject(&bitmap);
 
 	CFont* oldFont = dcMemory.SelectObject(&font);
@@ -195,8 +196,8 @@ void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
 			const int posout = line * m_width * 3 + horz;
 
 			texdata[posout] = data[pos];
-			texdata[posout] = data[pos + 1];
-			texdata[posout] = data[pos + 2];
+			texdata[posout + 1ULL] = data[pos + 1ULL];
+			texdata[posout + 2ULL] = data[pos + 2ULL];
 		}
 	}
 

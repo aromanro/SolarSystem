@@ -277,7 +277,7 @@ void CSolarSystemView::Setup()
 	memoryBitmap.SetSize(static_cast<int>(2.5 * height), height);
 
 	CFont font;
-	const int fontHeight = -MulDiv(22, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
+	const int fontHeight = -MulDiv(66, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
 	font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
 
 	memoryBitmap.WriteText("Test", 0, 0, font);
@@ -559,8 +559,10 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 		Resize(Height, Width);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		RenderScene();
+		
+		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
 		RenderSkybox();
+		RenderScene();
 
 		glFlush();
 		SwapBuffers(m_hDC);

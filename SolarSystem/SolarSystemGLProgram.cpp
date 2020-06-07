@@ -280,7 +280,10 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				}
 			}
 
-			outputColor = vec4(light, UseAlphaBlend == 1 ? color[3] : 1); // also allow alpha blending, useful if I'll add a billboard
+			// also allow alpha blending, useful if I'll add a billboard
+			//outputColor = vec4(light, UseAlphaBlend == 1 ? theColor[3] : 1); // use this if you want to show the whole billboard, but transparent
+			int transparent = (color[0] == 0 && color[1] == 0 && color[2] == 0) ? 1 : 0;
+			outputColor = vec4(light, UseAlphaBlend == 1 ? (transparent == 1 ? 0 : theColor[3]) : 1); // use this if you only want to show the alpha blended text
 		}
 
 	)), nrlights == 0 ? 1 : nrlights);
