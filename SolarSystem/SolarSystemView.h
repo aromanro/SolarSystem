@@ -21,6 +21,8 @@
 #include "SolarSystemBodies.h"
 #include "SolarSystemGLProgram.h"
 
+#include "MemoryBitmap.h"
+
 class CSolarSystemDoc;
 
 
@@ -55,12 +57,12 @@ private:
 
 	OpenGL::Sphere *sphere;
 
-	OpenGL::Rectangle* rectangle;
-	
+	OpenGL::Rectangle* billboardRectangle;
+	OpenGL::Texture* billboardTexture;
+	MemoryBitmap memoryBitmap;
+
 	OpenGL::SkyBoxCubeMapProgram *skyBoxProgram;
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
-
-
 
 	class Uniforms {
 	public:

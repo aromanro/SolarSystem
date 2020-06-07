@@ -1,5 +1,9 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
+#include "Texture.h"
 
 class MemoryBitmap
 {
@@ -18,6 +22,7 @@ protected:
 
 	unsigned char* data;
 
+	std::vector<unsigned char> texdata;
 public:
 	void SetSize(int width, int height);
 
@@ -27,8 +32,8 @@ public:
 
 		const int stride = GetStrideLength();
 
-		const int limX = 3 * min(Xpos + size, m_width);
-		const int limY = min(Ypos + size, m_height);
+		const int limX = 3 * std::min<int>(Xpos + size, m_width);
+		const int limY = std::min<int>(Ypos + size, m_height);
 
 		for (int line = Ypos; line < limY; ++line)
 		{
@@ -36,7 +41,7 @@ public:
 
 			for (int horz = 3 * Xpos; horz < limX; horz += 3)
 			{
-				int pos = startLine + horz;
+				const int pos = startLine + horz;
 
 				data[pos] = GetBValue(color);
 				data[pos + 1] = GetGValue(color);
@@ -54,6 +59,8 @@ public:
 	void Draw(CDC* pDC);
 	void Draw(CDC* pDC, CRect& rect, int origWidth = 0, int origHeight = 0);
 
-	void WriteText(const char* text, int x, int y, CFont& font);
+	void WriteText(const char* text, int x, int y, CFont& font, DWORD color = RGB(0, 0, 255));
+
+	void SetIntoTexture(OpenGL::Texture& texture);
 };
 

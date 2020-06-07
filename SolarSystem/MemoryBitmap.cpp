@@ -129,7 +129,7 @@ void MemoryBitmap::Draw(CDC* pDC, CRect& rect, int origWidth, int origHeight)
 }
 
 
-void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font)
+void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD color)
 {
 	BITMAPINFO bmi;
 	ZeroMemory(&bmi, sizeof(BITMAPINFOHEADER));
@@ -153,11 +153,56 @@ void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font)
 
 	CFont* oldFont = dcMemory.SelectObject(&font);
 
+	// paint the whole thing black
+	RECT rect;
+	rect.left = rect.top = 0;
+	rect.bottom = m_width;
+	rect.right = m_height;
+	dcMemory.FillSolidRect(&rect, RGB(0,0,0));
+
+	int nOldBkMode = dcMemory.SetBkMode(TRANSPARENT);
+	COLORREF oldBkColor = dcMemory.SetBkColor(RGB(0, 0, 0));
+	COLORREF oldForeColor = dcMemory.SetTextColor(color);
+
 	dcMemory.TextOut(x, y, CString(text));
+
+	::GetDIBits(dcMemory.GetSafeHdc(), bitmap, 0, m_height, data, &bmi, DIB_RGB_COLORS);
+
+	dcMemory.SetBkMode(nOldBkMode);
+	dcMemory.SetBkColor(oldBkColor);
+	dcMemory.SetTextColor(oldForeColor);
 
 	dcMemory.SelectObject(oldFont);
 	dcMemory.SelectObject(pOldBitmap);	
 }
+
+void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
+{
+	if (!data) return;
+
+	const int stride = GetStrideLength();
+
+	const size_t s = 3ULL * m_height * m_width;
+	texdata.resize(s);
+
+	for (int line = 0; line < m_height; ++line)
+	{
+		const int startLine = (m_height - line - 1) * stride;
+
+		for (int horz = 0; horz < 3 * m_width; horz += 3)
+		{
+			const int pos = startLine + horz;
+			const int posout = line * m_width * 3 + horz;
+
+			texdata[posout] = data[pos];
+			texdata[posout] = data[pos + 1];
+			texdata[posout] = data[pos + 2];
+		}
+	}
+
+	texture.setData(texdata.data(), m_width, m_height);
+}
+
 
 
 

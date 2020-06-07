@@ -120,7 +120,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), program(NULL), sphere(NULL), rectangle(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
+	: timer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -130,7 +130,8 @@ CSolarSystemView::CSolarSystemView()
 CSolarSystemView::~CSolarSystemView()
 {
 	delete sphere;
-	delete rectangle;
+	delete billboardRectangle;
+	delete billboardTexture;
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyBoxProgram();
@@ -269,7 +270,20 @@ void CSolarSystemView::Setup()
 	CSolarSystemDoc *doc = GetDocument();
 
 	sphere = new OpenGL::Sphere();
-	rectangle = new OpenGL::Rectangle(2.5);
+	billboardRectangle = new OpenGL::Rectangle(2.5);
+	billboardTexture = new OpenGL::Texture();
+
+	const int height = 200;
+	memoryBitmap.SetSize(static_cast<int>(2.5 * height), height);
+
+	CFont font;
+	const int fontHeight = -MulDiv(22, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
+	font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
+
+	memoryBitmap.WriteText("Test", 0, 0, font);
+
+	memoryBitmap.SetIntoTexture(*billboardTexture);
+	billboardTexture->GenerateMipmaps();
 
 	if (!SetupShaders()) {
 		ClearProgram();
@@ -406,7 +420,9 @@ void CSolarSystemView::RenderScene()
 		glUniform1i(program->isSunLocation, 1); // don't use lightning on it
 
 		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.8f); // blue with alpha blending for now
-		glUniform1i(program->useTextLocation, 0); // no texture for now
+		
+		billboardTexture->Bind();
+		glUniform1i(program->useTextLocation, 1); // use texture
 
 		glUniform1i(program->useAlphaBlend, 1);
 
@@ -417,7 +433,7 @@ void CSolarSystemView::RenderScene()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBlendEquation(GL_FUNC_ADD);
 
-		rectangle->Draw();
+		billboardRectangle->Draw();
 
 		glDisable(GL_BLEND);
 		
@@ -847,8 +863,11 @@ void CSolarSystemView::Reset()
 	delete sphere;
 	sphere = NULL;
 
-	delete rectangle;
-	rectangle = NULL;
+	delete billboardRectangle;
+	billboardRectangle = NULL;
+
+	delete billboardTexture;
+	billboardTexture = NULL;
 
 	ClearProgram();
 	ClearShadowProgram();

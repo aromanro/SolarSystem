@@ -49,7 +49,7 @@ namespace MolecularDynamics {
 
 #ifdef USE_VERLET
 
-	inline void ComputationThread::VerletStep(BodyList& Bodies, double timestep, double timestep2)
+	inline void ComputationThread::VerletStep(BodyList& Bodies, double /*timestep*/, double timestep2)
 	{
 		std::vector<Vector3D<double>> accelerations(Bodies.size());
 		int i = 0;
