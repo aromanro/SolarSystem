@@ -273,12 +273,13 @@ void CSolarSystemView::Setup()
 	billboardRectangle = new OpenGL::Rectangle(2.5);
 	billboardTexture = new OpenGL::Texture();
 
-	const int height = 200;
+	const int height = 512;
 	memoryBitmap.SetSize(static_cast<int>(2.5 * height), height);
 
 	CFont font;
-	const int fontHeight = -MulDiv(66, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
-	font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("Arial"));
+	const int fontSize = static_cast<int>(height * 0.3);
+	const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
+	font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
 
 	memoryBitmap.WriteText("Test", 0, 0, font);
 
@@ -419,7 +420,7 @@ void CSolarSystemView::RenderScene()
 		
 		glUniform1i(program->isSunLocation, 1); // don't use lightning on it
 
-		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.8f); // blue with alpha blending for now
+		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.6f); // blue with alpha blending for now
 		
 		billboardTexture->Bind();
 		glUniform1i(program->useTextLocation, 1); // use texture
