@@ -402,9 +402,7 @@ void CSolarSystemView::RenderScene()
 	// display a 'billboard'
 	/*
 	{
-		glm::mat4 modelMat(1);
-
-		modelMat *= glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
+		glm::mat4 modelMat = glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
 
 		glm::vec3 pos = glm::vec3(0, -0.038, -0.101);
 
