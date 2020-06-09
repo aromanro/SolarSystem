@@ -141,6 +141,7 @@ public:
 	void SetSpeeds(double translate, double rotate);
 	void EnableAntialias();
 	void DisableAntialias();
+	void DisplayBilboard();
 };
 
 #ifndef _DEBUG  // debug version in SolarSystemView.cpp

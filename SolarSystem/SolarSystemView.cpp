@@ -273,7 +273,7 @@ void CSolarSystemView::Setup()
 	billboardRectangle = new OpenGL::Rectangle(2.5);
 	billboardTexture = new OpenGL::Texture();
 
-	const int height = 512;
+	const int height = 256;
 	memoryBitmap.SetSize(static_cast<int>(2.5 * height), height);
 
 	CFont font;
@@ -284,7 +284,7 @@ void CSolarSystemView::Setup()
 	memoryBitmap.WriteText("Test", 0, 0, font);
 
 	memoryBitmap.SetIntoTexture(*billboardTexture);
-	billboardTexture->GenerateMipmaps();
+	//billboardTexture->GenerateMipmaps();
 
 	if (!SetupShaders()) {
 		ClearProgram();
@@ -400,46 +400,7 @@ void CSolarSystemView::RenderScene()
 
 
 	// display a 'billboard'
-	/*
-	{
-		glm::mat4 modelMat = glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
-
-		glm::vec3 pos = glm::vec3(0, -0.038, -0.101);
-
-		modelMat = glm::translate(modelMat, pos);
-
-		const float scale = 0.006f;
-		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
-
-		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
-
-		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
-		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
-		
-		glUniform1i(program->isSunLocation, 1); // don't use lightning on it
-
-		glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.6f); // blue with alpha blending for now
-		
-		billboardTexture->Bind();
-		glUniform1i(program->useTextLocation, 1); // use texture
-
-		glUniform1i(program->useAlphaBlend, 1);
-
-		DisableAntialias(); // otherwise a diagonal line is shown over the rectangle sometimes, with alpha blending on
-
-		glEnable(GL_BLEND);
-		//glDisable(GL_DEPTH_TEST);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_FUNC_ADD);
-
-		billboardRectangle->Draw();
-
-		glDisable(GL_BLEND);
-		
-		EnableAntialias();
-		//glEnable(GL_DEPTH_TEST);
-	}
-	*/
+	//DisplayBilboard();
 
 	program->UnUse();
 }
@@ -957,4 +918,45 @@ void CSolarSystemView::DisableAntialias()
 	glDisable(GL_DITHER);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_MULTISAMPLE_ARB);
+}
+
+
+void CSolarSystemView::DisplayBilboard()
+{
+	glm::mat4 modelMat = glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
+
+	glm::vec3 pos = glm::vec3(0, -0.038, -0.101);
+
+	modelMat = glm::translate(modelMat, pos);
+
+	const float scale = 0.006f;
+	modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
+
+	glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
+
+	glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+	glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+
+	glUniform1i(program->isSunLocation, 1); // don't use lightning on it
+
+	glUniform4f(program->colorLocation, 0.0f, 0.0f, 1.0f, 0.6f); // blue with alpha blending for now
+
+	billboardTexture->Bind();
+	glUniform1i(program->useTextLocation, 1); // use texture
+
+	glUniform1i(program->useAlphaBlend, 1);
+
+	DisableAntialias(); // otherwise a diagonal line is shown over the rectangle sometimes, with alpha blending on
+
+	glEnable(GL_BLEND);
+	//glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+
+	billboardRectangle->Draw();
+
+	glDisable(GL_BLEND);
+
+	EnableAntialias();
+	//glEnable(GL_DEPTH_TEST);
 }

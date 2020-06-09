@@ -129,7 +129,7 @@ void MemoryBitmap::Draw(CDC* pDC, CRect& rect, int origWidth, int origHeight)
 }
 
 
-void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD color)
+void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD color, DWORD bkcolor)
 {
 	BITMAPINFO bmi;
 	ZeroMemory(&bmi, sizeof(BITMAPINFOHEADER));
@@ -155,14 +155,16 @@ void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD 
 
 	RECT rect;
 	rect.left = rect.top = 0;
-	rect.bottom = m_height;
 	rect.right = m_width;
+	rect.bottom = m_height;
 
 	int nOldBkMode = dcMemory.SetBkMode(TRANSPARENT);
-	COLORREF oldBkColor = dcMemory.SetBkColor(RGB(0, 0, 0));
+	COLORREF oldBkColor = dcMemory.SetBkColor(bkcolor);
 	COLORREF oldForeColor = dcMemory.SetTextColor(color);
 
-	dcMemory.DrawText(CString(text), &rect, DT_CENTER | DT_VCENTER);
+	dcMemory.FillSolidRect(&rect, bkcolor);
+
+	dcMemory.DrawText(CString(text), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	::GetDIBits(dcMemory.GetSafeHdc(), bitmap, 0, m_height, data, &bmi, DIB_RGB_COLORS);
 
