@@ -34,6 +34,7 @@
 #define IDC_CHECK3                      1002
 #define IDC_CHECK4                      1003
 #define IDC_SLIDER1                     1004
+#define IDC_CHECK5                      1004
 #define IDC_SLIDER2                     1005
 #define IDC_SLIDER3                     1006
 #define IDC_STATIC1                     1007

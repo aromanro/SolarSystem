@@ -10,7 +10,7 @@
 
 Options::Options()
 	: gammaCorrection(false), showSkyBox(true), drawShadows(true), drawTextures(true),
-	translationSpeed(100), rotationSpeed(100), scrollSpeed(100)
+	translationSpeed(100), rotationSpeed(100), scrollSpeed(100), showBillboard(false)
 {
 }
 
@@ -38,6 +38,10 @@ bool Options::Load()
 	rotationSpeed = theApp.GetProfileInt(L"options", L"rotationSpeed", 100);
 	scrollSpeed = theApp.GetProfileInt(L"options", L"scrollSpeed", 100);
 
+	res = static_cast<int>(theApp.GetProfileInt(L"options", L"showBillboard", 0));
+	showBillboard = (res != 0 ? true : false);
+
+
 	return true;
 }
 
@@ -52,6 +56,8 @@ bool Options::Save()
 	theApp.WriteProfileInt(L"options", L"translationSpeed", (int)translationSpeed);
 	theApp.WriteProfileInt(L"options", L"rotationSpeed", (int)rotationSpeed);
 	theApp.WriteProfileInt(L"options", L"scrollSpeed", (int)scrollSpeed);
+
+	theApp.WriteProfileInt(L"options", L"showBillboard", showBillboard ? 1 : 0);
 
 	return false;
 }

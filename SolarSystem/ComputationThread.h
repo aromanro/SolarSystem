@@ -27,6 +27,7 @@ namespace MolecularDynamics {
 		std::thread Thread;
 	public:
 		unsigned int m_timestep;
+		std::atomic<double> simulationTime;
 
 		ComputationThread();
 		~ComputationThread();

@@ -14,6 +14,7 @@ class SolarSystemBodies
 public:
 	BodyList m_Bodies;
 	BodyPropList m_BodyProperties;
+	double m_simulationTime;
 
 	SolarSystemBodies();
 	~SolarSystemBodies();

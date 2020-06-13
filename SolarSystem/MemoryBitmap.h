@@ -59,7 +59,7 @@ public:
 	void Draw(CDC* pDC);
 	void Draw(CDC* pDC, CRect& rect, int origWidth = 0, int origHeight = 0);
 
-	void WriteText(const char* text, int x, int y, CFont& font, DWORD color = RGB(0, 0, 255), DWORD bkcolor = RGB(0, 0, 0));
+	void WriteText(const char* text, CFont& font, DWORD color = RGB(0, 0, 255), DWORD bkcolor = RGB(0, 0, 0));
 
 	void SetIntoTexture(OpenGL::Texture& texture);
 };

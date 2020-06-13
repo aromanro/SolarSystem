@@ -23,7 +23,6 @@
 #include <gl\glu.h>     // GLU OpenGL Libraries
 
 
-
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
 
@@ -31,6 +30,8 @@
 #include "MatrixPush.h"
 
 #include "Cube.h"
+
+#include <string>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -120,7 +121,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
+	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -270,22 +271,23 @@ void CSolarSystemView::Setup()
 	CSolarSystemDoc *doc = GetDocument();
 
 	sphere = new OpenGL::Sphere();
-	billboardRectangle = new OpenGL::Rectangle(2.5);
+	
+	
+	const int billboardAspectRatio = 16;
+	billboardRectangle = new OpenGL::Rectangle(billboardAspectRatio);
+
+	const int height = 128;
+	memoryBitmap.SetSize(static_cast<int>(billboardAspectRatio * height), height);
+
+	if (!font.GetSafeHandle())
+	{
+		const int fontSize = static_cast<int>(height * 0.6);
+		const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
+		font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
+	}
+
 	billboardTexture = new OpenGL::Texture();
-
-	const int height = 256;
-	memoryBitmap.SetSize(static_cast<int>(2.5 * height), height);
-
-	CFont font;
-	const int fontSize = static_cast<int>(height * 0.3);
-	const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
-	font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
-
-	memoryBitmap.WriteText("Test", 0, 0, font);
-
-	memoryBitmap.SetIntoTexture(*billboardTexture);
-	//billboardTexture->GenerateMipmaps();
-
+	
 	if (!SetupShaders()) {
 		ClearProgram();
 		return;
@@ -299,6 +301,9 @@ void CSolarSystemView::Setup()
 	SetupShadows();
 
 	wglMakeCurrent(NULL, NULL);
+
+	SetBillboardText("");
+
 	inited = true;
 }
 
@@ -398,9 +403,8 @@ void CSolarSystemView::RenderScene()
 		sphere->Draw();
 	}
 
-
-	// display a 'billboard'
-	//DisplayBilboard();
+	if (theApp.options.showBillboard) 
+		DisplayBilboard();
 
 	program->UnUse();
 }
@@ -582,6 +586,8 @@ int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 50 frames/sec
 	timer = SetTimer(1, 20, NULL);
 
+	slowTimer = SetTimer(2, 1000, NULL);
+
 	return 0;
 }
 
@@ -593,6 +599,7 @@ void CSolarSystemView::OnDestroy()
 		wglDeleteContext(m_hRC);
 		::ReleaseDC(m_hWnd, m_hDC);
 
+		KillTimer(slowTimer);
 		KillTimer(timer);
 	}
 
@@ -784,18 +791,66 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 {
 	if (inited)
 	{
-		CSolarSystemDoc *doc = GetDocument();
-		if (doc) {
-			doc->RetrieveData();
+		CSolarSystemDoc* doc = GetDocument();
+		if (1 == nIDEvent)
+		{
+			if (doc) {
+				doc->RetrieveData();
 
-			doc->m_Thread.SetNrSteps(doc->nrsteps);
-			if (!doc->stopped) doc->m_Thread.SignalWantMore();
+				doc->m_Thread.SetNrSteps(doc->nrsteps);
+				if (!doc->stopped) doc->m_Thread.SignalWantMore();
+			}
+
+			camera.Tick();
+			if (keyDown) camera.Move(movement);
+
+			Invalidate();
 		}
+		else if (doc)
+		{
+			const unsigned long long int seconds = static_cast<unsigned long long int>(doc->m_SolarSystem.m_simulationTime);
+			unsigned long long int hours = seconds / 3600;
+			unsigned long long int days = hours / 24;
+			const unsigned long long int years = days / 365;
+			days %= 365;
+			hours %= 24;
 
-		camera.Tick();
-		if (keyDown) camera.Move(movement);
+			std::string str;
+			if (years)
+			{
+				str = std::to_string(years);
+				if (1 == years)
+					str += " year";
+				else
+					str += " years";
+			}
 
-		Invalidate();
+			if (days)
+			{
+				if (str.size())
+					str += " ";
+
+				str += std::to_string(days);
+				if (1 == days)
+					str += " day";
+				else
+					str += " days";
+			}
+
+			if (hours)
+			{
+				if (str.size())
+					str += " ";
+
+				str += std::to_string(hours);
+				if (1 == hours)
+					str += " hour";
+				else
+					str += " hours";
+			}
+
+			SetBillboardText(str.c_str());
+		}
 	}
 
 	CView::OnTimer(nIDEvent);
@@ -929,7 +984,7 @@ void CSolarSystemView::DisplayBilboard()
 
 	modelMat = glm::translate(modelMat, pos);
 
-	const float scale = 0.006f;
+	const float scale = 0.003f;
 	modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
 
 	glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
@@ -959,4 +1014,17 @@ void CSolarSystemView::DisplayBilboard()
 
 	EnableAntialias();
 	//glEnable(GL_DEPTH_TEST);
+}
+
+
+void CSolarSystemView::SetBillboardText(const char* text)
+{
+	if (!billboardTexture) return;
+	
+	memoryBitmap.WriteText(text, font);
+
+	wglMakeCurrent(m_hDC, m_hRC);
+	memoryBitmap.SetIntoTexture(*billboardTexture);
+	//billboardTexture->GenerateMipmaps();
+	wglMakeCurrent(NULL, NULL);
 }

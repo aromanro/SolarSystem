@@ -23,6 +23,7 @@ DisplayPropertyPage::DisplayPropertyPage()
 	m_Shadows = (theApp.options.drawShadows ? 1 : 0);
 	m_SkyBox = (theApp.options.showSkyBox ? 1 : 0);
 	m_Textures = (theApp.options.drawTextures ? 1 : 0);
+	m_Billboard = (theApp.options.showBillboard ? 1 : 0);
 }
 
 DisplayPropertyPage::~DisplayPropertyPage()
@@ -37,6 +38,7 @@ void DisplayPropertyPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK2, m_SkyBox);
 	DDX_Check(pDX, IDC_CHECK3, m_Shadows);
 	DDX_Check(pDX, IDC_CHECK4, m_Textures);
+	DDX_Check(pDX, IDC_CHECK5, m_Billboard);
 }
 
 
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(DisplayPropertyPage, CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_CHECK2, &DisplayPropertyPage::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK3, &DisplayPropertyPage::OnBnClickedCheck3)
 	ON_BN_CLICKED(IDC_CHECK4, &DisplayPropertyPage::OnBnClickedCheck4)
+	ON_BN_CLICKED(IDC_CHECK5, &DisplayPropertyPage::OnBnClickedCheck5)
 END_MESSAGE_MAP()
 
 
@@ -69,6 +72,7 @@ void DisplayPropertyPage::ApplyValues()
 		theApp.options.drawShadows = (1 == m_Shadows);
 		theApp.options.drawTextures = (1 == m_Textures);
 		theApp.options.showSkyBox = (1 == m_SkyBox);
+		theApp.options.showBillboard = (1 == m_Billboard);
 
 		theApp.options.Save();
 
@@ -109,11 +113,16 @@ void DisplayPropertyPage::OnBnClickedCheck4()
 	SetModified();
 }
 
+void DisplayPropertyPage::OnBnClickedCheck5()
+{
+	SetModified();
+}
 
 bool DisplayPropertyPage::ShouldApply()
 {
 	return theApp.options.gammaCorrection != (1 == m_Gamma ? true : false) || 
 		theApp.options.drawShadows != (1 == m_Shadows ? true : false) ||
 		theApp.options.drawTextures != (1 == m_Textures ? true : false) ||
-		theApp.options.showSkyBox != (1 == m_SkyBox ? true : false);
+		theApp.options.showSkyBox != (1 == m_SkyBox ? true : false) ||
+		theApp.options.showBillboard != (1 == m_Billboard ? true : false);
 }

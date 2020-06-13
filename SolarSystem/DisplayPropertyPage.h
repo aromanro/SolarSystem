@@ -31,6 +31,9 @@ public:
 	int m_SkyBox;
 	int m_Shadows;
 	int m_Textures;
+	int m_Billboard;
 private:
 	bool ShouldApply();
+public:
+	afx_msg void OnBnClickedCheck5();
 };

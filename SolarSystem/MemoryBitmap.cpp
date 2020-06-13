@@ -129,7 +129,7 @@ void MemoryBitmap::Draw(CDC* pDC, CRect& rect, int origWidth, int origHeight)
 }
 
 
-void MemoryBitmap::WriteText(const char* text, int x, int y, CFont& font, DWORD color, DWORD bkcolor)
+void MemoryBitmap::WriteText(const char* text, CFont& font, DWORD color, DWORD bkcolor)
 {
 	BITMAPINFO bmi;
 	ZeroMemory(&bmi, sizeof(BITMAPINFOHEADER));

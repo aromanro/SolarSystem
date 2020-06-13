@@ -7,6 +7,7 @@
 #endif
 
 SolarSystemBodies::SolarSystemBodies()
+	: m_simulationTime(0)
 {
 }
 
@@ -20,6 +21,7 @@ void SolarSystemBodies::clear()
 {
 	m_Bodies.clear();
 	m_BodyProperties.clear();
+	m_simulationTime = 0;
 }
 
 

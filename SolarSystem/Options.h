@@ -11,6 +11,8 @@ public:
 	unsigned int rotationSpeed;
 	unsigned int scrollSpeed;
 
+	bool showBillboard;
+
 	Options();
 	~Options();
 	bool Load();

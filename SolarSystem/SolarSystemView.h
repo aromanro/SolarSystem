@@ -44,6 +44,7 @@ private:
 	HDC m_hDC;       // Device Context
 	CPalette m_GLPalette;   // Logical Palette
 	UINT_PTR timer;
+	UINT_PTR slowTimer;
 
 	int Width, Height;
 
@@ -60,6 +61,7 @@ private:
 	OpenGL::Rectangle* billboardRectangle;
 	OpenGL::Texture* billboardTexture;
 	MemoryBitmap memoryBitmap;
+	CFont font;
 
 	OpenGL::SkyBoxCubeMapProgram *skyBoxProgram;
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
@@ -142,6 +144,7 @@ public:
 	void EnableAntialias();
 	void DisableAntialias();
 	void DisplayBilboard();
+	void SetBillboardText(const char* text);
 };
 
 #ifndef _DEBUG  // debug version in SolarSystemView.cpp

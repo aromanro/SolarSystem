@@ -16,7 +16,7 @@ namespace MolecularDynamics {
 
 
 	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), m_timestep(300)
+		: an_event(0), nrsteps(1), m_timestep(300), simulationTime(0)
 	{
 	}
 
@@ -136,13 +136,19 @@ namespace MolecularDynamics {
 
 			// do computations
 			for (unsigned int i = 0; i < local_nrsteps; ++i)
+			{
 #ifdef USE_VERLET
 				VerletStep(m_Bodies, timestep, timestep2);
 #else
 				VelocityVerletStep(m_Bodies, timestep, timestep2);
 #endif
+			}
 
-			CalculateRotations(m_Bodies, local_nrsteps*timestep);
+			const double simulatedTime = local_nrsteps * timestep;
+
+			CalculateRotations(m_Bodies, simulatedTime);
+
+			simulationTime = simulationTime + simulatedTime;
 
 			// give result to the main thread
 			SetBodies(m_Bodies);
@@ -174,6 +180,7 @@ namespace MolecularDynamics {
 	void ComputationThread::StartThread()
 	{
 		EndThread();
+		simulationTime = 0;
 
 		Thread = std::thread(&ComputationThread::Compute, this);
 	}
