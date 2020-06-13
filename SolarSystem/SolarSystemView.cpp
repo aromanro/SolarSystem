@@ -276,12 +276,12 @@ void CSolarSystemView::Setup()
 	const int billboardAspectRatio = 16;
 	billboardRectangle = new OpenGL::Rectangle(billboardAspectRatio);
 
-	const int height = 128;
+	const int height = 256;
 	memoryBitmap.SetSize(static_cast<int>(billboardAspectRatio * height), height);
 
 	if (!font.GetSafeHandle())
 	{
-		const int fontSize = static_cast<int>(height * 0.6);
+		const int fontSize = static_cast<int>(height * 0.7);
 		const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
 		font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
 	}
@@ -984,7 +984,7 @@ void CSolarSystemView::DisplayBilboard()
 
 	modelMat = glm::translate(modelMat, pos);
 
-	const float scale = 0.003f;
+	const float scale = 0.0025f;
 	modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
 
 	glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
