@@ -34,8 +34,8 @@ void SolarSystemBodies::LoadTextures()
 			body.texture->GenerateMipmaps();
 			if (body.transparentTexture)
 				body.transparentTexture->GenerateMipmaps();
-			//if (body.shadowTexture)
-			//	body.shadowTexture->GenerateMipmaps();
+			if (body.shadowTexture)
+				body.shadowTexture->GenerateMipmaps();
 		}
 	}
 }

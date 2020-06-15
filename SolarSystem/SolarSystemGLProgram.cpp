@@ -12,8 +12,8 @@
 
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
-	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), /*useShadowTextLocation(0),*/ isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
-	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), /*shadowTextureLoc(0),*/ depthMapLoc(0)
+	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
+	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), depthMapLoc(0)
 {
 }
 
@@ -71,7 +71,7 @@ void SolarSystemGLProgram::getUniformsLocations()
 	colorLocation = glGetUniformLocation(getID(), "theColor");
 	useTextLocation = glGetUniformLocation(getID(), "UseTexture");
 	useTransparentTextLocation = glGetUniformLocation(getID(), "UseTransparentTexture");
-	//useShadowTextLocation = glGetUniformLocation(getID(), "UseShadowTexture");
+	useShadowTextLocation = glGetUniformLocation(getID(), "UseShadowTexture");
 	isSunLocation = glGetUniformLocation(getID(), "IsSun");
 	useAlphaBlend = glGetUniformLocation(getID(), "UseAlphaBlend");
 	viewPosLocation = glGetUniformLocation(getID(), "viewPos");
@@ -82,7 +82,7 @@ void SolarSystemGLProgram::getUniformsLocations()
 
 	textureLoc = glGetUniformLocation(getID(), "Texture");
 	transparentTextureLoc = glGetUniformLocation(getID(), "transparentTexture");
-	//shadowTextureLoc = glGetUniformLocation(getID(), "shadowTexture");
+	shadowTextureLoc = glGetUniformLocation(getID(), "shadowTexture");
 
 	depthMapLoc = glGetUniformLocation(getID(), "depthMap");
 }
@@ -167,7 +167,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform vec4 theColor;
 		uniform int UseTexture;
 		uniform int UseTransparentTexture;
-		//uniform int UseShadowTexture;
+		uniform int UseShadowTexture;
 		uniform int IsSun;
 		uniform int UseAlphaBlend;
 		uniform vec3 viewPos;
@@ -182,7 +182,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 		uniform sampler2D Texture;
 		uniform sampler2D transparentTexture;
-		//uniform sampler2D shadowTexture;
+		uniform sampler2D shadowTexture;
 
 		uniform int calcShadows;
 		uniform samplerCube depthMap;
@@ -278,6 +278,13 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				{
 					float cosAngle = clamp(dot(normal, viewDir), 0.0, 1.0);
 					shadow = CalcShadow(cosAngle, length(viewVec));
+				}
+
+				if (1 == UseShadowTexture && (shadow > 0.1 || dot(normalize(Lights[0].lightDir), normal) < 0))
+				{
+					vec4 shadowColor = texture(shadowTexture, TexCoord);
+					// the shadow texture for Earth is too dark, so use this 'trick' which works only for the texture I'm using, for others, modify accordingly
+					color = clamp(0.5 * color + shadowColor * 3, 0.0, 1.0);
 				}
 
 				// use transparent layer?

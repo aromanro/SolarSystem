@@ -21,7 +21,7 @@ public:
 
 	OpenGL::Texture* texture;
 	OpenGL::Texture* transparentTexture;
-	//OpenGL::Texture* shadowTexture;
+	OpenGL::Texture* shadowTexture;
 
 	BodyProperties();
 	~BodyProperties();

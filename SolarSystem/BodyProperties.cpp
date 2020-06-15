@@ -6,7 +6,7 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL)/*, shadowTexture(NULL)*/
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL)
 {
 }
 
@@ -14,7 +14,7 @@ BodyProperties::BodyProperties()
 BodyProperties::~BodyProperties()
 {
 	delete transparentTexture;
-	//delete shadowTexture;
+	delete shadowTexture;
 	delete texture;
 }
 
@@ -65,7 +65,6 @@ bool BodyProperties::LoadTexture()
 	}
 
 
-	/*
 	if (!shadowFile.IsEmpty())
 	{
 		try {
@@ -106,7 +105,6 @@ bool BodyProperties::LoadTexture()
 			shadowTexture = NULL;
 		}
 	}
-	*/
 
 
 	if (!imgFile.IsEmpty())
@@ -160,6 +158,6 @@ void BodyProperties::CleanTexture()
 	delete transparentTexture;
 	transparentTexture = NULL;
 
-	//delete shadowTexture;
-	//shadowTexture = NULL;
+	delete shadowTexture;
+	shadowTexture = NULL;
 }
