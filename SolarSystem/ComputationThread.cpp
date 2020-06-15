@@ -8,7 +8,7 @@
 #endif
 
 const double G = 6.67408E-11;
-const double TWO_M_PI = 2.*M_PI;
+const double TWO_M_PI = 2. * M_PI;
 
 #define EPS 1E-8
 
@@ -16,7 +16,7 @@ namespace MolecularDynamics {
 
 
 	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), m_timestep(300), simulationTime(0)
+		: an_event(0), nrsteps(1), m_timestep(120), simulationTime(0)
 	{
 	}
 
