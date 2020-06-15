@@ -204,7 +204,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			float shadow = 0.0;
 			float closestDepth;
 
-			float bias = clamp(0.05*tan(acos(cosAngle)), 0, 0.05);
+			float bias = clamp(0.05 * tan(acos(cosAngle)), 0, 0.05);
 
 			int samples = 16;
 
@@ -240,7 +240,9 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				if (currentDepth - bias > closestDepth)	shadow += 1.0;
 			}
 
-			return shadow * 0.5 / float(samples);
+			shadow = shadow * 0.5 / float(samples);
+
+			return shadow > 0.4 ? shadow : 0;
 		}
 
 		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color)

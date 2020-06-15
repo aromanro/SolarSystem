@@ -35,7 +35,7 @@ public:
 	GLint colorLocation;
 	GLint useTextLocation;
 	GLint useTransparentTextLocation;
-	GLint useShadowTextLocation;
+	//GLint useShadowTextLocation;
 	GLint isSunLocation;
 	GLint useAlphaBlend;
 	GLint viewPosLocation;
@@ -44,7 +44,7 @@ public:
 	GLint calcShadowsLoc;
 	GLint textureLoc;
 	GLint transparentTextureLoc;
-	GLint shadowTextureLoc;
+	//GLint shadowTextureLoc;
 	GLint depthMapLoc;
 protected:
 	void getUniformsLocations();
