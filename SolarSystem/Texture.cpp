@@ -24,6 +24,12 @@ namespace OpenGL {
 		glBindTexture(GL_TEXTURE_2D, ID);	
 	}
 
+	void Texture::Bind(int nr)
+	{
+		glActiveTexture(GL_TEXTURE0 + nr);
+		glBindTexture(GL_TEXTURE_2D, ID);
+	}
+
 	void Texture::UnBind()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -34,9 +40,9 @@ namespace OpenGL {
 		return GL_TEXTURE_2D;
 	}
 
-	void Texture::setData(const void *data, int width, int height)
+	void Texture::setData(const void *data, int width, int height, int nr)
 	{
-		Bind();
+		Bind(nr);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

@@ -12,10 +12,12 @@ namespace OpenGL {
 
 
 		virtual void Bind();
+		void Bind(int nr);
+
 		virtual void UnBind();
 		virtual GLuint getType() const;
 
-		void setData(const void *data, int width, int height);
+		void setData(const void *data, int width, int height, int nr = 0);
 		void GenerateMipmaps();
 	};
 
