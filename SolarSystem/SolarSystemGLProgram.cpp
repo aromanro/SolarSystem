@@ -245,17 +245,21 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			return shadow > 0.4 ? shadow : 0;
 		}
 
-		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color)
+		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color, in vec3 transparentColor)
 		{
 			// Diffuse shading
 			float diff = max(dot(normal, lightDir), 0.0);
 
 			// Specular shading
 			vec3 halfwayDir = normalize(lightDir + viewDir);
-			float spec = pow(max(dot(normal, halfwayDir), 0.0), 32);
+			float spec1 = pow(max(dot(normal, halfwayDir), 0.0), 32);
 
+			float spec2 = pow(max(dot(normal, halfwayDir), 0.0), 16); // different 'specular' for the transparent color - typically clouds
+
+			vec3 firstLayerColor = (0.6 * diff + 0.3 * spec1) * color;
+			vec3 transparentLayerColor = (0.8 * diff + 0.1 * spec2) * transparentColor;
 			// Combine results								
-			return (0.7 * diff + 0.2 * spec) * color;
+			return 0.5 * (firstLayerColor + transparentLayerColor);
 		}
 
 		void main()
@@ -284,22 +288,27 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				{
 					vec4 shadowColor = texture(shadowTexture, TexCoord);
 					// the shadow texture for Earth is too dark, so use this 'trick' which works only for the texture I'm using, for others, modify accordingly
-					color = clamp(0.5 * color + shadowColor * 3, 0.0, 1.0);
+					color = clamp(0.5 * color + shadowColor * 3.0, 0.0, 1.0);
 				}
 
 				// use transparent layer?
 				// this is only for adding a clouds layer on Earth
+				vec4 transparentColor;
 				if (1 == UseTexture && 1 == UseTransparentTexture)
-					color = 0.5 * color + 0.5 * texture(transparentTexture, TexCoord);
+					transparentColor = texture(transparentTexture, TexCoord);
+				else 
+					transparentColor = color;
+
+				vec4 mixedColor = 0.5 * (color + transparentColor);
 
 				// ambient
-				light = 0.1 * color.xyz;
+				light = 0.1 * mixedColor.xyz;
 
 				for (int i = 0; i < NRLIGHTS; ++i)
 				{
 					if (i > 0) shadow = 0;
 
-					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz);
+					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz, transparentColor.xyz);
 				}
 			}
 
