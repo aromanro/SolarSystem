@@ -71,9 +71,11 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 	glUniform1f(program.farPlaneLoc, (float)farPlaneDistance);
 
 	glUniform1i(program.textureLoc, 0);
+	glUniform1i(program.transparentTextureLoc, 1);
+	glUniform1i(program.shadowTextureLoc, 2);
 
 	// this is for shadow
-	glUniform1i(program.depthMapLoc, 1);
+	glUniform1i(program.depthMapLoc, 10);
 	glUniform1i(program.calcShadowsLoc, theApp.options.drawShadows ? 1 : 0);
 	glUniform3f(program.lightPosLoc, program.lights[0].lightPos.x, program.lights[0].lightPos.y, program.lights[0].lightPos.z);
 }
@@ -276,12 +278,12 @@ void CSolarSystemView::Setup()
 	const int billboardAspectRatio = 16;
 	billboardRectangle = new OpenGL::Rectangle(billboardAspectRatio);
 
-	const int height = 256;
+	const int height = 128;
 	memoryBitmap.SetSize(static_cast<int>(billboardAspectRatio * height), height);
 
 	if (!font.GetSafeHandle())
 	{
-		const int fontSize = static_cast<int>(height * 0.7);
+		const int fontSize = static_cast<int>(height * 0.8);
 		const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
 		font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
 	}
@@ -393,12 +395,32 @@ void CSolarSystemView::RenderScene()
 		{
 			pit->texture->Bind();
 			glUniform1i(program->useTextLocation, 1);
+
+			if (pit->transparentTexture)
+			{
+				pit->transparentTexture->Bind(1);
+				glUniform1i(program->useTransparentTextLocation, 1);
+			}
+			else
+				glUniform1i(program->useTransparentTextLocation, 0);
+
+			/*
+			if (pit->shadowTexture)
+			{
+				pit->shadowTexture->Bind(2);
+				glUniform1i(program->useShadowTextLocation, 1);
+			}
+			else
+				glUniform1i(program->useShadowTextLocation, 0);
+			*/
 		}
 		else
 		{
 			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
 			glUniform1i(program->useTextLocation, 0);
-		}		
+			glUniform1i(program->useTransparentTextLocation, 0);
+			glUniform1i(program->useShadowTextLocation, 0);
+		}
 
 		sphere->Draw();
 	}
@@ -998,6 +1020,7 @@ void CSolarSystemView::DisplayBilboard()
 
 	billboardTexture->Bind();
 	glUniform1i(program->useTextLocation, 1); // use texture
+	glUniform1i(program->useTransparentTextLocation, 0); // but no transparent texture on top of it
 
 	glUniform1i(program->useAlphaBlend, 1);
 

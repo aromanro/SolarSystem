@@ -235,6 +235,8 @@ void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics
 	props.color = RGB(GetXmlIntValue(node,L"R",0), GetXmlIntValue(node, L"G", 0), GetXmlIntValue(node, L"B", 0));
 
 	props.imgFile = GetXmlValue(node, L"skin", L"");
+	props.transparentFile = GetXmlValue(node, L"transparentSkin", L"");
+	props.shadowFile = GetXmlValue(node, L"shadowSkin", L"");
 
 	props.scale = GetXmlDoubleValue(node, L"Scale", 1.);
 	props.scaleDistance = GetXmlDoubleValue(node, L"ScaleDistance", 1.);

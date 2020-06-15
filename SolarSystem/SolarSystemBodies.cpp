@@ -30,6 +30,12 @@ void SolarSystemBodies::LoadTextures()
 	for (auto &body : m_BodyProperties)
 	{
 		if (body.LoadTexture())
+		{
 			body.texture->GenerateMipmaps();
+			if (body.transparentTexture)
+				body.transparentTexture->GenerateMipmaps();
+			//if (body.shadowTexture)
+			//	body.shadowTexture->GenerateMipmaps();
+		}
 	}
 }

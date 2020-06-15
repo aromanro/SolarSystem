@@ -13,7 +13,7 @@ namespace OpenGL {
 
 	ShadowCubeMapProgram::CubeMapTexture::CubeMapTexture()
 	{
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE10);
 
 		glGenTextures(1, &ID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
@@ -38,7 +38,7 @@ namespace OpenGL {
 
 	void ShadowCubeMapProgram::CubeMapTexture::Bind()
 	{
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE10);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
 	}
 

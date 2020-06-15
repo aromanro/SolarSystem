@@ -12,8 +12,8 @@
 
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
-	colorLocation(0), useTextLocation(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
-	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), depthMapLoc(0)
+	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), /*useShadowTextLocation(0),*/ isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
+	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), /*shadowTextureLoc(0),*/ depthMapLoc(0)
 {
 }
 
@@ -70,6 +70,8 @@ void SolarSystemGLProgram::getUniformsLocations()
 	// fragment shader uniform parameters
 	colorLocation = glGetUniformLocation(getID(), "theColor");
 	useTextLocation = glGetUniformLocation(getID(), "UseTexture");
+	useTransparentTextLocation = glGetUniformLocation(getID(), "UseTransparentTexture");
+	//useShadowTextLocation = glGetUniformLocation(getID(), "UseShadowTexture");
 	isSunLocation = glGetUniformLocation(getID(), "IsSun");
 	useAlphaBlend = glGetUniformLocation(getID(), "UseAlphaBlend");
 	viewPosLocation = glGetUniformLocation(getID(), "viewPos");
@@ -79,6 +81,9 @@ void SolarSystemGLProgram::getUniformsLocations()
 	calcShadowsLoc = glGetUniformLocation(getID(), "calcShadows");
 
 	textureLoc = glGetUniformLocation(getID(), "Texture");
+	transparentTextureLoc = glGetUniformLocation(getID(), "transparentTexture");
+	//shadowTextureLoc = glGetUniformLocation(getID(), "shadowTexture");
+
 	depthMapLoc = glGetUniformLocation(getID(), "depthMap");
 }
 
@@ -161,6 +166,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 		uniform vec4 theColor;
 		uniform int UseTexture;
+		uniform int UseTransparentTexture;
+		//uniform int UseShadowTexture;
 		uniform int IsSun;
 		uniform int UseAlphaBlend;
 		uniform vec3 viewPos;
@@ -174,6 +181,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		out vec4 outputColor;
 
 		uniform sampler2D Texture;
+		uniform sampler2D transparentTexture;
+		//uniform sampler2D shadowTexture;
 
 		uniform int calcShadows;
 		uniform samplerCube depthMap;
@@ -261,9 +270,6 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				vec3 viewDir = normalize(viewVec);
 				vec3 normal = normalize(Normal);
 
-				// ambient
-				light = 0.1 * color.xyz;
-
 				// shadow
 				float shadow = 0.0;
 				if (1 == calcShadows)
@@ -272,6 +278,14 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 					shadow = CalcShadow(cosAngle, length(viewVec));
 				}
 
+				// use transparent layer?
+				// this is only for adding a clouds layer on Earth
+				if (1 == UseTexture && 1 == UseTransparentTexture)
+					color = 0.5 * color + 0.5 * texture(transparentTexture, TexCoord);
+
+				// ambient
+				light = 0.1 * color.xyz;
+
 				for (int i = 0; i < NRLIGHTS; ++i)
 				{
 					if (i > 0) shadow = 0;
@@ -279,6 +293,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz);
 				}
 			}
+
 
 			// also allow alpha blending, useful if I'll add a billboard
 			//outputColor = vec4(light, UseAlphaBlend == 1 ? theColor[3] : 1); // use this if you want to show the whole billboard, but transparent

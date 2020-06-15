@@ -16,8 +16,12 @@ public:
 	double scaleDistance;
 	
 	CString imgFile;
+	CString transparentFile;
+	CString shadowFile;
 
-	OpenGL::Texture *texture;
+	OpenGL::Texture* texture;
+	OpenGL::Texture* transparentTexture;
+	//OpenGL::Texture* shadowTexture;
 
 	BodyProperties();
 	~BodyProperties();

@@ -34,6 +34,8 @@ public:
 	// fragment shader uniform parameters
 	GLint colorLocation;
 	GLint useTextLocation;
+	GLint useTransparentTextLocation;
+	GLint useShadowTextLocation;
 	GLint isSunLocation;
 	GLint useAlphaBlend;
 	GLint viewPosLocation;
@@ -41,6 +43,8 @@ public:
 	GLint lightPosLoc;
 	GLint calcShadowsLoc;
 	GLint textureLoc;
+	GLint transparentTextureLoc;
+	GLint shadowTextureLoc;
 	GLint depthMapLoc;
 protected:
 	void getUniformsLocations();
