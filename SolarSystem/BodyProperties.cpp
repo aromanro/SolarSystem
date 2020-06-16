@@ -6,13 +6,14 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL)
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL)
 {
 }
 
 
 BodyProperties::~BodyProperties()
 {
+	delete specularTexture;
 	delete transparentTexture;
 	delete shadowTexture;
 	delete texture;
@@ -103,6 +104,48 @@ bool BodyProperties::LoadTexture()
 		{
 			delete shadowTexture;
 			shadowTexture = NULL;
+		}
+	}
+
+
+	if (!specularFile.IsEmpty())
+	{
+		try {
+			CImage skin;
+			skin.Load(specularFile);
+
+			if (!(skin.IsNull() || skin.GetBPP() != 8))
+			{
+
+				// ideally they should be power of 2 but even values should do
+
+				// check if it's even
+				unsigned int dim = skin.GetWidth();
+				if (!(dim % 2))
+				{
+
+					// check if it's even
+					dim = skin.GetHeight();
+					if (!(dim % 2))
+					{
+
+						specularTexture = new OpenGL::Texture();
+						unsigned char* buf = NULL;
+
+						if (skin.GetPitch() < 0)
+							buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+						else
+							buf = static_cast<unsigned char*>(skin.GetBits());
+
+						specularTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 3, 1);
+					}
+				}
+			}
+		}
+		catch (...)
+		{
+			delete specularTexture;
+			specularTexture = NULL;
 		}
 	}
 

@@ -18,10 +18,12 @@ public:
 	CString imgFile;
 	CString transparentFile;
 	CString shadowFile;
+	CString specularFile;
 
 	OpenGL::Texture* texture;
 	OpenGL::Texture* transparentTexture;
 	OpenGL::Texture* shadowTexture;
+	OpenGL::Texture* specularTexture;
 
 	BodyProperties();
 	~BodyProperties();
