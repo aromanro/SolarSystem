@@ -73,6 +73,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 	glUniform1i(program.textureLoc, 0);
 	glUniform1i(program.transparentTextureLoc, 1);
 	glUniform1i(program.shadowTextureLoc, 2);
+	glUniform1i(program.specularTextureLoc, 3);
 
 	// this is for shadow
 	glUniform1i(program.depthMapLoc, 10);
@@ -411,6 +412,15 @@ void CSolarSystemView::RenderScene()
 			}
 			else
 				glUniform1i(program->useShadowTextLocation, 0);
+
+
+			if (pit->specularTexture)
+			{
+				pit->shadowTexture->Bind(3);
+				glUniform1i(program->useSpecularTextLocation, 1);
+			}
+			else
+				glUniform1i(program->useSpecularTextLocation, 0);
 		}
 		else
 		{
@@ -418,6 +428,7 @@ void CSolarSystemView::RenderScene()
 			glUniform1i(program->useTextLocation, 0);
 			glUniform1i(program->useTransparentTextLocation, 0);
 			glUniform1i(program->useShadowTextLocation, 0);
+			glUniform1i(program->useSpecularTextLocation, 0);
 		}
 
 		sphere->Draw();
