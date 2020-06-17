@@ -168,10 +168,12 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform Light Lights[NRLIGHTS];
 
 		uniform vec4 theColor;
+		
 		uniform int UseTexture;
 		uniform int UseTransparentTexture;
 		uniform int UseShadowTexture;
 		uniform int UseSpecularTexture;
+
 		uniform int IsSun;
 		uniform int UseAlphaBlend;
 		uniform vec3 viewPos;
@@ -257,15 +259,32 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 			// Specular shading
 			vec3 halfwayDir = normalize(lightDir + viewDir);
-			float spec1 = pow(max(dot(normal, halfwayDir), 0.0), 32);
+			float val = max(dot(normal, halfwayDir), 0.0);
 
-			float spec2 = pow(max(dot(normal, halfwayDir), 0.0), 16); // different 'specular' for the transparent color - typically clouds
+			float spec1 = pow(val, 32);
 
-			vec3 firstLayerColor = (0.6 * diff + 0.3 * spec1) * color;
+			float spec2 = pow(val, 16); // different 'specular' for the transparent color - typically clouds
 
-			vec3 transparentLayerColor = (0.8 * diff + 0.1 * spec2) * transparentColor;
+			vec3 firstLayerColor;
+			vec3 transparentLayerColor;
+
+			if (UseSpecularTexture == 1)
+			{
+				float spec3 = pow(val, 48);
+
+				float specProc = texture(specularTexture, TexCoord)[0];
+				float oneMinusProc = 1. - specProc;
+				firstLayerColor = (oneMinusProc * diff + specProc * spec3)* color;
+			}
+			else
+			{
+				firstLayerColor = (0.7 * diff + 0.3 * spec1) * color;
+			}
+
+			transparentLayerColor = (0.8 * diff + 0.2 * spec2) * transparentColor;
+
 			// Combine results								
-			return 0.5 * (firstLayerColor + transparentLayerColor);
+			return 0.5 * firstLayerColor + 0.5 * transparentLayerColor;
 		}
 
 		void main()
@@ -290,11 +309,22 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 					shadow = CalcShadow(cosAngle, length(viewVec));
 				}
 
-				if (1 == UseShadowTexture && (shadow > 0.1 || dot(normalize(Lights[0].lightDir), normal) < 0))
+				if (1 == UseShadowTexture)
 				{
-					vec4 shadowColor = texture(shadowTexture, TexCoord);
-					// the shadow texture for Earth is too dark, so use this 'trick' which works only for the texture I'm using, for others, modify accordingly
-					color = clamp(0.5 * color + shadowColor * 3.0, 0.0, 1.0);
+					float proj = dot(normalize(Lights[0].lightDir), normal);
+					if (shadow > 0.1 || proj < 0)
+					{
+						vec4 shadowColor = texture(shadowTexture, TexCoord);
+						if (shadow > 0.1)
+							color = 0.1 * color + 0.9 * shadowColor;
+						else
+							// without this 'trick' the contrast at terminator was too big
+							// at the terminator the angle between light and normal is 90 degrees, so the projection is 0
+							// then it goes negative up to -1 and so on
+							// this progressively mixes the normal layer with the shadow one
+							// I'm sure a better way could be found, but for now it's good enough for me
+							color = (1. + proj) * color - proj * shadowColor;
+					}
 				}
 
 				// use transparent layer?
@@ -305,7 +335,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				else 
 					transparentColor = color;
 
-				vec4 mixedColor = 0.5 * (color + transparentColor);
+				vec4 mixedColor = 0.5 * color + 0.5 * transparentColor;
 
 				// ambient
 				light = 0.1 * mixedColor.xyz;
@@ -316,6 +346,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz, transparentColor.xyz);
 				}
+
+				light = clamp(light, 0, 1);
 			}
 
 

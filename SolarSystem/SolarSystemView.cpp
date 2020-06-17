@@ -384,7 +384,7 @@ void CSolarSystemView::RenderScene()
 			{
 				glm::vec3 lightDir = program->lights[i].lightPos - pos;
 
-				const float atten = static_cast<float>(1. / (1. + 0.0025 * glm::length(lightDir)));
+				const float atten = static_cast<float>(1. / (1. + 0.001 * glm::length(lightDir)));
 
 				lightDir = glm::normalize(lightDir);
 				glUniform3f(program->lights[i].lightDirPos, lightDir.x, lightDir.y, lightDir.z);
@@ -416,7 +416,7 @@ void CSolarSystemView::RenderScene()
 
 			if (pit->specularTexture)
 			{
-				pit->shadowTexture->Bind(3);
+				pit->specularTexture->Bind(3);
 				glUniform1i(program->useSpecularTextLocation, 1);
 			}
 			else
