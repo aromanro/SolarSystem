@@ -180,6 +180,12 @@ void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
 {
 	if (!data) return;
 
+#if USE_DIRECT_TRANSFER
+	
+	texture.setData(data, m_width, m_height);
+
+#else 
+
 	const int stride = GetStrideLength();
 
 	const size_t s = 3ULL * m_height * m_width;
@@ -201,6 +207,7 @@ void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
 	}
 
 	texture.setData(texdata.data(), m_width, m_height);
+#endif
 }
 
 

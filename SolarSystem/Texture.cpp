@@ -50,7 +50,7 @@ namespace OpenGL {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, nrBytes, width, height, 0, 1 == nrBytes ? GL_LUMINANCE : GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, nrBytes, width, height, 0, 1 == nrBytes ? GL_LUMINANCE : (3 == nrBytes ? GL_BGR_EXT : GL_BGRA_EXT), GL_UNSIGNED_BYTE, data);
 	}
 
 	void Texture::GenerateMipmaps()

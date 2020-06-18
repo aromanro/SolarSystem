@@ -5,6 +5,11 @@
 
 #include "Texture.h"
 
+// to use direct transfer (that is, not copying data into 'texdata'
+// the stride must be of proper length, so not all resolutions will work
+
+#define USE_DIRECT_TRANSFER 1
+
 class MemoryBitmap
 {
 public:
@@ -22,7 +27,10 @@ protected:
 
 	unsigned char* data;
 
+#if USE_DIRECT_TRANSFER == 0
 	std::vector<unsigned char> texdata;
+#endif
+
 public:
 	void SetSize(int width, int height);
 
