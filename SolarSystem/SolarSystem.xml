@@ -18,7 +18,7 @@
     <Body Name="Rhea"     Radius="763800"  Mass="2.306E21"  XPosition="1429917108000" YVelocity="18870" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="4.518" Scale="1000" ScaleDistance="200"/>	
     <Body Name="Titan"    Radius="2575500" Mass="1.3452E23" XPosition="1430611870000" YVelocity="15260" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="15.945" Scale="1000" ScaleDistance="200"/>	
     <Body Name="Iapetus"  Radius="734500"  Mass="1.805E21"  XPosition="1432950820000" YVelocity="12950" R="255" G="255" B="0"   IsMoon="Yes" Tilt="0" RotationPeriod="79.32" Scale="1000" ScaleDistance="200"/>	
-	<Body Name="Uranus"  Radius="25362000"  Mass="8.6810E25"  XPosition="2875.04E9"    YVelocity="6800"  R="255" G="255" B="0"   skin="Textures\\uranusmap.jpg" Tilt="97.77" RotationPeriod="0.718" Scale="1000"/>	
+	<Body Name="Uranus"  Radius="25362000"  Mass="8.6810E25"  XPosition="2875.04E9"    YVelocity="6800"  R="255" G="255" B="0"   skin="Textures\\uranusmap.jpg" Tilt="97.77" RotationPeriod="-0.718" Scale="1000"/>	
 	<Body Name="Neptune" Radius="24622000"  Mass="1.0243E26"  XPosition="4504.45E9"    YVelocity="5430"  R="255" G="255" B="0"   skin="Textures\\neptunemap.jpg" Tilt="28.32" RotationPeriod="0.6713" Scale="1000"/>	
 	<Body Name="Pluto"   Radius="1187000"   Mass="1.303E22"   XPosition="5915E9"       YVelocity="4760"  R="255" G="255" B="0"   skin="Textures\\plutomap2k.jpg" Tilt="119.591" RotationPeriod="6.387230" Scale="1000"/>		
 </SolarSystem>
