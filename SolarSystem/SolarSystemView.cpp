@@ -401,9 +401,17 @@ void CSolarSystemView::RenderScene()
 			{
 				pit->transparentTexture->Bind(1);
 				glUniform1i(program->useTransparentTextLocation, 1);
+
+				if (pit->transparentTextureAlpha)
+					glUniform1i(program->alphaInTransparentTexture, 1);
+				else
+					glUniform1i(program->alphaInTransparentTexture, 0);
 			}
 			else
+			{
 				glUniform1i(program->useTransparentTextLocation, 0);
+				glUniform1i(program->alphaInTransparentTexture, 0);
+			}
 
 			if (pit->shadowTexture)
 			{
@@ -427,6 +435,7 @@ void CSolarSystemView::RenderScene()
 			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
 			glUniform1i(program->useTextLocation, 0);
 			glUniform1i(program->useTransparentTextLocation, 0);
+			glUniform1i(program->alphaInTransparentTexture, 0);
 			glUniform1i(program->useShadowTextLocation, 0);
 			glUniform1i(program->useSpecularTextLocation, 0);
 		}

@@ -12,7 +12,7 @@
 
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
-	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), useSpecularTextLocation(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
+	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), useSpecularTextLocation(0), alphaInTransparentTexture(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
 	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), specularTextureLoc(0), depthMapLoc(0)
 {
 }
@@ -73,6 +73,8 @@ void SolarSystemGLProgram::getUniformsLocations()
 	useTransparentTextLocation = glGetUniformLocation(getID(), "UseTransparentTexture");
 	useShadowTextLocation = glGetUniformLocation(getID(), "UseShadowTexture");
 	useSpecularTextLocation = glGetUniformLocation(getID(), "UseSpecularTexture");
+
+	alphaInTransparentTexture = glGetUniformLocation(getID(), "alphaInTransparentTexture");
 
 	isSunLocation = glGetUniformLocation(getID(), "IsSun");
 	useAlphaBlend = glGetUniformLocation(getID(), "UseAlphaBlend");
@@ -174,6 +176,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform int UseShadowTexture;
 		uniform int UseSpecularTexture;
 
+		uniform int alphaInTransparentTexture;
+
 		uniform int IsSun;
 		uniform int UseAlphaBlend;
 		uniform vec3 viewPos;
@@ -252,7 +256,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			return shadow > 0.4 ? shadow : 0;
 		}
 
-		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color, in vec3 transparentColor)
+		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color, in vec4 transparentColor)
 		{
 			// Diffuse shading
 			float diff = max(dot(normal, lightDir), 0.0);
@@ -281,10 +285,19 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				firstLayerColor = (0.7 * diff + 0.3 * spec1) * color;
 			}
 
-			transparentLayerColor = (0.8 * diff + 0.2 * spec2) * transparentColor;
+			transparentLayerColor = (0.8 * diff + 0.2 * spec2) * transparentColor.xyz;
+
+			float alphaColor = 0.5;
+			float alphaTransparent = 0.5;
+
+			if (1 == UseTexture && 1 == UseTransparentTexture && 1 == alphaInTransparentTexture)
+			{
+				alphaTransparent = transparentColor[3];
+				alphaColor = 1. - alphaTransparent;
+			}
 
 			// Combine results								
-			return 0.5 * firstLayerColor + 0.5 * transparentLayerColor;
+			return alphaColor * firstLayerColor + alphaTransparent * transparentLayerColor;
 		}
 
 		void main()
@@ -329,13 +342,24 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 				// use transparent layer?
 				// this is only for adding a clouds layer on Earth
+
+				float alphaColor = 0.5;
+				float alphaTransparent = 0.5;
+
 				vec4 transparentColor;
 				if (1 == UseTexture && 1 == UseTransparentTexture)
+				{
 					transparentColor = texture(transparentTexture, TexCoord);
+					if (1 == alphaInTransparentTexture)
+					{
+						alphaTransparent = transparentColor[3];
+						alphaColor = 1. - alphaTransparent;
+					}
+				}
 				else 
 					transparentColor = color;
 
-				vec4 mixedColor = 0.5 * color + 0.5 * transparentColor;
+				vec4 mixedColor = alphaColor * color + alphaTransparent * transparentColor;
 
 				// ambient
 				light = 0.1 * mixedColor.xyz;
@@ -344,7 +368,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				{
 					if (i > 0) shadow = 0;
 
-					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz, transparentColor.xyz);
+					light += Lights[i].atten * (1.0 - shadow) * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, color.xyz, transparentColor);
 				}
 
 				light = clamp(light, 0, 1);

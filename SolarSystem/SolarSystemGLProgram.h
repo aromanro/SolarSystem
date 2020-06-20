@@ -37,6 +37,9 @@ public:
 	GLint useTransparentTextLocation;
 	GLint useShadowTextLocation;
 	GLint useSpecularTextLocation;
+
+	GLint alphaInTransparentTexture;
+
 	GLint isSunLocation;
 	GLint useAlphaBlend;
 	GLint viewPosLocation;

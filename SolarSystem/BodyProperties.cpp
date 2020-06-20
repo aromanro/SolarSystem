@@ -6,7 +6,7 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL)
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), transparentTextureAlpha(false)
 {
 }
 
@@ -30,7 +30,7 @@ bool BodyProperties::LoadTexture()
 			CImage skin;
 			skin.Load(transparentFile);
 
-			if (!(skin.IsNull() || skin.GetBPP() != 24))
+			if (!(skin.IsNull() || (skin.GetBPP() != 24 && skin.GetBPP() != 32)))
 			{
 
 				// ideally they should be power of 2 but even values should do
@@ -53,7 +53,8 @@ bool BodyProperties::LoadTexture()
 						else
 							buf = static_cast<unsigned char*>(skin.GetBits());
 
-						transparentTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 1);
+						transparentTextureAlpha = skin.GetBPP() == 32;
+						transparentTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 1, transparentTextureAlpha ? 4 : 3);
 					}
 				}
 			}
@@ -203,4 +204,6 @@ void BodyProperties::CleanTexture()
 
 	delete shadowTexture;
 	shadowTexture = NULL;
+
+	transparentTextureAlpha = false;
 }

@@ -25,6 +25,8 @@ public:
 	OpenGL::Texture* shadowTexture;
 	OpenGL::Texture* specularTexture;
 
+	bool transparentTextureAlpha;
+
 	BodyProperties();
 	~BodyProperties();
 	bool LoadTexture();
