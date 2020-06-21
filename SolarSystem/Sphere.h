@@ -14,6 +14,7 @@ namespace OpenGL {
 		virtual ~Sphere();
 
 		virtual void Draw();
+		void DrawInstanced(unsigned int count);
 	};
 
 }

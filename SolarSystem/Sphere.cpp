@@ -107,4 +107,11 @@ namespace OpenGL {
 		//VertexBufferRenderable::UnBind();
 	}
 
+	void Sphere::DrawInstanced(unsigned int count)
+	{
+		VertexBufferRenderable::Bind();
+
+		for (unsigned int i = 0; i < m_lats; ++i)
+			glDrawArraysInstanced(GL_TRIANGLE_STRIP, static_cast<GLint>(i * (m_longs + 1) * 2), static_cast<GLsizei>(2 * (m_longs + 1)), count);
+	}
 }
