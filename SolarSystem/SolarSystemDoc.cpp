@@ -12,6 +12,8 @@
 #include "SolarSystemDoc.h"
 #include "SolarSystemView.h"
 
+#include "Constants.h"
+
 #include <propkey.h>
 
 
@@ -333,6 +335,38 @@ void CSolarSystemDoc::LoadFile(const CString& fileName)
 	m_SolarSystem.clear();
 
 	LoadXmlFile(fileName);
+
+	auto pit = m_SolarSystem.m_BodyProperties.begin();
+	for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	{
+		glm::mat4 modelMat(1);
+		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
+		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
+
+		if (pit->isMoon && pit->scaleDistance != 1.)
+		{
+
+			auto pmit = m_SolarSystem.m_BodyProperties.begin();
+
+			int index = 0;
+			for (auto mit = m_SolarSystem.m_Bodies.begin(); mit != m_SolarSystem.m_Bodies.end(); ++mit, ++pmit, ++index)
+			{
+				if (pmit->isMoon || pmit->isSun) continue; // ignore a collision with another moon or with the sun
+
+				const glm::vec3 mpos = glm::vec3(mit->m_Position.X / AGLU, mit->m_Position.Y / AGLU, mit->m_Position.Z / AGLU);
+				const glm::vec3 fromvec = pos - mpos;
+				const double dist = glm::length(fromvec);
+
+				if (dist <= 1.05 * (mit->m_Radius * pmit->scale + it->m_Radius * pit->scale) / AGLU)
+				{
+					pit->parentIndex = index;
+					break;
+				}
+			}
+		}
+	}
 }
 
 void CSolarSystemDoc::StartThread()

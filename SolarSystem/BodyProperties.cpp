@@ -6,7 +6,7 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), transparentTextureAlpha(false)
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), transparentTextureAlpha(false), parentIndex(-1)
 {
 }
 

@@ -27,6 +27,8 @@ public:
 
 	bool transparentTextureAlpha;
 
+	int parentIndex; // just an index for the body where the moon belongs
+
 	BodyProperties();
 	~BodyProperties();
 	bool LoadTexture();

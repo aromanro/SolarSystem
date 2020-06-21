@@ -38,10 +38,6 @@
 #endif
 
 
-
-const double AGLU = (149597870700. / 100.);
-
-
 CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights)
 {
 	USES_CONVERSION;
@@ -314,21 +310,22 @@ void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator&
 {
 	CSolarSystemDoc *doc = GetDocument();
 
-	auto pmit = doc->m_SolarSystem.m_BodyProperties.begin();
-	for (auto mit = doc->m_SolarSystem.m_Bodies.begin(); mit != doc->m_SolarSystem.m_Bodies.end(); ++mit, ++pmit)
-	{
-		if (pmit->isMoon || pmit->isSun) continue; // ignore a collision with another moon or with the sun
+	if (-1 == pit->parentIndex)
+		return;
 
-		const glm::vec3 mpos = glm::vec3(mit->m_Position.X / AGLU, mit->m_Position.Y / AGLU, mit->m_Position.Z / AGLU);
-		const glm::vec3 fromvec = pos - mpos;
-		const double dist = glm::length(fromvec);
+	const MolecularDynamics::Body& parent = doc->m_SolarSystem.m_Bodies[pit->parentIndex];
+	const BodyProperties& parentProps = doc->m_SolarSystem.m_BodyProperties[pit->parentIndex];
 
-		if (dist <= (mit->m_Radius * pmit->scale + it->m_Radius * pit->scale) / AGLU)
-		{
-			pos = mpos + glm::vec3(fromvec.x*pit->scaleDistance, fromvec.y*pit->scaleDistance, fromvec.z*pit->scaleDistance);
-			break;
-		}
-	}
+	// should not happen, but be safe
+	if (parentProps.isMoon || parentProps.isSun) 
+		return;
+
+	const glm::vec3 mpos = glm::vec3(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
+	const glm::vec3 fromvec = pos - mpos;
+	const double dist = glm::length(fromvec);
+
+	if (dist <= (parent.m_Radius * parentProps.scale + it->m_Radius * pit->scale) / AGLU)
+		pos = mpos + glm::vec3(fromvec.x * pit->scaleDistance, fromvec.y * pit->scaleDistance, fromvec.z * pit->scaleDistance);
 }
 
 void CSolarSystemView::RenderScene()
