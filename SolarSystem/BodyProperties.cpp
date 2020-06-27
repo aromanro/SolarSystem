@@ -6,13 +6,14 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), transparentTextureAlpha(false), parentIndex(-1)
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), normalTexture(NULL), transparentTextureAlpha(false), parentIndex(-1)
 {
 }
 
 
 BodyProperties::~BodyProperties()
 {
+	delete normalTexture;
 	delete specularTexture;
 	delete transparentTexture;
 	delete shadowTexture;
@@ -151,6 +152,55 @@ bool BodyProperties::LoadTexture()
 	}
 
 
+	if (!normalFile.IsEmpty())
+	{
+		try {
+			CImage skin;
+			skin.Load(normalFile);
+
+			if (!skin.IsNull() && (skin.GetBPP() == 8 || skin.GetBPP() == 24))
+			{
+
+				// ideally they should be power of 2 but even values should do
+
+				// check if it's even
+				unsigned int dim = skin.GetWidth();
+				if (!(dim % 2))
+				{
+
+					// check if it's even
+					dim = skin.GetHeight();
+					if (!(dim % 2))
+					{
+						normalTexture = new OpenGL::Texture();
+						unsigned char* buf = NULL;
+
+						if (skin.GetBPP() == 24)
+						{
+							if (skin.GetPitch() < 0)
+								buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+							else
+								buf = static_cast<unsigned char*>(skin.GetBits());
+
+							normalTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 3, 1);
+						}
+						else
+						{
+							// if it's a bump map, there is some work to do
+
+						}
+					}
+				}
+			}
+		}
+		catch (...)
+		{
+			delete normalTexture;
+			normalTexture = NULL;
+		}
+	}
+
+
 	if (!imgFile.IsEmpty())
 	{
 		try {
@@ -204,6 +254,9 @@ void BodyProperties::CleanTexture()
 
 	delete shadowTexture;
 	shadowTexture = NULL;
+
+	delete normalTexture;
+	normalTexture = NULL;
 
 	transparentTextureAlpha = false;
 }

@@ -141,7 +141,7 @@ bool SolarSystemGLProgram::SetupVertexShader()
 			gl_Position = transformMat * modelMat * vec4(position.x, position.y, position.z, 1.0);
 			TexCoord = texCoord;
 			Normal = normalize(transpInvModelMat * normal);
-			FragPos = vec3(modelMat * vec4(position, 1.0f));
+			FragPos = vec3(modelMat * vec4(position, 1.0f));			
 			Tangent = normalize(transpInvModelMat * tangent);
 			Bitangent = normalize(transpInvModelMat * bitangent);
 		}

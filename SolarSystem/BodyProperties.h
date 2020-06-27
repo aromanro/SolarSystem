@@ -19,11 +19,13 @@ public:
 	CString transparentFile;
 	CString shadowFile;
 	CString specularFile;
+	CString normalFile; // might be a bump mapping file, with one gray channel, in this case use Sobel to compute the normals
 
 	OpenGL::Texture* texture;
 	OpenGL::Texture* transparentTexture;
 	OpenGL::Texture* shadowTexture;
 	OpenGL::Texture* specularTexture;
+	OpenGL::Texture* normalTexture;
 
 	bool transparentTextureAlpha;
 

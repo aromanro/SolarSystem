@@ -70,7 +70,7 @@ namespace OpenGL {
 				
 				const glm::vec3 approxBitangent(x1 - x0, y1 - y0, z1 - z0);
 				
-				glm::vec3 bitangent = approxBitangent - approxBitangent * normal; // subtract the projection on the direction of the normal, now it's orthogonal
+				glm::vec3 bitangent = approxBitangent - (approxBitangent * normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
 				bitangent = glm::normalize(bitangent); // now it's orthonormal
 
 				// the other one is simply the cross product
@@ -104,7 +104,7 @@ namespace OpenGL {
 				buffer[base + STRIDE_SIZE + 7] = static_cast<float>(YTex0);
 
 				normal = glm::vec3(buffer[base + STRIDE_SIZE + 3], buffer[base + STRIDE_SIZE + 4], buffer[base + STRIDE_SIZE + 5]);
-				bitangent = approxBitangent - approxBitangent * normal; // subtract the projection on the direction of the normal, now it's orthogonal
+				bitangent = approxBitangent - (approxBitangent * normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
 				bitangent = glm::normalize(bitangent); // now it's orthonormal
 				
 				// the other one is simply the cross product

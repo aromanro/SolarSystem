@@ -240,6 +240,7 @@ void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics
 	props.transparentFile = GetXmlValue(node, L"transparentSkin", L"");
 	props.shadowFile = GetXmlValue(node, L"shadowSkin", L"");
 	props.specularFile = GetXmlValue(node, L"specularSkin", L"");
+	props.normalFile = GetXmlValue(node, L"normalSkin", L"");
 
 	props.scale = GetXmlDoubleValue(node, L"Scale", 1.);
 	props.scaleDistance = GetXmlDoubleValue(node, L"ScaleDistance", 1.);
