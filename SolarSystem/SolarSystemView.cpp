@@ -251,6 +251,7 @@ void CSolarSystemView::Setup()
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		
 		glPolygonMode(GL_FRONT, GL_FILL);
 
 		glMatrixMode(GL_MODELVIEW);

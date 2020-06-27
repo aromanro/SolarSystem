@@ -123,6 +123,8 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		layout(location = 0) in vec3 position;
 		layout(location = 1) in vec3 normal;
 		layout(location = 2) in vec2 texCoord;
+		layout(location = 3) in vec3 tangent;
+		layout(location = 4) in vec3 bitangent;
 
 		uniform mat4 transformMat;
 		uniform mat4 modelMat;
@@ -131,6 +133,8 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		out vec2 TexCoord;
 		out vec3 Normal;
 		out vec3 FragPos;
+		out vec3 Tangent;
+		out vec3 Bitangent;
 
 		void main()
 		{
@@ -138,6 +142,8 @@ bool SolarSystemGLProgram::SetupVertexShader()
 			TexCoord = texCoord;
 			Normal = normalize(transpInvModelMat * normal);
 			FragPos = vec3(modelMat * vec4(position, 1.0f));
+			Tangent = normalize(transpInvModelMat * tangent);
+			Bitangent = normalize(transpInvModelMat * bitangent);
 		}
 
 	));
@@ -187,6 +193,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		in vec2 TexCoord;
 		in vec3 Normal;
 		in vec3 FragPos;
+		in vec3 Tangent;
+		in vec3 Bitangent;
 
 		out vec4 outputColor;
 
