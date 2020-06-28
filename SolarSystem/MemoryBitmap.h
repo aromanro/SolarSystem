@@ -58,6 +58,20 @@ public:
 		}
 	}
 
+	inline void SetPixel(int Xpos, int Ypos, COLORREF color)
+	{
+		if (!data) return;
+
+		const int stride = GetStrideLength();
+
+		const int startLine = (m_height - Ypos - 1) * stride;
+		const int pos = startLine + static_cast<int>(3. * Xpos);
+
+		data[pos] = GetBValue(color);
+	    data[pos + 1] = GetGValue(color);
+		data[pos + 2] = GetRValue(color);
+	}
+
 	inline int GetStrideLength() const {
 		return 4 * ((m_width * 3 + 3) / 4);
 	}

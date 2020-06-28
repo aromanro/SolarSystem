@@ -35,5 +35,8 @@ public:
 	~BodyProperties();
 	bool LoadTexture();
 	void CleanTexture();
+
+protected:
+	static double GetPixelValue(const CImage& img, int x, int y);
 };
 

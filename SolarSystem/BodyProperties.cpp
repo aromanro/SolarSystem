@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "BodyProperties.h"
+#include "MemoryBitmap.h"
+
+#include <glm.hpp>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -187,7 +190,41 @@ bool BodyProperties::LoadTexture()
 						else
 						{
 							// if it's a bump map, there is some work to do
+							MemoryBitmap memoryBitmap(skin.GetWidth(), skin.GetHeight());
 
+							// TODO: set the normal map into the memory bitmap (using Sobel to convert from bump map)
+
+							for (int row = 0; row < skin.GetHeight(); ++row)
+							{
+								for (int col = 0; col < skin.GetWidth(); ++col)
+								{
+									const double topLeft = GetPixelValue(skin, row - 1, col - 1);
+									const double left = GetPixelValue(skin, row, col - 1);
+									const double bottomLeft = GetPixelValue(skin, row + 1, col - 1);
+									const double topRight = GetPixelValue(skin, row - 1, col + 1);
+									const double right = GetPixelValue(skin, row, col + 1);
+									const double bottomRight = GetPixelValue(skin, row + 1, col + 1);
+									const double top = GetPixelValue(skin, row - 1, col);
+									const double bottom = GetPixelValue(skin, row + 1, col);
+
+									// Sobel (actually, -dx, -dy)
+									const double mdX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
+									const double mdY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
+									
+									const double dZ = 1.;
+
+									glm::vec3 v(mdX, mdY, dZ);
+									v = glm::normalize(v);
+									// now convert to RGB
+									const double R = 255. * 0.5 * (1. + v.x);
+									const double G = 255. * 0.5 * (1. + v.y);
+									const double B = 255. * 0.5 * (1. + v.z);
+
+									memoryBitmap.SetPixel(row, col, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
+								}
+							}
+
+							memoryBitmap.SetIntoTexture(*normalTexture);
 						}
 					}
 				}
@@ -241,6 +278,24 @@ bool BodyProperties::LoadTexture()
 
 
 	return false;
+}
+
+
+double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
+{
+	const int width = img.GetWidth();
+	const int height = img.GetHeight();
+
+	if (x < 0) x += width;
+	else if (x >= width) x -= width;
+	
+	if (y < 0) x += height;
+	else if (y >= height) y -= height;
+
+	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
+	if (paddr) return *paddr / 255.;
+
+	return 0;
 }
 
 
