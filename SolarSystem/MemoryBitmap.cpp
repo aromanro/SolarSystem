@@ -131,23 +131,17 @@ void MemoryBitmap::Draw(CDC* pDC, CRect& rect, int origWidth, int origHeight)
 
 void MemoryBitmap::WriteText(const char* text, CFont& font, DWORD color, DWORD bkcolor)
 {
-	BITMAPINFO bmi;
-	ZeroMemory(&bmi, sizeof(BITMAPINFOHEADER));
-
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = m_width;
-	bmi.bmiHeader.biHeight = m_height;
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biBitCount = 24;
-	bmi.bmiHeader.biCompression = BI_RGB;
+	const HDC hDC = GetDC(NULL);
+	if (NULL == hDC) return;
+	CDC* pDC = CDC::FromHandle(hDC);
+	if (!pDC) return;
 
 	CBitmap bitmap;
 	CDC dcMemory;
 
-	CDC* pDC = CDC::FromHandle(GetDC(NULL));
 	dcMemory.CreateCompatibleDC(pDC);
 	bitmap.CreateCompatibleBitmap(pDC, m_width, m_height);
-	pDC->DeleteDC();
+	//pDC->DeleteDC();
 
 	CBitmap* pOldBitmap = dcMemory.SelectObject(&bitmap);
 
@@ -165,6 +159,16 @@ void MemoryBitmap::WriteText(const char* text, CFont& font, DWORD color, DWORD b
 	dcMemory.FillSolidRect(&rect, bkcolor);
 
 	dcMemory.DrawText(CString(text), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	BITMAPINFO bmi;
+	ZeroMemory(&bmi, sizeof(BITMAPINFOHEADER));
+
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = m_width;
+	bmi.bmiHeader.biHeight = m_height;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 24;
+	bmi.bmiHeader.biCompression = BI_RGB;
 
 	::GetDIBits(dcMemory.GetSafeHdc(), bitmap, 0, m_height, data, &bmi, DIB_RGB_COLORS);
 

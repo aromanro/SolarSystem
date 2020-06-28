@@ -124,15 +124,14 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		layout(location = 1) in vec3 normal;
 		layout(location = 2) in vec2 texCoord;
 		layout(location = 3) in vec3 tangent;
-		layout(location = 4) in vec3 bitangent;
 
 		uniform mat4 transformMat;
 		uniform mat4 modelMat;
 		uniform mat3 transpInvModelMat;
 
 		out vec2 TexCoord;
-		out vec3 Normal;
 		out vec3 FragPos;
+		out vec3 Normal;
 		out vec3 Tangent;
 		out vec3 Bitangent;
 
@@ -140,12 +139,15 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		{
 			gl_Position = transformMat * modelMat * vec4(position.x, position.y, position.z, 1.0);
 			TexCoord = texCoord;
-			Normal = normalize(transpInvModelMat * normal);
 			FragPos = vec3(modelMat * vec4(position, 1.0f));			
+			
+			Normal = normalize(transpInvModelMat * normal);
 			Tangent = normalize(transpInvModelMat * tangent);
-			Bitangent = normalize(transpInvModelMat * bitangent);
-		}
+			// re-orhogonalize
+			Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
 
+			Bitangent = normalize(cross(Normal, Tangent));
+		}
 	));
 
 	if (vertexShader.getStatus() == false)
@@ -191,8 +193,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform vec3 lightPos;
 
 		in vec2 TexCoord;
-		in vec3 Normal;
 		in vec3 FragPos;
+		in vec3 Normal;
 		in vec3 Tangent;
 		in vec3 Bitangent;
 

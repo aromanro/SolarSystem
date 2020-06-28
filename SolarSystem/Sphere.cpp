@@ -17,7 +17,7 @@ namespace OpenGL {
 		: m_lats(lats), m_longs(longs)
 	{
 		std::vector<GLfloat> buffer;
-		const int STRIDE_SIZE = 14; // 3 for vertex, 3 for normal, 2 for texture coordinates, 3 for tangent, 3 for bitangent
+		const int STRIDE_SIZE = 11; // 3 for vertex, 3 for normal, 2 for texture coordinates, 3 for tangent
 		const int STEP_SIZE = 2 * STRIDE_SIZE; // 2 vertices at once
 
 		unsigned int length = (lats + 1) * (longs + 1) * STEP_SIZE;
@@ -45,11 +45,10 @@ namespace OpenGL {
 				double YTex0 = static_cast<double>(i) / lats;
 				double YTex1 = (static_cast<double>(i) + 1.) / lats;
 
-				//double lng = sqrt(x0*x0 + y0*y0 + z0*z0);
-
 				double x1 = r1 * c;
 				double y1 = r1 * s;
-				//double lng1 = sqrt(x1*x1 + y1*y1 + z1*z1);
+
+				// first vertex
 
 				// vertex
 				const size_t base = i * (longs + 1ULL) * STEP_SIZE + j * STEP_SIZE;
@@ -82,12 +81,7 @@ namespace OpenGL {
 				buffer[base + 9] = static_cast<float>(tangent.y);
 				buffer[base + 10] = static_cast<float>(tangent.z);
 
-
-				// bitangent
-				buffer[base + 11] = static_cast<float>(bitangent.x);
-				buffer[base + 12] = static_cast<float>(bitangent.y);
-				buffer[base + 13] = static_cast<float>(bitangent.z);
-
+				// second vertex
 
 				// vertex 
 				buffer[base + STRIDE_SIZE] = static_cast<float>(x0);
@@ -115,11 +109,6 @@ namespace OpenGL {
 				buffer[base + STRIDE_SIZE + 8] = static_cast<float>(tangent.x);
 				buffer[base + STRIDE_SIZE + 9] = static_cast<float>(tangent.y);
 				buffer[base + STRIDE_SIZE + 10] = static_cast<float>(tangent.z);
-
-				// bitangent
-				buffer[base + STRIDE_SIZE + 11] = static_cast<float>(bitangent.x);
-				buffer[base + STRIDE_SIZE + 12] = static_cast<float>(bitangent.y);
-				buffer[base + STRIDE_SIZE + 13] = static_cast<float>(bitangent.z);
 			}
 		}
 
@@ -141,10 +130,6 @@ namespace OpenGL {
 		// tangent
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, STRIDE_SIZE * sizeof(GLfloat), (GLvoid*)(8 * sizeof(GLfloat)));
-
-		// bitangent
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, STRIDE_SIZE * sizeof(GLfloat), (GLvoid*)(11 * sizeof(GLfloat)));
 	}
 
 
