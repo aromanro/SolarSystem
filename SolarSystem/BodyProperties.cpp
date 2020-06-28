@@ -280,7 +280,7 @@ bool BodyProperties::LoadTexture()
 	return false;
 }
 
-
+// the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
 double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 {
 	const int width = img.GetWidth();
