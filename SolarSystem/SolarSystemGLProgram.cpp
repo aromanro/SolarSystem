@@ -12,8 +12,8 @@
 
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
-	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), useSpecularTextLocation(0), alphaInTransparentTexture(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
-	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), specularTextureLoc(0), depthMapLoc(0)
+	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), useSpecularTextLocation(0), useNormalTextLocation(0), alphaInTransparentTexture(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
+	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), specularTextureLoc(0), normalTextureLoc(0), depthMapLoc(0)
 {
 }
 
@@ -73,6 +73,7 @@ void SolarSystemGLProgram::getUniformsLocations()
 	useTransparentTextLocation = glGetUniformLocation(getID(), "UseTransparentTexture");
 	useShadowTextLocation = glGetUniformLocation(getID(), "UseShadowTexture");
 	useSpecularTextLocation = glGetUniformLocation(getID(), "UseSpecularTexture");
+	useNormalTextLocation = glGetUniformLocation(getID(), "UseNormalTexture");
 
 	alphaInTransparentTexture = glGetUniformLocation(getID(), "alphaInTransparentTexture");
 
@@ -88,6 +89,7 @@ void SolarSystemGLProgram::getUniformsLocations()
 	transparentTextureLoc = glGetUniformLocation(getID(), "transparentTexture");
 	shadowTextureLoc = glGetUniformLocation(getID(), "shadowTexture");
 	specularTextureLoc = glGetUniformLocation(getID(), "specularTexture");
+	normalTextureLoc = glGetUniformLocation(getID(), "normalTexture");
 
 	depthMapLoc = glGetUniformLocation(getID(), "depthMap");
 }
@@ -183,6 +185,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform int UseTransparentTexture;
 		uniform int UseShadowTexture;
 		uniform int UseSpecularTexture;
+		uniform int UseNormalTexture;
 
 		uniform int alphaInTransparentTexture;
 
@@ -204,6 +207,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform sampler2D transparentTexture;
 		uniform sampler2D shadowTexture;
 		uniform sampler2D specularTexture;
+		uniform sampler2D normalTexture;
 
 		uniform int calcShadows;
 		uniform samplerCube depthMap;

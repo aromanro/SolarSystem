@@ -37,6 +37,7 @@ public:
 	GLint useTransparentTextLocation;
 	GLint useShadowTextLocation;
 	GLint useSpecularTextLocation;
+	GLint useNormalTextLocation;
 
 	GLint alphaInTransparentTexture;
 
@@ -50,6 +51,7 @@ public:
 	GLint transparentTextureLoc;
 	GLint shadowTextureLoc;
 	GLint specularTextureLoc;
+	GLint normalTextureLoc;
 	GLint depthMapLoc;
 protected:
 	void getUniformsLocations();

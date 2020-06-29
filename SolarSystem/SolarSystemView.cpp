@@ -427,6 +427,14 @@ void CSolarSystemView::RenderScene()
 			}
 			else
 				glUniform1i(program->useSpecularTextLocation, 0);
+
+			if (pit->normalTexture)
+			{
+				pit->normalTexture->Bind(4);
+				glUniform1i(program->useNormalTextLocation, 1);
+			}
+			else
+				glUniform1i(program->useNormalTextLocation, 0);
 		}
 		else
 		{
@@ -436,6 +444,8 @@ void CSolarSystemView::RenderScene()
 			glUniform1i(program->alphaInTransparentTexture, 0);
 			glUniform1i(program->useShadowTextLocation, 0);
 			glUniform1i(program->useSpecularTextLocation, 0);
+			glUniform1i(program->useNormalTextLocation, 0);
+
 		}
 
 		sphere->Draw();
@@ -1039,6 +1049,11 @@ void CSolarSystemView::DisplayBilboard()
 	glUniform1i(program->useTransparentTextLocation, 0); // but no transparent texture on top of it
 
 	glUniform1i(program->useAlphaBlend, 1);
+
+	glUniform1i(program->alphaInTransparentTexture, 0);
+	glUniform1i(program->useShadowTextLocation, 0);
+	glUniform1i(program->useSpecularTextLocation, 0);
+	glUniform1i(program->useNormalTextLocation, 0);
 
 	DisableAntialias(); // otherwise a diagonal line is shown over the rectangle sometimes, with alpha blending on
 
