@@ -135,7 +135,7 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		out vec3 FragPos;
 		out vec3 Normal;
 		out vec3 Tangent;
-		out vec3 Bitangent;
+		//out vec3 Bitangent;
 
 		void main()
 		{
@@ -145,10 +145,6 @@ bool SolarSystemGLProgram::SetupVertexShader()
 			
 			Normal = normalize(transpInvModelMat * normal);
 			Tangent = normalize(transpInvModelMat * tangent);
-			// re-orhogonalize
-			Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
-
-			Bitangent = normalize(cross(Normal, Tangent));
 		}
 	));
 
@@ -199,7 +195,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		in vec3 FragPos;
 		in vec3 Normal;
 		in vec3 Tangent;
-		in vec3 Bitangent;
+		//in vec3 Bitangent;
 
 		out vec4 outputColor;
 
@@ -285,10 +281,14 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			// this is only for normal mapping - it's applied on the usual texture and on the one used for shadow, but not on the transparent one
 			if (1 == UseNormalTexture)
 			{
-				mat3 TBN = mat3(Tangent, Bitangent, normal);
+				// re-orhogonalize
+				vec3 tangent = normalize(Tangent - dot(Tangent, normal) * normal);
+				vec3 bitangent = normalize(cross(normal, tangent));
 
-				vec3 normalMapped = texture(normalTexture, TexCoord).rgb;
-				normalMapped = normalMapped * 2. - 1.;
+				mat3 TBN = mat3(tangent, bitangent, normal);
+
+				vec3 normalMapped = texture(normalTexture, TexCoord).rgb * 2. - 1.;
+
 				normalMapped = normalize(TBN * normalMapped);
 				
 				float diffMapped = max(dot(normalMapped, lightDir), 0.0);

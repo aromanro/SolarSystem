@@ -293,6 +293,7 @@ double BodyProperties::GetPixelValue(const CImage& img, int y, int x)
 	else if (y >= height) y -= height;
 
 	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
+
 	if (paddr) return *paddr / 255.;
 
 	return 0;
