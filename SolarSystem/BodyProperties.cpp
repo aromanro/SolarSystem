@@ -220,7 +220,7 @@ bool BodyProperties::LoadTexture()
 									const double G = 255. * 0.5 * (1. + v.y);
 									const double B = 255. * 0.5 * (1. + v.z);
 
-									memoryBitmap.SetPixel(row, col, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
+									memoryBitmap.SetPixel(col, row, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
 								}
 							}
 
@@ -281,7 +281,7 @@ bool BodyProperties::LoadTexture()
 }
 
 // the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
-double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
+double BodyProperties::GetPixelValue(const CImage& img, int y, int x)
 {
 	const int width = img.GetWidth();
 	const int height = img.GetHeight();
@@ -289,7 +289,7 @@ double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 	if (x < 0) x += width;
 	else if (x >= width) x -= width;
 	
-	if (y < 0) x += height;
+	if (y < 0) y += height;
 	else if (y >= height) y -= height;
 
 	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));

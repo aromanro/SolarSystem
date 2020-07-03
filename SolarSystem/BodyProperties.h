@@ -37,6 +37,6 @@ public:
 	void CleanTexture();
 
 protected:
-	static double GetPixelValue(const CImage& img, int x, int y);
+	static double GetPixelValue(const CImage& img, int y, int x);
 };
 
