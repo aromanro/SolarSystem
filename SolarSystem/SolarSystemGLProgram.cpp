@@ -279,26 +279,53 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			vec3 halfwayDir = normalize(lightDir + viewDir);
 			float val = max(dot(normal, halfwayDir), 0.0);
 
-			float spec1 = pow(val, 32);
-
-			float spec2 = pow(val, 16); // different 'specular' for the transparent color - typically clouds
-
 			vec3 firstLayerColor;
 			vec3 transparentLayerColor;
 
-			if (UseSpecularTexture == 1)
+			// this is only for normal mapping - it's applied on the usual texture and on the one used for shadow, but not on the transparent one
+			if (1 == UseNormalTexture)
 			{
-				float spec3 = pow(val, 48);
+				mat3 TBN = mat3(Tangent, Bitangent, normal);
 
-				float specProc = texture(specularTexture, TexCoord)[0];
-				float oneMinusProc = 1. - specProc;
-				firstLayerColor = (oneMinusProc * diff + specProc * spec3)* color;
+				vec3 normalMapped = texture(normalTexture, TexCoord).rgb;
+				normalMapped = normalMapped * 2. - 1.;
+				normalMapped = normalize(TBN * normalMapped);
+				
+				float diffMapped = max(dot(normalMapped, lightDir), 0.0);
+				float valMapped = max(dot(normalMapped, halfwayDir), 0.0);
+
+				if (1 == UseSpecularTexture)
+				{
+					float spec3 = pow(valMapped, 48);
+
+					float specProc = texture(specularTexture, TexCoord)[0];
+					float oneMinusProc = 1. - specProc;
+					firstLayerColor = (oneMinusProc * diffMapped + specProc * spec3) * color;
+				}
+				else
+				{
+					float specMapped = pow(valMapped, 32);
+					firstLayerColor = (0.7 * diffMapped + 0.3 * specMapped) * color;
+				}
 			}
 			else
 			{
-				firstLayerColor = (0.7 * diff + 0.3 * spec1) * color;
+				if (1 == UseSpecularTexture)
+				{
+					float spec3 = pow(val, 48);
+
+					float specProc = texture(specularTexture, TexCoord)[0];
+					float oneMinusProc = 1. - specProc;
+					firstLayerColor = (oneMinusProc * diff + specProc * spec3) * color;
+				}
+				else
+				{
+					float spec = pow(val, 32);
+					firstLayerColor = (0.7 * diff + 0.3 * spec) * color;
+				}
 			}
 
+			float spec2 = pow(val, 16); // different 'specular' for the transparent color - typically clouds
 			transparentLayerColor = (0.8 * diff + 0.2 * spec2) * transparentColor.xyz;
 
 			float alphaColor = 0.5;
