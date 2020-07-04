@@ -185,7 +185,7 @@ bool BodyProperties::LoadTexture()
 							else
 								buf = static_cast<unsigned char*>(skin.GetBits());
 
-							normalTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 3, 1);
+							normalTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 4);
 						}
 						else
 						{
@@ -224,7 +224,7 @@ bool BodyProperties::LoadTexture()
 								}
 							}
 
-							memoryBitmap.SetIntoTexture(*normalTexture);
+							memoryBitmap.SetIntoTexture(*normalTexture, 4);
 						}
 					}
 				}
@@ -293,10 +293,13 @@ double BodyProperties::GetPixelValue(const CImage& img, int y, int x)
 	else if (y >= height) y -= height;
 
 	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
-
 	if (paddr) return *paddr / 255.;
 
-	return 0;
+	// this is very slow!
+	//COLORREF rgb = img.GetPixel(x, y);
+	//return ((double)GetRValue(rgb) + (double)GetGValue(rgb) + (double)GetBValue(rgb)) / (3. * 255.);
+
+	return 0.;
 }
 
 
@@ -310,6 +313,9 @@ void BodyProperties::CleanTexture()
 
 	delete shadowTexture;
 	shadowTexture = NULL;
+
+	delete specularTexture;
+	specularTexture = NULL;
 
 	delete normalTexture;
 	normalTexture = NULL;

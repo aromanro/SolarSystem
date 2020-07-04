@@ -180,13 +180,13 @@ void MemoryBitmap::WriteText(const char* text, CFont& font, DWORD color, DWORD b
 	dcMemory.SelectObject(pOldBitmap);	
 }
 
-void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
+void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture, int nr)
 {
 	if (!data) return;
 
 #if USE_DIRECT_TRANSFER
 	
-	texture.setData(data, m_width, m_height);
+	texture.setData(data, m_width, m_height, nr);
 
 #else 
 
@@ -210,7 +210,7 @@ void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture)
 		}
 	}
 
-	texture.setData(texdata.data(), m_width, m_height);
+	texture.setData(texdata.data(), m_width, m_height, nr);
 #endif
 }
 

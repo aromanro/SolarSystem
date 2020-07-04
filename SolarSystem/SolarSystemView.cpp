@@ -70,6 +70,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 	glUniform1i(program.transparentTextureLoc, 1);
 	glUniform1i(program.shadowTextureLoc, 2);
 	glUniform1i(program.specularTextureLoc, 3);
+	glUniform1i(program.normalTextureLoc, 4);
 
 	// this is for shadow
 	glUniform1i(program.depthMapLoc, 10);

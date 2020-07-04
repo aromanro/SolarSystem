@@ -17,8 +17,8 @@ namespace OpenGL {
 		: m_lats(lats), m_longs(longs)
 	{
 		std::vector<GLfloat> buffer;
-		const int STRIDE_SIZE = 11; // 3 for vertex, 3 for normal, 2 for texture coordinates, 3 for tangent
-		const int STEP_SIZE = 2 * STRIDE_SIZE; // 2 vertices at once
+		static const int STRIDE_SIZE = 11; // 3 for vertex, 3 for normal, 2 for texture coordinates, 3 for tangent
+		static const int STEP_SIZE = 2 * STRIDE_SIZE; // 2 vertices at once
 
 		unsigned int length = (lats + 1) * (longs + 1) * STEP_SIZE;
 		buffer.resize(length); 
@@ -67,9 +67,9 @@ namespace OpenGL {
 
 				glm::vec3 normal(buffer[base + 3], buffer[base + 4], buffer[base + 5]);
 				
-				const glm::vec3 approxBitangent(x1 - x0, y1 - y0, z1 - z0);
+				const glm::vec3 approxBitangent(x1- x0, y1 - y0, z1 - z0);
 				
-				glm::vec3 bitangent = approxBitangent - (approxBitangent * normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
+				glm::vec3 bitangent = approxBitangent - glm::dot(approxBitangent, normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
 				bitangent = glm::normalize(bitangent); // now it's orthonormal
 
 				// the other one is simply the cross product
@@ -98,7 +98,7 @@ namespace OpenGL {
 				buffer[base + STRIDE_SIZE + 7] = static_cast<float>(YTex0);
 
 				normal = glm::vec3(buffer[base + STRIDE_SIZE + 3], buffer[base + STRIDE_SIZE + 4], buffer[base + STRIDE_SIZE + 5]);
-				bitangent = approxBitangent - (approxBitangent * normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
+				bitangent = approxBitangent - glm::dot(approxBitangent, normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
 				bitangent = glm::normalize(bitangent); // now it's orthonormal
 				
 				// the other one is simply the cross product
