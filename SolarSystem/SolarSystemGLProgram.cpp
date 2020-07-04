@@ -328,13 +328,26 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			float spec2 = pow(val, 16); // different 'specular' for the transparent color - typically clouds
 			transparentLayerColor = (0.8 * diff + 0.2 * spec2) * transparentColor.xyz;
 
-			float alphaColor = 0.5;
-			float alphaTransparent = 0.5;
+			float alphaColor;
+			float alphaTransparent;
 
-			if (1 == UseTexture && 1 == UseTransparentTexture && 1 == alphaInTransparentTexture)
+			if (1 == UseTexture && 1 == UseTransparentTexture) 
 			{
-				alphaTransparent = transparentColor[3];
-				alphaColor = 1. - alphaTransparent;
+				if (1 == alphaInTransparentTexture)
+				{
+					alphaTransparent = transparentColor[3];
+					alphaColor = 1. - alphaTransparent;
+				}
+				else
+				{
+					alphaColor = 0.5;
+					alphaTransparent = 0.5;
+				}
+			}
+			else
+			{
+				alphaColor = 1.;
+				alphaTransparent = 0.;
 			}
 
 			// Combine results								
@@ -384,8 +397,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				// use transparent layer?
 				// this is only for adding a clouds layer on Earth
 
-				float alphaColor = 0.5;
-				float alphaTransparent = 0.5;
+				float alphaColor;
+				float alphaTransparent;
 
 				vec4 transparentColor;
 				if (1 == UseTexture && 1 == UseTransparentTexture)
@@ -396,9 +409,18 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 						alphaTransparent = transparentColor[3];
 						alphaColor = 1. - alphaTransparent;
 					}
+					else
+					{
+						alphaColor = 0.5;
+						alphaTransparent = 0.5;
+					}
 				}
-				else 
+				else
+				{
+					alphaColor = 1.;
+					alphaTransparent = 0.;
 					transparentColor = color;
+				}
 
 				vec4 mixedColor = alphaColor * color + alphaTransparent * transparentColor;
 
