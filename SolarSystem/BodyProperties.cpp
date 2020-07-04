@@ -194,35 +194,38 @@ bool BodyProperties::LoadTexture()
 
 							// TODO: set the normal map into the memory bitmap (using Sobel to convert from bump map)
 
-							for (int row = 0; row < skin.GetHeight(); ++row)
+							for (int y = 0; y < skin.GetHeight(); ++y)
 							{
-								for (int col = 0; col < skin.GetWidth(); ++col)
+								for (int x = 0; x < skin.GetWidth(); ++x)
 								{
-									const double topLeft = GetPixelValue(skin, row - 1, col - 1);
-									const double left = GetPixelValue(skin, row, col - 1);
-									const double bottomLeft = GetPixelValue(skin, row + 1, col - 1);
-									const double topRight = GetPixelValue(skin, row - 1, col + 1);
-									const double right = GetPixelValue(skin, row, col + 1);
-									const double bottomRight = GetPixelValue(skin, row + 1, col + 1);
-									const double top = GetPixelValue(skin, row - 1, col);
-									const double bottom = GetPixelValue(skin, row + 1, col);
+									const double top = GetPixelValue(skin, x, y + 1);
+									const double bottom = GetPixelValue(skin, x, y - 1);
+									const double left = GetPixelValue(skin, x - 1, y);
+									const double right = GetPixelValue(skin, x + 1, y);
+
+									const double topLeft = GetPixelValue(skin, x - 1, y + 1);
+									const double bottomLeft = GetPixelValue(skin, x - 1, y - 1);
+									const double topRight = GetPixelValue(skin, x + 1, y + 1);
+									const double bottomRight = GetPixelValue(skin, x + 1, y - 1);
 
 									// Sobel (actually, -dx, -dy)
-									const double mdX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
-									const double mdY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
+									const double dX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
+									const double dY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
 									
-									const double dZ = 1.;
+									const double dZ = 2.;
 
-									glm::vec3 v(mdX, mdY, dZ);
+									glm::vec3 v(-dX, -dY, dZ);
 									v = glm::normalize(v);
 									// now convert to RGB
 									const double R = 255. * 0.5 * (1. + v.x);
 									const double G = 255. * 0.5 * (1. + v.y);
 									const double B = 255. * 0.5 * (1. + v.z);
 
-									memoryBitmap.SetPixel(col, row, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
+									memoryBitmap.SetPixel(x, y, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
 								}
 							}
+							
+							//memoryBitmap.Save(CString("C:\\temp\\") + normalFile);
 
 							memoryBitmap.SetIntoTexture(*normalTexture, 4);
 						}
@@ -281,7 +284,7 @@ bool BodyProperties::LoadTexture()
 }
 
 // the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
-double BodyProperties::GetPixelValue(const CImage& img, int y, int x)
+double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 {
 	const int width = img.GetWidth();
 	const int height = img.GetHeight();

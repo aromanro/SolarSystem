@@ -84,5 +84,7 @@ public:
 	void WriteText(const char* text, CFont& font, DWORD color = RGB(0, 0, 255), DWORD bkcolor = RGB(0, 0, 0));
 
 	void SetIntoTexture(OpenGL::Texture& texture, int nr = 0);
+
+	void Save(const CString& name);
 };
 

@@ -6,10 +6,10 @@
 #include <cassert>
 
 MemoryBitmap::MemoryBitmap(int width, int height)
-	: m_width(width), m_height(height), data(nullptr)
+	: m_width(0), m_height(0), data(nullptr)
 {	
-	if (m_width > 0 && m_height > 0)
-		SetSize(m_width, m_height);
+	if (width > 0 && height > 0)
+		SetSize(width, height);
 }
 
 
@@ -214,6 +214,20 @@ void MemoryBitmap::SetIntoTexture(OpenGL::Texture& texture, int nr)
 #endif
 }
 
+
+void MemoryBitmap::Save(const CString& name)
+{
+	if (!data) return;
+
+	CImage image;
+	image.Create(m_width, m_height, 24);
+
+	HDC hDC = image.GetDC();
+	Draw(CDC::FromHandle(hDC));
+	image.ReleaseDC();
+
+	image.Save(name);
+}
 
 
 

@@ -67,7 +67,7 @@ namespace OpenGL {
 
 				glm::vec3 normal(buffer[base + 3], buffer[base + 4], buffer[base + 5]);
 				
-				const glm::vec3 approxBitangent(x1- x0, y1 - y0, z1 - z0);
+				const glm::vec3 approxBitangent(x1 - x0, y1 - y0, z1 - z0);
 				
 				glm::vec3 bitangent = approxBitangent - glm::dot(approxBitangent, normal) * normal; // subtract the projection on the direction of the normal, now it's orthogonal
 				bitangent = glm::normalize(bitangent); // now it's orthonormal
