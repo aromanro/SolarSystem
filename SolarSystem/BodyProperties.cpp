@@ -208,14 +208,15 @@ bool BodyProperties::LoadTexture()
 									const double topRight = GetPixelValue(skin, x + 1, y + 1);
 									const double bottomRight = GetPixelValue(skin, x + 1, y - 1);
 
-									// Sobel (actually, -dx, -dy)
+									// Sobel
 									const double dX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
 									const double dY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
 									
-									const double dZ = 2.;
+									const double dZ = 2; // make it smaller to increase the slope 
 
 									glm::vec3 v(-dX, -dY, dZ);
 									v = glm::normalize(v);
+
 									// now convert to RGB
 									const double R = 255. * 0.5 * (1. + v.x);
 									const double G = 255. * 0.5 * (1. + v.y);
