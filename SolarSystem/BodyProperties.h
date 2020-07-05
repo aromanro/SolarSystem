@@ -29,6 +29,8 @@ public:
 
 	bool transparentTextureAlpha;
 
+	double bumpParam;
+
 	int parentIndex; // just an index for the body where the moon belongs
 
 	BodyProperties();

@@ -9,7 +9,7 @@
 #endif
 
 BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), normalTexture(NULL), transparentTextureAlpha(false), parentIndex(-1)
+	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), normalTexture(NULL), transparentTextureAlpha(false), bumpParam(2.), parentIndex(-1)
 {
 }
 
@@ -212,7 +212,7 @@ bool BodyProperties::LoadTexture()
 									const double dX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
 									const double dY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
 									
-									const double dZ = 2; // make it smaller to increase the slope 
+									const double dZ = bumpParam; // make it smaller to increase the slope 
 
 									glm::vec3 v(-dX, -dY, dZ);
 									v = glm::normalize(v);
