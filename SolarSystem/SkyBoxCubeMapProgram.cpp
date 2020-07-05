@@ -271,7 +271,7 @@ namespace OpenGL {
 #define LoadSkinBegin(name) { \
 	CImage skin; \
 	skin.Load(CString(name)); \
-	if (skin.IsNull()) return false; \
+	if (skin.IsNull()) throw new CFileException(); \
 	unsigned char* buf = (unsigned char*)skin.GetBits(); \
 	if (skin.GetPitch() < 0) \
 		buf = (unsigned char*)skin.GetPixelAddress(0, skin.GetHeight() - 1);
@@ -295,6 +295,72 @@ namespace OpenGL {
 			LoadSkinEnd(setDataFront);
 			LoadSkinBegin(back);
 			LoadSkinEnd(setDataBack);
+		}
+		catch (CFileException *e)
+		{
+			e->Delete();
+			try
+			{
+				// try once again by replacing '.jpg' with '.png'
+				{
+					CString name(left);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataLeft);
+				}
+				{
+					CString name(right);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataRight);
+				}
+				{
+					CString name(top);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataTop);
+				}
+				{
+					CString name(bottom);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataBottom);
+				}
+				{
+					CString name(front);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataFront);
+				}
+				{
+					CString name(back);
+					name.MakeLower();
+					name.Replace(_T(".jpg"), _T(".png"));
+
+					LoadSkinBegin(name);
+					LoadSkinEnd(setDataBack);
+				}
+			}
+			catch (CFileException* e)
+			{
+				e->Delete();
+
+				return false;
+			}
+			catch (...)
+			{
+				return false;
+			}
 		}
 		catch (...)
 		{
