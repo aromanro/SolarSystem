@@ -391,10 +391,18 @@ void CSolarSystemView::RenderScene()
 			}
 		}
 
-		if (pit->texture && theApp.options.drawTextures)
+		if (theApp.options.drawTextures)
 		{
-			pit->texture->Bind();
-			glUniform1i(program->useTextLocation, 1);
+			if (pit->texture)
+			{
+				pit->texture->Bind();
+				glUniform1i(program->useTextLocation, 1);
+			}
+			else
+			{
+				glUniform1i(program->useTextLocation, 0);
+				glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
+			}
 
 			if (pit->transparentTexture)
 			{
@@ -632,8 +640,8 @@ int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	const int nPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
 	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
 
-	// 50 frames/sec
-	timer = SetTimer(1, 20, NULL);
+	// aprox 60 frames/sec
+	timer = SetTimer(1, 17, NULL);
 
 	slowTimer = SetTimer(2, 1000, NULL);
 

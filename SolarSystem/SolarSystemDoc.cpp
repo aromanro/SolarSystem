@@ -326,7 +326,7 @@ void CSolarSystemDoc::LoadXmlFile(const CString& name)
 
 void CSolarSystemDoc::RetrieveData()
 {
-	m_SolarSystem.m_Bodies = m_Thread.GetBodies();
+	m_SolarSystem.m_Bodies.swap(m_Thread.GetBodies());
 	m_SolarSystem.m_simulationTime = m_Thread.simulationTime;
 }
 

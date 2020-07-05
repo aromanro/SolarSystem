@@ -16,7 +16,7 @@ namespace MolecularDynamics {
 
 
 	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), m_timestep(120), simulationTime(0)
+		: an_event(0), nrsteps(1), m_timestep(60), simulationTime(0)
 	{
 	}
 
@@ -39,9 +39,9 @@ namespace MolecularDynamics {
 			if (cit == it) continue;
 
 			const Vector3D<double> r21 = cit->m_Position - it->m_Position;
-			const double length = r21.Length();
+			const double length2 = r21 * r21;
 
-			acceleration += r21 * cit->m_Mass / ((length*length + EPS2) * length);
+			acceleration += r21 * cit->m_Mass / ((length2 + EPS2) * sqrt(length2));
 		}
 
 		return G * acceleration;
@@ -91,6 +91,7 @@ namespace MolecularDynamics {
 		{
 			const double angular_speed = TWO_M_PI / body.rotationPeriod;
 			body.rotation += angular_speed * timestep;
+			
 			if (body.rotation >= TWO_M_PI) body.rotation -= TWO_M_PI;
 			else if (body.rotation < 0) body.rotation += TWO_M_PI;
 		}
@@ -212,10 +213,8 @@ namespace MolecularDynamics {
 	BodyList ComputationThread::GetBodies()
 	{
 		std::lock_guard<std::mutex> lock(m_DataSection);
-
-		BodyList bodies(m_SharedBodies);
-
-		return std::move(bodies);
+	
+		return BodyList(m_SharedBodies);
 	}
 
 }

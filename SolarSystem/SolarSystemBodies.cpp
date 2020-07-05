@@ -38,6 +38,8 @@ void SolarSystemBodies::LoadTextures()
 				body.shadowTexture->GenerateMipmaps();
 			if (body.specularTexture)
 				body.specularTexture->GenerateMipmaps();
+			
+			// some bump maps appear to look better without mipmaps, from distance
 			if (body.normalTexture)
 				body.normalTexture->GenerateMipmaps();
 		}
