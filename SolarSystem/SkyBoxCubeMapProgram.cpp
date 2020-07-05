@@ -274,7 +274,10 @@ namespace OpenGL {
 	if (skin.IsNull()) throw new CFileException(); \
 	unsigned char* buf = (unsigned char*)skin.GetBits(); \
 	if (skin.GetPitch() < 0) \
-		buf = (unsigned char*)skin.GetPixelAddress(0, skin.GetHeight() - 1);
+		buf = (unsigned char*)skin.GetPixelAddress(0, skin.GetHeight() - 1); \
+	else \
+		buf = static_cast<unsigned char*>(skin.GetBits());
+
 
 #define LoadSkinEnd(funct) funct(buf, skin.GetWidth(), skin.GetHeight()); }
 
