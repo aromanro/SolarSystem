@@ -229,7 +229,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 
 			int samples = 16;
 
-			float diskRadius = (1.0 + 150.0 * (viewDist / farPlane)) / 8.0;
+			float diskRadius = (1.0 + 50.0 * (viewDist / farPlane)) / 8.0;
 			for (int i = 0; i < samples; ++i)
 			{
 				// most of fragments are either deep in the shadow or in the light

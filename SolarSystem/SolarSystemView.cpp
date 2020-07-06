@@ -345,7 +345,7 @@ void CSolarSystemView::RenderScene()
 
 	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
 
-	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
+	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
 	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 	glUniform1i(program->useAlphaBlend, 0);

@@ -8,6 +8,7 @@ const double translateDistStep = 2.;
 const double cameraAngle = 45. * M_PI / 180.;
 const GLuint SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 
+// from AU = astronomical unit = 149597870700 m
 const double AGLU = (149597870700. / 100.);
 
 
