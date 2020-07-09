@@ -401,7 +401,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				float alphaTransparent;
 
 				vec4 transparentColor;
-				if (1 == UseTexture && 1 == UseTransparentTexture)
+				if (1 == UseTransparentTexture)
 				{
 					transparentColor = texture(transparentTexture, TexCoord);
 					if (1 == alphaInTransparentTexture)
