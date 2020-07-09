@@ -25,6 +25,8 @@ namespace MolecularDynamics {
 		std::mutex m_DataSection;
 
 		std::thread Thread;
+
+		std::vector<Vector3D<double>> accelerations;
 	public:
 		unsigned int m_timestep;
 		std::atomic<double> simulationTime;
@@ -43,14 +45,14 @@ namespace MolecularDynamics {
 		BodyList GetBodies();
 
 	protected:
-		void Initialize(BodyList& m_Bodies) const;
+		void Initialize(BodyList& m_Bodies);
 
 		inline static Vector3D<double> CalculateAcceleration(BodyList::const_iterator& it, BodyList& Bodies);
 
 #ifdef USE_VERLET
-		inline static void VerletStep(BodyList& Bodies, double period, double period2);
+		inline void VerletStep(BodyList& Bodies, double period, double period2);
 #else
-		inline static void VelocityVerletStep(BodyList& Bodies, double period, double period2);
+		inline VelocityVerletStep(BodyList& Bodies, double period, double period2);
 #endif
 		inline static void CalculateRotations(BodyList& Bodies, double period);
 		void Compute();
