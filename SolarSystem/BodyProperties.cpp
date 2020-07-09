@@ -275,7 +275,8 @@ bool BodyProperties::LoadTexture()
 		}
 		catch (...)
 		{
-			CleanTexture();
+			delete texture;
+			texture = NULL;
 		}
 	}
 
