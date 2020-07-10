@@ -383,7 +383,7 @@ void CSolarSystemView::RenderScene()
 			{
 				glm::vec3 lightDir = program->lights[i].lightPos - pos;
 
-				const float atten = static_cast<float>(1. / (1. + 0.001 * glm::length(lightDir)));
+				const float atten = static_cast<float>(1. / (1. + 0.0001 * glm::length(lightDir)));
 
 				lightDir = glm::normalize(lightDir);
 				glUniform3f(program->lights[i].lightDirPos, lightDir.x, lightDir.y, lightDir.z);
