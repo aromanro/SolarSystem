@@ -108,6 +108,7 @@ namespace OpenGL {
 	void SkyBoxCubeMapProgram::Draw(const glm::mat4& mat)
 	{
 		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
 		Use();
 
 		glUniformMatrix4fv(transformMatLoc, 1, GL_FALSE, value_ptr(mat));
@@ -120,6 +121,7 @@ namespace OpenGL {
 		skyBox->UnBind();
 		cubeMapTextures->UnBind();
 		UnUse();
+		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 	}
 
