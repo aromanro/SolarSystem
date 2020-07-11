@@ -269,7 +269,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in vec3 color, in vec4 transparentColor)
 		{
 			// Diffuse shading
-			float diff = max(dot(normal, lightDir), 0.0);
+			float proj = dot(normal, lightDir);
+			float diff = max(proj, 0.0);
 
 			// Specular shading
 			vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -279,7 +280,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			vec3 transparentLayerColor;
 
 			// this is only for normal mapping - it's applied on the usual texture and on the one used for shadow, but not on the transparent one
-			if (1 == UseNormalTexture)
+			if (1 == UseNormalTexture) // don't use normal mapping if on the shadow side
 			{
 				// re-orhogonalize
 				vec3 tangent = normalize(Tangent - dot(Tangent, normal) * normal);
@@ -288,8 +289,11 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				mat3 TBN = mat3(tangent, bitangent, normal);
 
 				vec3 normalMapped = texture(normalTexture, TexCoord).rgb * 2. - 1.;
-
 				normalMapped = normalize(TBN * normalMapped);
+
+				// this makes bump mapping go away faster beyond terminator, otherwise it looks odd
+				if (proj < 0)
+					normalMapped = (1. + proj) * normalMapped - proj * normal;
 				
 				float diffMapped = max(dot(normalMapped, lightDir), 0.0);
 				float valMapped = max(dot(normalMapped, halfwayDir), 0.0);
@@ -385,12 +389,14 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 						if (shadow > 0.)
 							color = 0.1 * color + 0.9 * shadowColor;
 						else
+						{
 							// without this 'trick' the contrast at terminator was too big
 							// at the terminator the angle between light and normal is 90 degrees, so the projection is 0
 							// then it goes negative up to -1 and so on
 							// this progressively mixes the normal layer with the shadow one
 							// I'm sure a better way could be found, but for now it's good enough for me
 							color = (1. + proj) * color - proj * shadowColor;
+						}
 					}
 				}
 
