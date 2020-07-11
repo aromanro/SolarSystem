@@ -379,10 +379,10 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				if (1 == UseShadowTexture)
 				{
 					float proj = dot(normalize(Lights[0].lightDir), normal);
-					if (shadow > 0.1 || proj < 0)
+					if (shadow > 0. || proj < 0)
 					{
 						vec4 shadowColor = texture(shadowTexture, TexCoord);
-						if (shadow > 0.1)
+						if (shadow > 0.)
 							color = 0.1 * color + 0.9 * shadowColor;
 						else
 							// without this 'trick' the contrast at terminator was too big
