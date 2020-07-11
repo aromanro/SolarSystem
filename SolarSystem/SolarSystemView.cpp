@@ -75,7 +75,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 	// this is for shadow
 	glUniform1i(program.depthMapLoc, 10);
 	glUniform1i(program.calcShadowsLoc, theApp.options.drawShadows ? 1 : 0);
-	glUniform3f(program.lightPosLoc, program.lights[0].lightPos.x, program.lights[0].lightPos.y, program.lights[0].lightPos.z);
+	glUniform3f(program.lightPosLoc, static_cast<float>(program.lights[0].lightPos.x), static_cast<float>(program.lights[0].lightPos.y), static_cast<float>(program.lights[0].lightPos.z));
 }
 
 
@@ -308,7 +308,7 @@ void CSolarSystemView::Setup()
 	inited = true;
 }
 
-void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, Vector3D<double>& pos)
+void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::dvec3& pos)
 {
 	CSolarSystemDoc *doc = GetDocument();
 
@@ -322,12 +322,12 @@ void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator&
 	if (parentProps.isMoon || parentProps.isSun) 
 		return;
 
-	Vector3D<double> mpos(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
-	const Vector3D<double> fromvec = pos - mpos;
-	const double dist = fromvec.Length();
+	glm::dvec3 mpos(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
+	const glm::dvec3 fromvec = pos - mpos;
+	const double dist = glm::length(fromvec);
 
 	if (dist <= (parent.m_Radius * parentProps.scale + it->m_Radius * pit->scale) / AGLU)
-		pos = mpos + Vector3D<double>(fromvec.X * pit->scaleDistance, fromvec.Y * pit->scaleDistance, fromvec.Z * pit->scaleDistance);
+		pos = mpos + glm::dvec3(fromvec.x * pit->scaleDistance, fromvec.y * pit->scaleDistance, fromvec.z * pit->scaleDistance);
 }
 
 void CSolarSystemView::RenderScene()
@@ -337,7 +337,7 @@ void CSolarSystemView::RenderScene()
 	CSolarSystemDoc *doc = GetDocument();
 	if (!doc) return;
 
-	glm::mat4 mat = perspectiveMatrix*(glm::mat4)camera;
+	glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
 
 	program->Use();
 
@@ -353,27 +353,26 @@ void CSolarSystemView::RenderScene()
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
-		glm::mat4 modelMat(1);
-		Vector3D<double> posv = Vector3D<double>(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+		glm::dmat4 modelMatHP(1);
+		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
 
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, posv);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
 
 		// ****************************************************************************************************************************
 
-		const glm::vec3 pos(posv.X, posv.Y, posv.Z);
+		modelMatHP = glm::translate(modelMatHP, pos);
 
-		modelMat = glm::translate(modelMat, pos);
+		const double scale = it->m_Radius * pit->scale / AGLU;
+		modelMatHP = glm::scale(modelMatHP, glm::dvec3(scale, scale, scale));
+		modelMatHP = glm::rotate(modelMatHP, pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0));
+		modelMatHP = glm::rotate(modelMatHP, it->rotation, glm::dvec3(0, 0, 1));
 
-		const float scale = static_cast<float>(it->m_Radius * pit->scale / AGLU);
-		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
-		modelMat = glm::rotate(modelMat, static_cast<float>(pit->tilt * M_PI / 180.), glm::vec3(0, 1, 0));
-		modelMat = glm::rotate(modelMat, static_cast<float>(it->rotation), glm::vec3(0, 0, 1));
-
-		glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
+		const glm::mat4 modelMat(modelMatHP);
+		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
 
 		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
@@ -383,12 +382,12 @@ void CSolarSystemView::RenderScene()
 		{
 			for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
 			{
-				glm::vec3 lightDir = program->lights[i].lightPos - pos;
+				glm::dvec3 lightDir = program->lights[i].lightPos - pos;
 
 				const float atten = static_cast<float>(1. / (1. + 0.0001 * glm::length(lightDir)));
 
 				lightDir = glm::normalize(lightDir);
-				glUniform3f(program->lights[i].lightDirPos, lightDir.x, lightDir.y, lightDir.z);
+				glUniform3f(program->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
 				glUniform1f(program->lights[i].attenPos, atten);
 			}
 		}
@@ -491,21 +490,20 @@ void CSolarSystemView::RenderShadowScene()
 	{
 		if (pit->isSun) continue; // Suns don't drop a shadow, don't render them
 
-		glm::mat4 modelMat(1);
-		Vector3D<double> posv = Vector3D<double>(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+		glm::dmat4 modelMatHP(1);
+		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, posv);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
 
 		// ****************************************************************************************************************************
-		const glm::vec3 pos(posv.X, posv.Y, posv.Z);
+		modelMatHP = glm::translate(modelMatHP, pos);
+		const double scale = it->m_Radius * pit->scale / AGLU;
+		modelMatHP = glm::scale(modelMatHP, glm::dvec3(scale, scale, scale));
 
-		modelMat = glm::translate(modelMat, pos);
-		const float scale = static_cast<float>(it->m_Radius * pit->scale / AGLU);
-		modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
-
+		const glm::mat4 modelMat(modelMatHP);
 		glUniformMatrix4fv(shadowProgram->getMatLocation(), 1, GL_FALSE, value_ptr(modelMat));
 
 		sphere->Draw();
@@ -525,10 +523,11 @@ void CSolarSystemView::RenderSkybox()
 		glUniform1i(glGetUniformLocation(*skyBoxProgram, "Texture"), 0);
 
 		// remove translation from the camera matrix		
-		glm::mat4 mat = glm::mat4(glm::mat3((glm::mat4)camera));
-		mat = perspectiveMatrix * mat;
-		mat = glm::scale(mat, glm::vec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
+		glm::dmat4 matHP(glm::dmat3((glm::dmat4)camera));
+		matHP = perspectiveMatrix * matHP;
+		matHP = glm::scale(matHP, glm::dvec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
 
+		const glm::mat4 mat(matHP);
 		skyBoxProgram->Draw(mat);
 	}
 }
@@ -1038,16 +1037,20 @@ void CSolarSystemView::DisableAntialias()
 
 void CSolarSystemView::DisplayBilboard()
 {
-	glm::mat4 modelMat = glm::inverse((glm::mat4)camera); // undo the camera rotation and translation
+	glm::dmat4 precisionMat((glm::mat4)camera);
+	precisionMat = glm::inverse(precisionMat);
 
-	glm::vec3 pos = glm::vec3(0, -0.038, -0.101);
+	const glm::dvec3 pos(0, -0.038, -0.101);
 
-	modelMat = glm::translate(modelMat, pos);
+	precisionMat = glm::translate(precisionMat, pos);
 
-	const float scale = 0.0025f;
-	modelMat = glm::scale(modelMat, glm::vec3(scale, scale, scale));
+	const double scale = 0.0025f;
+	precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
+	
+	const glm::mat4 modelMat(precisionMat);
 
-	glm::mat3 transpInvModelMat = glm::mat3(glm::transpose(glm::inverse(modelMat)));
+	precisionMat = glm::transpose(glm::inverse(precisionMat));
+	glm::mat3 transpInvModelMat(precisionMat);
 
 	glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 	glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));

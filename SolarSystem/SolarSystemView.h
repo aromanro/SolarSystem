@@ -52,7 +52,7 @@ private:
 
 	OpenGL::Camera camera;
 
-	glm::mat4 perspectiveMatrix;
+	glm::dmat4 perspectiveMatrix;
 
 	SolarSystemGLProgram *program;
 
@@ -113,7 +113,7 @@ private:
 
 	void Resize(GLsizei h, GLsizei w);
 	
-	void MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, Vector3D<double>& pos);
+	void MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::dvec3& pos);
 
 	Vector3D<double> GetTowardsVector(CPoint& point, const Vector3D<double>& forward);
 

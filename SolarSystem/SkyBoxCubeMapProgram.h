@@ -58,7 +58,7 @@ namespace OpenGL {
 		bool SetShaders();
 		bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 
-		void Draw(glm::mat4& mat);
+		void Draw(const glm::mat4& mat);
 	};
 
 }

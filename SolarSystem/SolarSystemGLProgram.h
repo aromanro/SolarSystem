@@ -19,7 +19,7 @@ public:
 	struct Light {
 		GLint lightDirPos = 0;
 		GLint attenPos = 0;
-		glm::vec3 lightPos;
+		glm::dvec3 lightPos;
 	};
 
 	std::vector<Light> lights;

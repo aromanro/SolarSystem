@@ -95,7 +95,13 @@ namespace OpenGL {
 			return glm::lookAt(glm::vec3(eyePos.X, eyePos.Y, eyePos.Z), glm::vec3(lookAt.X, lookAt.Y, lookAt.Z), glm::vec3(up.X, up.Y, up.Z));
 		}
 
+		inline glm::dmat4 getMatrixDouble() const {
+			return glm::lookAt(glm::dvec3(eyePos.X, eyePos.Y, eyePos.Z), glm::dvec3(lookAt.X, lookAt.Y, lookAt.Z), glm::dvec3(up.X, up.Y, up.Z));
+		}
+
 		inline operator glm::mat4() const { return getMatrix(); };
+		inline operator glm::dmat4() const { return getMatrixDouble(); };
+
 		void SetSpeeds(double translate, double angle);
 	};
 

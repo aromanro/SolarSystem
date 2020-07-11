@@ -105,7 +105,7 @@ namespace OpenGL {
 	}
 
 
-	void SkyBoxCubeMapProgram::Draw(glm::mat4& mat)
+	void SkyBoxCubeMapProgram::Draw(const glm::mat4& mat)
 	{
 		glDepthMask(GL_FALSE);
 		Use();
