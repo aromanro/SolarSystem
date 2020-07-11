@@ -240,34 +240,34 @@ namespace OpenGL {
 		return GL_TEXTURE_CUBE_MAP;
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataLeft(const void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataLeft(const void *data, int width, int height, int bpp)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
-	}	
-
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataRight(const void *data, int width, int height)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataTop(const void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataRight(const void *data, int width, int height, int bpp)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBottom(const void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataTop(const void *data, int width, int height, int bpp)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataFront(const void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBottom(const void *data, int width, int height, int bpp)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
-	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBack(const void *data, int width, int height)
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataFront(const void *data, int width, int height, int bpp)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, 3, width, height, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
+	}
+
+	void SkyBoxCubeMapProgram::CubeMapTexture::setDataBack(const void *data, int width, int height, int bpp)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, bpp == 24 ? 3 : 4, width, height, 0, bpp == 24 ? GL_BGR_EXT : GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 	}
 
 #define LoadSkinBegin(name) { \
@@ -275,13 +275,14 @@ namespace OpenGL {
 	skin.Load(CString(name)); \
 	if (skin.IsNull()) throw new CFileException(); \
 	unsigned char* buf = (unsigned char*)skin.GetBits(); \
+	int bpp = skin.GetBPP(); \
 	if (skin.GetPitch() < 0) \
 		buf = (unsigned char*)skin.GetPixelAddress(0, skin.GetHeight() - 1); \
 	else \
 		buf = static_cast<unsigned char*>(skin.GetBits());
 
 
-#define LoadSkinEnd(funct) funct(buf, skin.GetWidth(), skin.GetHeight()); }
+#define LoadSkinEnd(funct) funct(buf, skin.GetWidth(), skin.GetHeight(), bpp); }
 
 	bool SkyBoxCubeMapProgram::CubeMapTexture::LoadTextures(const char* left, const char* right, const char* top, const char* bottom, const char* front, const char* back)
 	{
