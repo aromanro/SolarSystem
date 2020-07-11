@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<SolarSystem TimeStep="60">
+<SolarSystem TimeStep="240">
 	<Body Name="Sun"     Radius="696342000" Mass="1.98855E30" IsSun="yes" R="255" G="255" B="128" skin="Textures\\sunmap.jpg" RotationPeriod="25.05" Scale="50"/>
 	<Body Name="Mercury" Radius="2439700"   Mass="3.3011E23"  XPosition="57909050000"  YVelocity="47362" R="128" G="128" B="128" skin="Textures\mercurymap.jpg" normalSkin="Textures\mercurybump.jpg" RotationPeriod="58.646" Scale="1000"/>
 	<Body Name="Venus"   Radius="6051800"   Mass="4.8675E24"  XPosition="108208000000" YVelocity="35020" R="128" G="128" B="128" skin="Textures\venusmap.jpg" normalSkin="Textures\venusbump.jpg" Tilt="2.64" RotationPeriod="-243.025" Scale="1000"/>
