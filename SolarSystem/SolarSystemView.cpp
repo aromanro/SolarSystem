@@ -1073,16 +1073,19 @@ void CSolarSystemView::DisplayBilboard()
 	DisableAntialias(); // otherwise a diagonal line is shown over the rectangle sometimes, with alpha blending on
 
 	glEnable(GL_BLEND);
-	//glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 
 	billboardRectangle->Draw();
 
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
 	glDisable(GL_BLEND);
 
 	EnableAntialias();
-	//glEnable(GL_DEPTH_TEST);
 }
 
 
