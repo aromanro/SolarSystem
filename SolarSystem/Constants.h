@@ -6,6 +6,7 @@ const double farPlaneDistance = 4000.;
 const double rotateAngleStep = 0.5 * M_PI / 180.;
 const double translateDistStep = 2.;
 const double cameraAngle = 45. * M_PI / 180.;
+const double skyboxAngle = 45. * M_PI / 180.; // can be different than for the scene, for some 'interesting' effects
 const GLuint SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
 
 // from AU = astronomical unit = 149597870700 m

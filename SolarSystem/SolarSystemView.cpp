@@ -524,7 +524,7 @@ void CSolarSystemView::RenderSkybox()
 
 		// remove translation from the camera matrix		
 		glm::dmat4 matHP(glm::dmat3((glm::dmat4)camera));
-		matHP = perspectiveMatrix * matHP;
+		matHP = skyboxPerspectiveMatrix * matHP;
 		matHP = glm::scale(matHP, glm::dvec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
 
 		const glm::mat4 mat(matHP);
@@ -540,6 +540,7 @@ void CSolarSystemView::Resize(GLsizei h, GLsizei w)
 
 	const double ar = static_cast<double>(w) / h;
 	perspectiveMatrix = glm::perspective(cameraAngle, ar, nearPlaneDistance, farPlaneDistance);
+	skyboxPerspectiveMatrix = glm::perspective(skyboxAngle, ar, nearPlaneDistance, farPlaneDistance);
 }
 
 BOOL CSolarSystemView::PreCreateWindow(CREATESTRUCT& cs)

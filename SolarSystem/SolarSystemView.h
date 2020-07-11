@@ -53,6 +53,7 @@ private:
 	OpenGL::Camera camera;
 
 	glm::dmat4 perspectiveMatrix;
+	glm::dmat4 skyboxPerspectiveMatrix;
 
 	SolarSystemGLProgram *program;
 
