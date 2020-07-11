@@ -113,7 +113,7 @@ private:
 
 	void Resize(GLsizei h, GLsizei w);
 	
-	void MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::vec3& pos);
+	void MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, Vector3D<double>& pos);
 
 	Vector3D<double> GetTowardsVector(CPoint& point, const Vector3D<double>& forward);
 

@@ -308,7 +308,7 @@ void CSolarSystemView::Setup()
 	inited = true;
 }
 
-void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::vec3& pos)
+void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, Vector3D<double>& pos)
 {
 	CSolarSystemDoc *doc = GetDocument();
 
@@ -322,12 +322,12 @@ void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator&
 	if (parentProps.isMoon || parentProps.isSun) 
 		return;
 
-	const glm::vec3 mpos = glm::vec3(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
-	const glm::vec3 fromvec = pos - mpos;
-	const double dist = glm::length(fromvec);
+	Vector3D<double> mpos(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
+	const Vector3D<double> fromvec = pos - mpos;
+	const double dist = fromvec.Length();
 
 	if (dist <= (parent.m_Radius * parentProps.scale + it->m_Radius * pit->scale) / AGLU)
-		pos = mpos + glm::vec3(fromvec.x * pit->scaleDistance, fromvec.y * pit->scaleDistance, fromvec.z * pit->scaleDistance);
+		pos = mpos + Vector3D<double>(fromvec.X * pit->scaleDistance, fromvec.Y * pit->scaleDistance, fromvec.Z * pit->scaleDistance);
 }
 
 void CSolarSystemView::RenderScene()
@@ -354,15 +354,17 @@ void CSolarSystemView::RenderScene()
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
 		glm::mat4 modelMat(1);
-		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+		Vector3D<double> posv = Vector3D<double>(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
 
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, posv);
 
 		// ****************************************************************************************************************************
+
+		const glm::vec3 pos(posv.X, posv.Y, posv.Z);
 
 		modelMat = glm::translate(modelMat, pos);
 
@@ -490,14 +492,15 @@ void CSolarSystemView::RenderShadowScene()
 		if (pit->isSun) continue; // Suns don't drop a shadow, don't render them
 
 		glm::mat4 modelMat(1);
-		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+		Vector3D<double> posv = Vector3D<double>(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, posv);
 
 		// ****************************************************************************************************************************
+		const glm::vec3 pos(posv.X, posv.Y, posv.Z);
 
 		modelMat = glm::translate(modelMat, pos);
 		const float scale = static_cast<float>(it->m_Radius * pit->scale / AGLU);
