@@ -42,7 +42,7 @@ namespace OpenGL {
 
 		if (vertexShader.getStatus() == false)
 		{
-			AfxMessageBox(CString("CubeMap vertex shader: ") + CString(vertexShader.getStatusMessage()));
+			AfxMessageBox(CString("Sky vertex shader: ") + CString(vertexShader.getStatusMessage()));
 			return false;
 		}
 
@@ -65,7 +65,7 @@ namespace OpenGL {
 
 		if (fragmentShader.getStatus() == false)
 		{
-			AfxMessageBox(CString("CubeMap fragment shader: ") + CString(fragmentShader.getStatusMessage()));
+			AfxMessageBox(CString("Sky fragment shader: ") + CString(fragmentShader.getStatusMessage()));
 			return false;
 		}
 

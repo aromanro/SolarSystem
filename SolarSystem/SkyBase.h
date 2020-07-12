@@ -16,6 +16,8 @@ namespace OpenGL {
 
         bool SetShaders();
 
+        virtual void Draw(const glm::mat4& mat) = 0;
+
     protected:
         GLint transformMatLoc;
     };

@@ -51,7 +51,7 @@ namespace OpenGL {
 
 		bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 
-		void Draw(const glm::mat4& mat);
+		virtual void Draw(const glm::mat4& mat) override;
 	};
 
 }

@@ -64,7 +64,7 @@ private:
 	MemoryBitmap memoryBitmap;
 	CFont font;
 
-	OpenGL::SkyBoxCubeMapProgram *skyBoxProgram;
+	OpenGL::SkyBase *skyProgram;
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
 
 	class Uniforms {
@@ -110,7 +110,7 @@ protected:
 private:
 	void RenderScene();
 	void RenderShadowScene();
-	void RenderSkybox();
+	void RenderSky();
 
 	void Resize(GLsizei h, GLsizei w);
 	
@@ -139,7 +139,7 @@ public:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	void ClearProgram();
-	void ClearSkyBoxProgram();
+	void ClearSkyProgram();
 	void ClearShadowProgram();
 	void SetSpeeds(double translate, double rotate);
 	void EnableAntialias();

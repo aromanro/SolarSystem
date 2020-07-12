@@ -121,7 +121,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyBoxProgram(NULL), shadowProgram(NULL),
+	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyProgram(NULL), shadowProgram(NULL),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -135,7 +135,7 @@ CSolarSystemView::~CSolarSystemView()
 	delete billboardTexture;
 	ClearProgram();
 	ClearShadowProgram();
-	ClearSkyBoxProgram();
+	ClearSkyProgram();
 }
 
 
@@ -158,12 +158,13 @@ bool CSolarSystemView::SetupSkyBox()
 {
 	if (!theApp.options.showSkyBox) return true;
 
-	if (NULL == skyBoxProgram)
+	if (NULL == skyProgram)
 	{
-		skyBoxProgram = new OpenGL::SkyBoxCubeMapProgram();
+		OpenGL::SkyBoxCubeMapProgram *skyBoxProgram = new OpenGL::SkyBoxCubeMapProgram();
+		skyProgram = skyBoxProgram;
 		if (!skyBoxProgram->SetShaders())
 		{
-			ClearSkyBoxProgram();
+			ClearSkyProgram();
 
 			return false;
 		}
@@ -171,14 +172,14 @@ bool CSolarSystemView::SetupSkyBox()
 		if (skyBoxProgram->getStatus() == false)
 		{
 			AfxMessageBox(CString("SkyBox CubeMap compile: ") + CString(skyBoxProgram->getStatusMessage()));
-			ClearSkyBoxProgram();
+			ClearSkyProgram();
 
 			return false;
 		}
 
 		if (!skyBoxProgram->LoadTextures())
 		{
-			ClearSkyBoxProgram();
+			ClearSkyProgram();
 
 			return false;
 		}
@@ -516,11 +517,11 @@ void CSolarSystemView::RenderShadowScene()
 
 
 
-void CSolarSystemView::RenderSkybox()
+void CSolarSystemView::RenderSky()
 {
-	if (skyBoxProgram)
+	if (skyProgram)
 	{
-		glUniform1i(glGetUniformLocation(*skyBoxProgram, "Texture"), 0);
+		glUniform1i(glGetUniformLocation(*skyProgram, "Texture"), 0);
 
 		// remove translation from the camera matrix		
 		glm::dmat4 matHP(glm::dmat3((glm::dmat4)camera));
@@ -528,7 +529,7 @@ void CSolarSystemView::RenderSkybox()
 		matHP = glm::scale(matHP, glm::dvec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
 
 		const glm::mat4 mat(matHP);
-		skyBoxProgram->Draw(mat);
+		skyProgram->Draw(mat);
 	}
 }
 
@@ -585,7 +586,7 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
-		RenderSkybox();
+		RenderSky();
 		RenderScene();
 
 		glFlush();
@@ -948,7 +949,7 @@ void CSolarSystemView::Reset()
 
 	ClearProgram();
 	ClearShadowProgram();
-	ClearSkyBoxProgram();
+	ClearSkyProgram();
 
 	inited = false;
 
@@ -996,10 +997,10 @@ void CSolarSystemView::ClearProgram()
 }
 
 
-void CSolarSystemView::ClearSkyBoxProgram()
+void CSolarSystemView::ClearSkyProgram()
 {
-	delete skyBoxProgram;
-	skyBoxProgram = NULL;
+	delete skyProgram;
+	skyProgram = NULL;
 }
 
 
