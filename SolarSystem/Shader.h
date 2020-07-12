@@ -19,8 +19,8 @@ namespace OpenGL {
 		Shader(GLuint type = GL_VERTEX_SHADER);
 		virtual ~Shader();
 
-		virtual bool getStatus() const;
-		virtual const char* getStatusMessage();
+		virtual bool getStatus() const override;
+		virtual const char* getStatusMessage() override;
 
 		virtual void Bind() override; // it's actually a compile, no need to be called, it's called automatically by setSource
 		virtual void UnBind() override; // does nothing for a shader

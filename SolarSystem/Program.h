@@ -27,8 +27,8 @@ namespace OpenGL {
 
 		void Attach(const Shader& shader);
 
-		virtual bool getStatus() const;
-		virtual const char* getStatusMessage();
+		virtual bool getStatus() const override;
+		virtual const char* getStatusMessage() override;
 	};
 
 }
