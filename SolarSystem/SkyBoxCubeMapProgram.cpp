@@ -9,13 +9,12 @@
 #define new DEBUG_NEW
 #endif
 
-#define GLSL(src) "#version 330\n" #src
 
 
 namespace OpenGL {
 
 	SkyBoxCubeMapProgram::SkyBoxCubeMapProgram()
-		: skyBox(NULL), cubeMapTextures(NULL), transformMatLoc(-1)
+		: skyBox(NULL), cubeMapTextures(NULL)
 	{
 	}
 
@@ -26,65 +25,6 @@ namespace OpenGL {
 		delete cubeMapTextures;
 	}
 
-	bool SkyBoxCubeMapProgram::SetShaders()
-	{
-		VertexShader vertexShader;
-
-		vertexShader.setSource(GLSL(
-
-			layout(location = 0) in vec3 position;
-		    out vec3 TexCoords;
-
-			uniform mat4 transformMat;
-
-			void main()
-			{
-				vec4 pos = transformMat * vec4(position, 1.0);
-				gl_Position = pos.xyww;
-				TexCoords = position;
-			}
-
-		));
-
-
-		if (vertexShader.getStatus() == false)
-		{
-			AfxMessageBox(CString("CubeMap vertex shader: ") + CString(vertexShader.getStatusMessage()));
-			return false;
-		}
-
-		FragmentShader fragmentShader;
-
-		fragmentShader.setSource(GLSL(
-
-			in vec3 TexCoords;
-			out vec4 outputColor;
-
-			uniform samplerCube Texture;
-
-			void main()
-			{
-				outputColor = texture(Texture, TexCoords);
-			}
-
-		));
-
-
-		if (fragmentShader.getStatus() == false)
-		{
-			AfxMessageBox(CString("CubeMap fragment shader: ") + CString(fragmentShader.getStatusMessage()));
-			return false;
-		}
-
-		Attach(vertexShader);
-		Attach(fragmentShader);
-
-		Program::Bind();
-
-		transformMatLoc = glGetUniformLocation(*this, "transformMat");
-
-		return true;
-	}
 
 	bool SkyBoxCubeMapProgram::LoadTextures(const char* left, const char* right, const char* top, const char* bottom, const char* front, const char* back)
 	{
@@ -124,8 +64,6 @@ namespace OpenGL {
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 	}
-
-
 
 
 	SkyBoxCubeMapProgram::SkyBox::SkyBox()

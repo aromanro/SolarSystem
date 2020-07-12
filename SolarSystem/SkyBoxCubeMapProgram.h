@@ -4,11 +4,13 @@
 #include "Texture.h"
 #include "VertexBufferRenderable.h"
 
+#include "SkyBase.h"
+
 #include <glm.hpp>
 
 namespace OpenGL {
 
-	class SkyBoxCubeMapProgram : public Program
+	class SkyBoxCubeMapProgram : public SkyBase
 	{
 	protected:
 		class SkyBox : public VertexBufferRenderable
@@ -42,13 +44,11 @@ namespace OpenGL {
 
 		CubeMapTexture* cubeMapTextures;
 		SkyBox *skyBox;
-		GLint transformMatLoc;
 	public:
 
 		SkyBoxCubeMapProgram();
 		virtual ~SkyBoxCubeMapProgram();
 
-		bool SetShaders();
 		bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 
 		void Draw(const glm::mat4& mat);
