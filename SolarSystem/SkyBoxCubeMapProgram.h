@@ -2,6 +2,7 @@
 
 #include "Program.h"
 #include "Texture.h"
+#include "VertexBufferRenderable.h"
 
 #include <glm.hpp>
 
@@ -10,21 +11,13 @@ namespace OpenGL {
 	class SkyBoxCubeMapProgram : public Program
 	{
 	protected:
-		class SkyBox
+		class SkyBox : public VertexBufferRenderable
 		{
-		protected:
-			VertexArrayObject *vao;
-			VertexBufferObject *vbo;
 		public:
 			SkyBox();
-			~SkyBox();
 
-			void Draw();
-
-			void Bind();
-			void UnBind();
+			virtual void Draw() override;
 		};
-
 
 		class CubeMapTexture : public OpenGLObject
 		{
@@ -33,9 +26,9 @@ namespace OpenGL {
 			virtual ~CubeMapTexture();
 
 
-			virtual void Bind();
-			virtual void UnBind();
-			virtual GLuint getType() const;
+			virtual void Bind() override;
+			virtual void UnBind() override;
+			virtual GLuint getType() const override;
 
 			void setDataLeft(const void *data, int width, int height, int bpp = 24);
 			void setDataRight(const void *data, int width, int height, int bpp = 24);

@@ -21,18 +21,18 @@ namespace OpenGL {
 	void Texture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, ID);	
+		glBindTexture(getType(), ID);	
 	}
 
 	void Texture::Bind(int nr)
 	{
 		glActiveTexture(GL_TEXTURE0 + nr);
-		glBindTexture(GL_TEXTURE_2D, ID);
+		glBindTexture(getType(), ID);
 	}
 
 	void Texture::UnBind()
 	{
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(getType(), 0);
 	}
 
 	GLuint Texture::getType() const
@@ -44,19 +44,19 @@ namespace OpenGL {
 	{
 		Bind(nr);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(getType(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(getType(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(getType(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(getType(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, nrBytes, width, height, 0, 1 == nrBytes ? GL_LUMINANCE : (3 == nrBytes ? GL_BGR_EXT : GL_BGRA_EXT), GL_UNSIGNED_BYTE, data);
+		glTexImage2D(getType(), 0, nrBytes, width, height, 0, 1 == nrBytes ? GL_LUMINANCE : (3 == nrBytes ? GL_BGR_EXT : GL_BGRA_EXT), GL_UNSIGNED_BYTE, data);
 	}
 
 	void Texture::GenerateMipmaps()
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(getType(), GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(getType());
 	}
 
 

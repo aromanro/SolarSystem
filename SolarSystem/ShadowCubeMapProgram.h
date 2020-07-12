@@ -43,9 +43,9 @@ namespace OpenGL {
 			virtual ~CubeMapTexture();
 
 
-			virtual void Bind();
-			virtual void UnBind();
-			virtual GLuint getType() const;
+			virtual void Bind() override;
+			virtual void UnBind() override;
+			virtual GLuint getType() const override;
 		};
 
 		FrameBufferObject depthMapFBO;

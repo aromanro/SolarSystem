@@ -22,8 +22,8 @@ namespace OpenGL {
 		virtual bool getStatus() const;
 		virtual const char* getStatusMessage();
 
-		virtual void Bind(); // it's actually a compile, no need to be called, it's called automatically by setSource
-		virtual void UnBind(); // does nothing for a shader
+		virtual void Bind() override; // it's actually a compile, no need to be called, it's called automatically by setSource
+		virtual void UnBind() override; // does nothing for a shader
 
 		void setSource(const char* src);
 	};
@@ -32,26 +32,26 @@ namespace OpenGL {
 	class VertexShader : public Shader {
 	public:
 		VertexShader();
-		virtual GLuint getType() const;
+		virtual GLuint getType() const override;
 	};
 
 
 	class FragmentShader : public Shader {
 	public:
 		FragmentShader();
-		virtual GLuint getType() const;
+		virtual GLuint getType() const override;
 	};
 
 	class GeometryShader : public Shader {
 	public:
 		GeometryShader();
-		virtual GLuint getType() const;
+		virtual GLuint getType() const override;
 	};
 
 	class ComputeShader : public Shader {
 	public:
 		ComputeShader();
-		virtual GLuint getType() const;
+		virtual GLuint getType() const override;
 	};
 }
 

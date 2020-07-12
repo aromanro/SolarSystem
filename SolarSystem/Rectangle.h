@@ -15,7 +15,7 @@ namespace OpenGL {
 		Rectangle(float aspectRatio = 1.0f);
 		virtual ~Rectangle();
 
-		virtual void Draw();
+		virtual void Draw() override;
 	};
 
 }

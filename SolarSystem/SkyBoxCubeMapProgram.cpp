@@ -175,11 +175,8 @@ namespace OpenGL {
 			1.0f, -1.0f,  1.0f
 		};
 
-		vao = new VertexArrayObject();
-		vao->Bind();
-
-		vbo = new VertexBufferObject();
-		vbo->setData((void*)skyBoxVert, sizeof(skyBoxVert));
+		Renderable::Bind();
+		setData((void*)skyBoxVert, sizeof(skyBoxVert));
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
@@ -188,27 +185,9 @@ namespace OpenGL {
 	}
 
 
-	SkyBoxCubeMapProgram::SkyBox::~SkyBox()
-	{
-		delete vbo;
-		delete vao;
-	}
-
 	void SkyBoxCubeMapProgram::SkyBox::Draw()
 	{
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
-
-	void SkyBoxCubeMapProgram::SkyBox::Bind()
-	{
-		vao->Bind();
-		vbo->Bind();
-	}
-
-	void SkyBoxCubeMapProgram::SkyBox::UnBind()
-	{
-		vao->UnBind();
-		vbo->UnBind();
 	}
 
 
@@ -227,12 +206,12 @@ namespace OpenGL {
 	void SkyBoxCubeMapProgram::CubeMapTexture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+		glBindTexture(getType(), ID);
 	}
 
 	void SkyBoxCubeMapProgram::CubeMapTexture::UnBind()
 	{
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		glBindTexture(getType(), 0);
 	}
 
 	GLuint SkyBoxCubeMapProgram::CubeMapTexture::getType() const

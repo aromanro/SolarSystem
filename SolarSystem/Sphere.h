@@ -13,7 +13,7 @@ namespace OpenGL {
 		Sphere(float r = 1., unsigned int lats = 64, unsigned int longs = 64);
 		virtual ~Sphere();
 
-		virtual void Draw();
+		virtual void Draw() override;
 		void DrawInstanced(unsigned int count);
 	};
 
