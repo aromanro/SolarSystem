@@ -550,7 +550,7 @@ void CSolarSystemView::RenderSky()
 		// remove translation from the camera matrix		
 		glm::dmat4 matHP(glm::dmat3((glm::dmat4)camera));
 		matHP = skyboxPerspectiveMatrix * matHP;
-		matHP = glm::scale(matHP, glm::dvec3(farPlaneDistance, farPlaneDistance, farPlaneDistance));
+		matHP = glm::scale(matHP, glm::dvec3(2. * farPlaneDistance, 2. * farPlaneDistance, 2. * farPlaneDistance));
 
 		const glm::mat4 mat(matHP);
 		skyProgram->Draw(mat);

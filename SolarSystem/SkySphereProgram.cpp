@@ -190,8 +190,6 @@ namespace OpenGL {
 
 	void SkySphereProgram::Draw(const glm::mat4& mat)
 	{
-		// TODO: needs to be rotated to be oriented properly
-
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glPolygonMode(GL_BACK, GL_FILL);
