@@ -13,7 +13,7 @@
 #include "Camera.h"
 
 #include "Program.h"
-#include "SkyBoxCubeMapProgram.h"
+#include "SkyBase.h"
 #include "ShadowCubeMapProgram.h"
 #include "Sphere.h"
 #include "Rectangle.h"

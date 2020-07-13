@@ -31,6 +31,9 @@
 
 #include "Cube.h"
 
+#include "SkyBoxCubeMapProgram.h"
+#include "SkySphereProgram.h"
+
 #include <string>
 
 #ifdef _DEBUG
@@ -160,6 +163,28 @@ bool CSolarSystemView::SetupSkyBox()
 
 	if (NULL == skyProgram)
 	{
+		OpenGL::SkySphereProgram* skySphereProgram = new OpenGL::SkySphereProgram();
+		skyProgram = skySphereProgram;
+		if (!skySphereProgram->SetShaders())
+		{
+			ClearSkyProgram();
+		}
+		else if (skySphereProgram->getStatus() == false)
+		{
+			AfxMessageBox(CString("SkySphere CubeMap compile: ") + CString(skySphereProgram->getStatusMessage()));
+			ClearSkyProgram();
+		}
+		else if (!skySphereProgram->LoadTexture())
+		{
+			ClearSkyProgram();
+		}
+
+		if (skyProgram)
+			return true;
+	}
+
+	if (NULL == skyProgram)
+	{
 		OpenGL::SkyBoxCubeMapProgram *skyBoxProgram = new OpenGL::SkyBoxCubeMapProgram();
 		skyProgram = skyBoxProgram;
 		if (!skyBoxProgram->SetShaders())
@@ -168,16 +193,14 @@ bool CSolarSystemView::SetupSkyBox()
 
 			return false;
 		}
-
-		if (skyBoxProgram->getStatus() == false)
+		else if (skyBoxProgram->getStatus() == false)
 		{
 			AfxMessageBox(CString("SkyBox CubeMap compile: ") + CString(skyBoxProgram->getStatusMessage()));
 			ClearSkyProgram();
 
 			return false;
 		}
-
-		if (!skyBoxProgram->LoadTextures())
+		else if (!skyBoxProgram->LoadTextures())
 		{
 			ClearSkyProgram();
 
@@ -255,6 +278,7 @@ void CSolarSystemView::Setup()
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		
 		glPolygonMode(GL_FRONT, GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glMatrixMode(GL_MODELVIEW);
 

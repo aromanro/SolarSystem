@@ -10,6 +10,8 @@
 #endif
 
 
+#define GLSL(src) "#version 330\n" #src
+
 
 namespace OpenGL {
 
@@ -295,6 +297,66 @@ namespace OpenGL {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		return true;
+	}
+
+	bool SkyBoxCubeMapProgram::SetShaders()
+	{
+		VertexShader vertexShader;
+
+		vertexShader.setSource(GLSL(
+
+			layout(location = 0) in vec3 position;
+			out vec3 TexCoords;
+
+			uniform mat4 transformMat;
+
+			void main()
+			{
+				vec4 pos = transformMat * vec4(position, 1.0);
+				gl_Position = pos.xyww;
+				TexCoords = position;
+			}
+
+		));
+
+
+		if (vertexShader.getStatus() == false)
+		{
+			AfxMessageBox(CString("SkyBox vertex shader: ") + CString(vertexShader.getStatusMessage()));
+			return false;
+		}
+
+		FragmentShader fragmentShader;
+
+		fragmentShader.setSource(GLSL(
+
+			in vec3 TexCoords;
+			out vec4 outputColor;
+
+			uniform samplerCube Texture;
+
+			void main()
+			{
+				outputColor = texture(Texture, TexCoords);
+			}
+
+		));
+
+
+		if (fragmentShader.getStatus() == false)
+		{
+			AfxMessageBox(CString("SkyBox fragment shader: ") + CString(fragmentShader.getStatusMessage()));
+			return false;
+		}
+
+		Attach(vertexShader);
+		Attach(fragmentShader);
+
+		SkyBase::Bind();
+
+		transformMatLoc = glGetUniformLocation(*this, "transformMat");
 
 		return true;
 	}

@@ -236,6 +236,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowCubeMapProgram.h" />
+    <ClInclude Include="SkySphereProgram.h" />
     <ClInclude Include="SolarSystem.h" />
     <ClInclude Include="SolarSystemBodies.h" />
     <ClInclude Include="SolarSystemDoc.h" />
@@ -271,6 +272,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowCubeMapProgram.cpp" />
+    <ClCompile Include="SkySphereProgram.cpp" />
     <ClCompile Include="SolarSystem.cpp" />
     <ClCompile Include="SolarSystemBodies.cpp" />
     <ClCompile Include="SolarSystemDoc.cpp" />

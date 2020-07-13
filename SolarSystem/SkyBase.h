@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "Program.h"
 #include "Texture.h"
 #include "VertexBufferRenderable.h"
@@ -14,10 +16,9 @@ namespace OpenGL {
         SkyBase();
         virtual ~SkyBase();
 
-        bool SetShaders();
-
         virtual void Draw(const glm::mat4& mat) = 0;
 
+        virtual bool SetShaders() = 0;
     protected:
         GLint transformMatLoc;
     };

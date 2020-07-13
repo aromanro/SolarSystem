@@ -123,6 +123,9 @@
     <ClInclude Include="SkyBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SkySphereProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SolarSystem.cpp">
@@ -219,6 +222,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SkyBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkySphereProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
