@@ -87,6 +87,29 @@ http://planetpixelemporium.com/planets.html
 Convert them to 24bpp, ensure they have power of 2 dimensions and put them in the /Textures folder.
 Currently the link where I downloaded the skybox http://www.custommapmakers.org/skyboxes.php is not available, so you'll need to provide another one or not use a skybox.
 
+One way of generating a skybox is here: https://github.com/wwwtyro/space-3d
+Just visit http://wwwtyro.github.io/space-3d/ adjust parameters and download your skybox. I prefer one without a sun and with a high resolution.
+
+If you want textures for planets, others than the ones provided above, you could use this: https://github.com/wwwtyro/planet-3d
+Visit this link http://wwwtyro.github.io/planet-3d/, save the textures, convert the cubemap to equirectangular https://360toolkit.co/convert-cubemap-to-spherical-equirectangular and they should be usable.
+
+### LATEST ENHANCEMENTS TEXTURES
+
+Instead of a single texture, the latest version allows using several ones, one as in the old version (but now it can be normal mapped/bump mapped), one transparent layer on top of it for the atmosphere, one for night/shadow (I use it only for Earth to show city lights at night), a specular map that allows having different specular parameters for water and land and a bump map/normal map which allows faking terrain elevation.
+The expected format for most of them is 24 bpp, with some exceptions. 
+The specular map should be gray with 8bpp (white means high specular, black means no specular). 
+Also if the bump map is 8bpp, it's considered to be a height map and Sobel is used in the code to transform it into a normal map. If it's 24 bpp it's considered a normal map.
+The texture for the transparent layer can be 24 bpp in which case 0.5 is used for alpha, or it can be 32 bpp with an alpha channel, in which case the value for alpha is taken from the texture.
+
+For Earth here is another source for textures: https://visibleearth.nasa.gov/collection/1484/blue-marble
+You'll find there textures for 'topography' (height map), 'city lights' (can be used for night/shadow), clouds, land surface/water/sea ice. Some of them might require some adjusmtents to work properly (saving in jpg/png, conversion to the proper bpp, color to alpha channel for the clouds, to have the clear sky transparent, or at least to color it blue and so on - I use Gimp for such things).
+
+###### Skybox/skysphere
+
+I also added a skysphere, because I didn't want to convert an equirectangular map into a cubemap in the code. You can use a sjksphere by placing in Textures directory a file named `skysphere.jpg` or `skysphere.png`.
+You could make one by downloading the star map in celestial coordinates from here: https://svs.gsfc.nasa.gov/3895
+I used the highest resolution available which I converted to png. By the way, both the skybox and the skysphere accept either 24 bpp images or 32 bpp with an alpha channel, but the alpha value is ignored, so better use 24 bpp ones.
+
 ### LINKS
 
 Those are some links to some OpenGL tutorials I visited while refreshing my memory about OpenGL and implementing the OpenGL code:
