@@ -279,8 +279,6 @@ bool BodyProperties::LoadTexture()
 		}
 	}
 
-
-
 	return false;
 }
 

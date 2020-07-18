@@ -29,30 +29,36 @@ void SolarSystemBodies::LoadTextures()
 {
 	for (auto &body : m_BodyProperties)
 	{
-		if (body.LoadTexture())
+		body.LoadTexture();
+		if (body.texture)
 		{
 			body.texture->Bind();
 			body.texture->GenerateMipmaps();
-			if (body.transparentTexture)
-			{
-				body.transparentTexture->Bind(1);
-				body.transparentTexture->GenerateMipmaps();
-			}
-			if (body.shadowTexture)
-			{
-				body.shadowTexture->Bind(2);
-				body.shadowTexture->GenerateMipmaps();
-			}
-			if (body.specularTexture)
-			{
-				body.specularTexture->Bind(3);
-				body.specularTexture->GenerateMipmaps();
-			}			
-			if (body.normalTexture)
-			{
-				body.normalTexture->Bind(4);
-				body.normalTexture->GenerateMipmaps();
-			}
+			body.texture->UnBind();
+		}
+		if (body.transparentTexture)
+		{
+			body.transparentTexture->Bind(1);
+			body.transparentTexture->GenerateMipmaps();
+			body.transparentTexture->UnBind();
+		}
+		if (body.shadowTexture)
+		{
+			body.shadowTexture->Bind(2);
+			body.shadowTexture->GenerateMipmaps();
+			body.shadowTexture->UnBind();
+		}
+		if (body.specularTexture)
+		{
+			body.specularTexture->Bind(3);
+			body.specularTexture->GenerateMipmaps();
+			body.specularTexture->UnBind();
+		}			
+		if (body.normalTexture)
+		{
+			body.normalTexture->Bind(4);
+			body.normalTexture->GenerateMipmaps();
+			body.normalTexture->UnBind();
 		}
 	}
 }
