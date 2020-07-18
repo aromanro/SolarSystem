@@ -102,7 +102,7 @@ Also if the bump map is 8bpp, it's considered to be a height map and Sobel is us
 The texture for the transparent layer can be 24 bpp in which case 0.5 is used for alpha, or it can be 32 bpp with an alpha channel, in which case the value for alpha is taken from the texture.
 
 For Earth here is another source for textures: https://visibleearth.nasa.gov/collection/1484/blue-marble
-You'll find there textures for 'topography' (height map), 'city lights' (can be used for night/shadow), clouds, land surface/water/sea ice. Some of them might require some adjusmtents to work properly (saving in jpg/png, conversion to the proper bpp, color to alpha channel for the clouds, to have the clear sky transparent, or at least to color it blue and so on - I use Gimp for such things).
+You'll find there textures for 'topography' (height map), 'city lights' (can be used for night/shadow), clouds, land surface/water/sea ice. Some of them might require some adjustments to work properly (saving in jpg/png, conversion to the proper bpp, color to alpha channel for the clouds, to have the clear sky transparent, or at least to color it blue and so on - I use Gimp for such things).
 
 ###### Skybox/skysphere
 
