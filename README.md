@@ -106,7 +106,7 @@ You'll find there textures for 'topography' (height map), 'city lights' (can be 
 
 ###### Skybox/skysphere
 
-I also added a skysphere, because I didn't want to convert an equirectangular map into a cubemap in the code. You can use a sjksphere by placing in Textures directory a file named `skysphere.jpg` or `skysphere.png`.
+I also added a skysphere, because I didn't want to convert an equirectangular map into a cubemap in the code. You can use a skysphere by placing in Textures directory a file named `skysphere.jpg` or `skysphere.png`.
 You could make one by downloading the star map in celestial coordinates from here: https://svs.gsfc.nasa.gov/3895
 I used the highest resolution available which I converted to png. By the way, both the skybox and the skysphere accept either 24 bpp images or 32 bpp with an alpha channel, but the alpha value is ignored, so better use 24 bpp ones.
 
