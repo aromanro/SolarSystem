@@ -31,17 +31,28 @@ void SolarSystemBodies::LoadTextures()
 	{
 		if (body.LoadTexture())
 		{
+			body.texture->Bind();
 			body.texture->GenerateMipmaps();
 			if (body.transparentTexture)
+			{
+				body.transparentTexture->Bind(1);
 				body.transparentTexture->GenerateMipmaps();
+			}
 			if (body.shadowTexture)
+			{
+				body.shadowTexture->Bind(2);
 				body.shadowTexture->GenerateMipmaps();
+			}
 			if (body.specularTexture)
+			{
+				body.specularTexture->Bind(3);
 				body.specularTexture->GenerateMipmaps();
-			
-			// some bump maps appear to look better without mipmaps, from distance
-			//if (body.normalTexture)
-			//	body.normalTexture->GenerateMipmaps();
+			}			
+			if (body.normalTexture)
+			{
+				body.normalTexture->Bind(4);
+				body.normalTexture->GenerateMipmaps();
+			}
 		}
 	}
 }
