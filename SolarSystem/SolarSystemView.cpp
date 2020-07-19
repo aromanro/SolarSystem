@@ -500,9 +500,12 @@ void CSolarSystemView::RenderShadowScene()
 	CSolarSystemDoc *doc = GetDocument();
 	if (!doc) return;
 
+	shadowProgram->depthMapFBO.Bind();
+
+	glDrawBuffer(GL_NONE);
+
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
-	shadowProgram->depthMapFBO.Bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	glCullFace(GL_FRONT);
@@ -605,6 +608,8 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 		wglMakeCurrent(m_hDC, m_hRC);
 
 		if (theApp.options.drawShadows) RenderShadowScene();
+		
+		glDrawBuffer(GL_BACK);
 
 		Resize(Height, Width);
 
@@ -658,13 +663,19 @@ int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		1,
 		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
 		PFD_TYPE_RGBA,
-		24,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,
-		32,
-		0,
-		0,
-		PFD_MAIN_PLANE,
-		0,0,0,0 };
+		24, // 24-bit color depth  
+		0,0,0,0,0,0, // color bits ignored
+		0, // no alpha buffer 
+		0, // shift bit ignored  
+		0, // no accumulation buffer 
+		0,0,0,0, // accum bits ignored  				
+		32, // 32-bit z-buffer   
+		0, // no stencil buffer
+		0, // no auxiliary buffer 
+		PFD_MAIN_PLANE/*PFD_OVERLAY_PLANE*/, // main layer
+		0, // reserved  
+		0,0,0 // layer masks ignored  
+	};
 
 	const int nPixelFormat = ChoosePixelFormat(m_hDC, &pfd);
 	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
