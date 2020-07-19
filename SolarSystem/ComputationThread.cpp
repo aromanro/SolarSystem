@@ -130,7 +130,7 @@ namespace MolecularDynamics {
 		BodyList m_Bodies(GetBodies());
 		Initialize(m_Bodies);
 
-		for (;;)
+		do
 		{
 			const unsigned int local_nrsteps = nrsteps;
 
@@ -144,23 +144,25 @@ namespace MolecularDynamics {
 #endif
 			}
 
-			const double simulatedTime = local_nrsteps * timestep;
+			const double simulatedTime = timestep * local_nrsteps;
 
 			CalculateRotations(m_Bodies, simulatedTime);
 
 			simulationTime = simulationTime + simulatedTime;
 
 			// give result to the main thread
-			SetBodies(m_Bodies);
+			SetBodies(m_Bodies);			
+		} while (!Wait()); // is signaled to kill? also waits for a signal to do more work
+	}
 
-			// is signaled to kill? also waits for a signal to do more work
-			{
-				std::unique_lock<std::mutex> lock(mtx);
-				cv.wait(lock, [this] { return an_event > 0; });
-				if (an_event > 1) break;
-				an_event = 0;
-			}
-		}
+	bool ComputationThread::Wait()
+	{
+		std::unique_lock<std::mutex> lock(mtx);
+		cv.wait(lock, [this] { return an_event > 0; });
+		if (an_event > 1) return true;
+		an_event = 0;
+
+		return false;
 	}
 
 	void ComputationThread::EndThread()

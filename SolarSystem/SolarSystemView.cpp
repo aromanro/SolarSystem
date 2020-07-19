@@ -376,6 +376,7 @@ void CSolarSystemView::RenderScene()
 	glUniform1i(program->useAlphaBlend, 0);
 
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
+
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
 		glm::dmat4 modelMatHP(1);
@@ -603,14 +604,14 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 	{
 		wglMakeCurrent(m_hDC, m_hRC);
 
-		RenderShadowScene();
+		if (theApp.options.drawShadows) RenderShadowScene();
 
 		Resize(Height, Width);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
-		RenderSky();
+		if (theApp.options.showSkyBox) RenderSky();
 		RenderScene();
 
 		glFlush();
@@ -864,7 +865,7 @@ bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
 			movement = OpenGL::Camera::Movements::noMove;
 		}
 
-		Invalidate();
+		Invalidate(0);
 	}
 	else if (pMsg->message == WM_KEYUP) keyDown = false;
 
@@ -877,64 +878,65 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 	if (inited)
 	{
 		CSolarSystemDoc* doc = GetDocument();
-		if (1 == nIDEvent)
+		if (doc)
 		{
-			if (doc) {
+			if (1 == nIDEvent)
+			{
 				doc->RetrieveData();
 
 				doc->m_Thread.SetNrSteps(doc->nrsteps);
 				if (!doc->stopped) doc->m_Thread.SignalWantMore();
+
+				camera.Tick();
+				if (keyDown) camera.Move(movement);				
 			}
-
-			camera.Tick();
-			if (keyDown) camera.Move(movement);
-
-			Invalidate();
-		}
-		else if (doc)
-		{
-			const unsigned long long int seconds = static_cast<unsigned long long int>(doc->m_SolarSystem.m_simulationTime);
-			unsigned long long int hours = seconds / 3600;
-			unsigned long long int days = hours / 24;
-			const unsigned long long int years = days / 365;
-			days %= 365;
-			hours %= 24;
-
-			std::string str;
-			if (years)
+			else
 			{
-				str = std::to_string(years);
-				if (1 == years)
-					str += " year";
-				else
-					str += " years";
+				const unsigned long long int seconds = static_cast<unsigned long long int>(doc->m_SolarSystem.m_simulationTime);
+				unsigned long long int hours = seconds / 3600;
+				unsigned long long int days = hours / 24;
+				const unsigned long long int years = days / 365;
+				days %= 365;
+				hours %= 24;
+
+				std::string str;
+				if (years)
+				{
+					str = std::to_string(years);
+					if (1 == years)
+						str += " year";
+					else
+						str += " years";
+				}
+
+				if (days)
+				{
+					if (str.size())
+						str += " ";
+
+					str += std::to_string(days);
+					if (1 == days)
+						str += " day";
+					else
+						str += " days";
+				}
+
+				if (hours)
+				{
+					if (str.size())
+						str += " ";
+
+					str += std::to_string(hours);
+					if (1 == hours)
+						str += " hour";
+					else
+						str += " hours";
+				}
+
+				SetBillboardText(str.c_str());
 			}
 
-			if (days)
-			{
-				if (str.size())
-					str += " ";
-
-				str += std::to_string(days);
-				if (1 == days)
-					str += " day";
-				else
-					str += " days";
-			}
-
-			if (hours)
-			{
-				if (str.size())
-					str += " ";
-
-				str += std::to_string(hours);
-				if (1 == hours)
-					str += " hour";
-				else
-					str += " hours";
-			}
-
-			SetBillboardText(str.c_str());
+			Invalidate(0);
 		}
 	}
 
@@ -1123,6 +1125,5 @@ void CSolarSystemView::SetBillboardText(const char* text)
 
 	wglMakeCurrent(m_hDC, m_hRC);
 	memoryBitmap.SetIntoTexture(*billboardTexture);
-	//billboardTexture->GenerateMipmaps();
 	wglMakeCurrent(NULL, NULL);
 }

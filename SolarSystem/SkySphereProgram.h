@@ -20,7 +20,7 @@ namespace OpenGL {
 			unsigned int m_lats;
 			unsigned int m_longs;
 		public:
-			SkySphere(float r = 1., unsigned int lats = 64, unsigned int longs = 64);
+			SkySphere(float r = 1., unsigned int lats = 32, unsigned int longs = 32);
 
 			virtual void Draw() override;
 		};

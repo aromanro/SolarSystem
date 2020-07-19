@@ -56,6 +56,8 @@ namespace MolecularDynamics {
 #endif
 		inline static void CalculateRotations(BodyList& Bodies, double period);
 		void Compute();
+
+		bool Wait();
 	};
 
 }
