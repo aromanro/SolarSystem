@@ -121,3 +121,39 @@ http://alfonse.bitbucket.org/oldtut/
 http://www.opengl-tutorial.org/ 
 
 http://www.tomdalling.com/blog/category/modern-opengl/
+
+### SCREENSHOTS
+
+A view from 'above':
+
+![Screenshot](Screenshots/SolarSystem.png)
+
+Mercury:
+
+![Screenshot](Screenshots/Mercury.png)
+
+Venus:
+
+![Screenshot](Screenshots/Venus.png)
+
+The Moon:
+
+![Screenshot](Screenshots/Moon.png)
+
+The Earth with the Moon:
+
+![Screenshot](Screenshots/EarthMoon.png)
+
+Earth close to show the normal mapping:
+
+![Screenshot](Screenshots/EarthClose.png)
+
+Mars:
+
+![Screenshot](Screenshots/Mars.png)
+
+Gamma correction:
+
+![Screenshot](Screenshots/gamma.png)
+
+
