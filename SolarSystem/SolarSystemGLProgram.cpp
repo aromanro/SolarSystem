@@ -386,17 +386,14 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 					if (shadow > 0. || proj < 0)
 					{
 						vec4 shadowColor = texture(shadowTexture, TexCoord);
-						if (shadow > 0.)
-							color = 0.1 * color + 0.9 * shadowColor;
-						else
-						{
-							// without this 'trick' the contrast at terminator was too big
-							// at the terminator the angle between light and normal is 90 degrees, so the projection is 0
-							// then it goes negative up to -1 and so on
-							// this progressively mixes the normal layer with the shadow one
-							// I'm sure a better way could be found, but for now it's good enough for me
-							color = (1. + proj) * color - proj * shadowColor;
-						}
+						
+						// without this 'trick' the contrast at terminator was too big
+						// at the terminator the angle between light and normal is 90 degrees, so the projection is 0
+						// then it goes negative up to -1 and so on
+						// this progressively mixes the normal layer with the shadow one
+						// I'm sure a better way could be found, but for now it's good enough for me
+						proj = abs(proj);
+						color = (1. - proj) * color + proj * shadowColor; // if I don't do this for shadow, too, the eclipse is not ok at the terminator
 					}
 				}
 
