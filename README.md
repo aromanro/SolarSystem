@@ -5,7 +5,7 @@ A detailed description of the project is on the computational physics blog: http
 
 ### PROGRAM IN ACTION
 
-[![Program video](https://img.youtube.com/vi/prh2CCTkVLo/0.jpg)](https://youtu.be/prh2CCTkVLo)
+[![Program video](https://img.youtube.com/vi/nO0xolnW4Jg/0.jpg)](https://youtu.be/nO0xolnW4Jg)
 
 ### TOOLS
 
