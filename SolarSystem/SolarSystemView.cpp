@@ -377,6 +377,8 @@ void CSolarSystemView::RenderScene()
 
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
 
+	static const double lightCoeff = 0.000001;
+
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
 		glm::dmat4 modelMatHP(1);
@@ -410,7 +412,8 @@ void CSolarSystemView::RenderScene()
 			{
 				glm::dvec3 lightDir = program->lights[i].lightPos - pos;
 
-				const float atten = static_cast<float>(1. / (1. + 0.0001 * glm::length(lightDir)));
+				// linear instead of quadratic and using a coefficient that provides enough light even for Pluto
+				const float atten = static_cast<float>(1. / (1. + lightCoeff * glm::length(lightDir)));
 
 				lightDir = glm::normalize(lightDir);
 				glUniform3f(program->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
