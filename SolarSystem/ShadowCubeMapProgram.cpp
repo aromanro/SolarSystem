@@ -92,6 +92,7 @@ namespace OpenGL {
 		VertexShader vertexShader;
 
 		vertexShader.setSource(GLSL(
+			precision highp float;
 
 			layout(location = 0) in vec3 position;
 
@@ -114,6 +115,7 @@ namespace OpenGL {
 		GeometryShader geometryShader;
 
 		geometryShader.setSource(GLSL(
+			precision highp float;
 
 			layout(triangles) in;
 			layout(triangle_strip, max_vertices = 18) out;
@@ -147,6 +149,7 @@ namespace OpenGL {
 		FragmentShader fragmentShader;
 
 		fragmentShader.setSource(GLSL(
+			precision highp float;
 
 			in vec4 FragPos;
 

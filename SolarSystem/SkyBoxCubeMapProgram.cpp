@@ -308,6 +308,7 @@ namespace OpenGL {
 		VertexShader vertexShader;
 
 		vertexShader.setSource(GLSL(
+			precision highp float;
 
 			layout(location = 0) in vec3 position;
 			out vec3 TexCoords;
@@ -333,6 +334,7 @@ namespace OpenGL {
 		FragmentShader fragmentShader;
 
 		fragmentShader.setSource(GLSL(
+			precision highp float;
 
 			in vec3 TexCoords;
 			out vec4 outputColor;
