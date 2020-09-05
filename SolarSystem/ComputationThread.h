@@ -19,17 +19,18 @@ namespace MolecularDynamics {
 		unsigned int an_event; // 0, no event, 1 want more data, 2 finish
 
 		std::atomic_uint nrsteps;
+		std::atomic_bool newData;
 
 		BodyList m_SharedBodies;
-
-		std::mutex m_DataSection;
 
 		std::thread Thread;
 
 		std::vector<Vector3D<double>> accelerations;
 	public:
+		std::mutex m_DataSection;
+
 		unsigned int m_timestep;
-		std::atomic<double> simulationTime;
+		double simulationTime;
 
 		ComputationThread();
 		~ComputationThread();
@@ -41,8 +42,10 @@ namespace MolecularDynamics {
 
 		void SetNrSteps(unsigned int nr);
 
-		void SetBodies(const BodyList& bodies);
-		BodyList GetBodies();
+		void SetBodies(const BodyList& bodies, double simulationTime);
+		BodyList& GetBodies();
+
+		bool HasNewData() const { return newData; }
 
 	protected:
 		void Initialize(BodyList& m_Bodies);

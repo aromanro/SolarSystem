@@ -328,8 +328,16 @@ void CSolarSystemDoc::LoadXmlFile(const CString& name)
 
 void CSolarSystemDoc::RetrieveData()
 {
-	m_SolarSystem.m_Bodies.swap(m_Thread.GetBodies());
-	m_SolarSystem.m_simulationTime = m_Thread.simulationTime;
+	if (m_Thread.HasNewData())
+	{
+		std::lock_guard<std::mutex> lock(m_Thread.m_DataSection);
+
+		m_SolarSystem.m_Bodies.swap(m_Thread.GetBodies());
+		m_SolarSystem.m_simulationTime = m_Thread.simulationTime;
+	}
+	
+	m_Thread.SetNrSteps(nrsteps);
+	if (!stopped) m_Thread.SignalWantMore();
 }
 
 
@@ -374,7 +382,7 @@ void CSolarSystemDoc::LoadFile(const CString& fileName)
 
 void CSolarSystemDoc::StartThread()
 {
-	m_Thread.SetBodies(m_SolarSystem.m_Bodies);
+	m_Thread.SetBodies(m_SolarSystem.m_Bodies, 0);
 	m_Thread.StartThread();
 }
 

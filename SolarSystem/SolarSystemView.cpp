@@ -624,7 +624,7 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 
 		glFlush();
 		SwapBuffers(m_hDC);
-		wglMakeCurrent(m_hDC, NULL);
+		wglMakeCurrent(NULL, NULL);
 	}
 }
 
@@ -684,7 +684,7 @@ int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
 
 	// aprox 60 frames/sec
-	timer = SetTimer(1, 17, NULL);
+	timer = SetTimer(1, msFrame, NULL);
 
 	slowTimer = SetTimer(2, 1000, NULL);
 
@@ -897,12 +897,11 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 			if (1 == nIDEvent)
 			{
 				doc->RetrieveData();
-
-				doc->m_Thread.SetNrSteps(doc->nrsteps);
-				if (!doc->stopped) doc->m_Thread.SignalWantMore();
-
+			
 				camera.Tick();
 				if (keyDown) camera.Move(movement);				
+				
+				OnPaint();
 			}
 			else
 			{
@@ -948,9 +947,9 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 				}
 
 				SetBillboardText(str.c_str());
-			}
 
-			Invalidate(0);
+				Invalidate(0);
+			}
 		}
 	}
 

@@ -16,7 +16,7 @@ namespace MolecularDynamics {
 
 
 	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), m_timestep(60), simulationTime(0)
+		: an_event(0), nrsteps(1), newData(false), m_timestep(60), simulationTime(0)
 	{
 	}
 
@@ -86,13 +86,15 @@ namespace MolecularDynamics {
 
 	inline void ComputationThread::CalculateRotations(BodyList& Bodies, double timestep)
 	{
+		static const double maxLimit = 100 * TWO_M_PI;
+
 		for (auto &body : Bodies)
 		{
 			const double angular_speed = TWO_M_PI / body.rotationPeriod;
 			body.rotation += angular_speed * timestep;
 			
-			if (body.rotation >= TWO_M_PI) body.rotation -= TWO_M_PI;
-			else if (body.rotation < 0) body.rotation += TWO_M_PI;
+			if (body.rotation >= maxLimit) body.rotation -= maxLimit;
+			else if (body.rotation < 0) body.rotation += maxLimit;
 		}
 	}
 
@@ -148,10 +150,8 @@ namespace MolecularDynamics {
 
 			CalculateRotations(m_Bodies, simulatedTime);
 
-			simulationTime = simulationTime + simulatedTime;
-
 			// give result to the main thread
-			SetBodies(m_Bodies);			
+			SetBodies(m_Bodies, simulationTime + simulatedTime);
 		} while (!Wait()); // is signaled to kill? also waits for a signal to do more work
 	}
 
@@ -182,7 +182,6 @@ namespace MolecularDynamics {
 	void ComputationThread::StartThread()
 	{
 		EndThread();
-		simulationTime = 0;
 
 		Thread = std::thread(&ComputationThread::Compute, this);
 	}
@@ -203,19 +202,23 @@ namespace MolecularDynamics {
 	}
 
 
-	void ComputationThread::SetBodies(const BodyList& bodies)
+	void ComputationThread::SetBodies(const BodyList& bodies, double curSimulationTime)
 	{
-		std::lock_guard<std::mutex> lock(m_DataSection);
+		{
+			std::lock_guard<std::mutex> lock(m_DataSection);
 
-		m_SharedBodies = bodies;
+			simulationTime = curSimulationTime;
+			m_SharedBodies = bodies;
+		}
+
+		newData = true;
 	}
 
 
-	BodyList ComputationThread::GetBodies()
+	BodyList& ComputationThread::GetBodies()
 	{
-		std::lock_guard<std::mutex> lock(m_DataSection);
-	
-		return BodyList(m_SharedBodies);
+		newData = false;
+		return m_SharedBodies;
 	}
 
 }

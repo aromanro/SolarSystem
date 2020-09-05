@@ -405,7 +405,6 @@ afx_msg LRESULT CMainFrame::OnToolbarReset(WPARAM wp, LPARAM)
 	if (uiToolBarId == IDR_MAINFRAME || uiToolBarId == IDR_MAINFRAME_256)
 	{
 		CMFCToolBarSlider btnSlider(ID_SLIDER);		
-		btnSlider.SetRange(1, MAX_NRSTEPS);
 		CWnd* pWndMain = AfxGetMainWnd();
 		if (pWndMain)
 		{

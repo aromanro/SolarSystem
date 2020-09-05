@@ -195,7 +195,7 @@ namespace OpenGL {
 
 void OpenGL::Camera::Tick()
 {
-	if (movements.size() > 0)
+	if (!movements.empty())
 	{
 		if (movements.front().movement == Movements::rotateTowards) RotateTowards(rotateAngle, movements.front().towardsVec);
 		else Move(movements.front().movement, movements.front().fromMouse);
@@ -215,7 +215,7 @@ void OpenGL::Camera::ProgressiveMove(Movements movement, int nrticks, bool fromM
 
 void OpenGL::Camera::ProgressiveRotate(const Vector3D<double>& towards, int nrticks)
 {
-	if (movements.size() == 0)
+	if (movements.empty())
 	{
 		movements.emplace_back(Movement(Movements::rotateTowards, nrticks));
 		movements.back().towardsVec = towards;
