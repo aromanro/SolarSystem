@@ -511,7 +511,7 @@ void CSolarSystemView::RenderShadowScene()
 
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	glCullFace(GL_FRONT);
 
@@ -616,8 +616,8 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 
 		Resize(Height, Width);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
 		if (theApp.options.showSkyBox) RenderSky();
 		RenderScene();
