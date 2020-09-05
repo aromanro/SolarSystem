@@ -197,6 +197,8 @@ namespace OpenGL {
 		glDisable(GL_DEPTH_TEST);
 		Use();
 
+		glUniform1i(glGetUniformLocation(getID(), "Texture"), 0);
+
 		glUniform1i(textureLoc, 0);
 		glUniformMatrix4fv(transformMatLoc, 1, GL_FALSE, value_ptr(mat));
 

@@ -503,6 +503,8 @@ void CSolarSystemView::RenderShadowScene()
 	CSolarSystemDoc *doc = GetDocument();
 	if (!doc) return;
 
+	shadowProgram->Use();
+
 	shadowProgram->depthMapFBO.Bind();
 
 	glDrawBuffer(GL_NONE);
@@ -512,8 +514,6 @@ void CSolarSystemView::RenderShadowScene()
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	glCullFace(GL_FRONT);
-
-	shadowProgram->Use();
 
 	ShadowUniforms params(doc->m_SolarSystem, *shadowProgram, program->nrlights);
 
@@ -541,6 +541,8 @@ void CSolarSystemView::RenderShadowScene()
 		sphere->Draw();
 	}
 
+	glFlush();
+
 	glCullFace(GL_BACK);
 	shadowProgram->depthMapFBO.UnBind();
 	shadowProgram->UnUse();
@@ -552,8 +554,6 @@ void CSolarSystemView::RenderSky()
 {
 	if (skyProgram)
 	{
-		glUniform1i(glGetUniformLocation(*skyProgram, "Texture"), 0);
-
 		// remove translation from the camera matrix		
 		glm::dmat4 matHP(glm::dmat3((glm::dmat4)camera));
 		matHP = skyboxPerspectiveMatrix * matHP;
@@ -622,7 +622,7 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 		if (theApp.options.showSkyBox) RenderSky();
 		RenderScene();
 
-		glFlush();
+		//glFlush(); // not really needed, SwapBuffers should take care of things
 		SwapBuffers(m_hDC);
 		wglMakeCurrent(NULL, NULL);
 	}
