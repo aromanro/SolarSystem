@@ -249,7 +249,7 @@ void CSolarSystemView::Setup()
 		VERIFY(wglMakeCurrent(m_hDC, m_hRC));
 
 		glewInit();
-
+		
 		glClearColor(0, 0, 0, 0);
 
 		EnableAntialias();
@@ -333,7 +333,7 @@ void CSolarSystemView::Setup()
 	inited = true;
 }
 
-void CSolarSystemView::MoonHack(BodyPropList::iterator& pit, BodyList::iterator& it, glm::dvec3& pos)
+void CSolarSystemView::MoonHack(const BodyPropList::iterator& pit, const BodyList::iterator& it, glm::dvec3& pos)
 {
 	CSolarSystemDoc *doc = GetDocument();
 
@@ -381,7 +381,6 @@ void CSolarSystemView::RenderScene()
 
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
-		glm::dmat4 modelMatHP(1);
 		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
 
@@ -392,12 +391,8 @@ void CSolarSystemView::RenderScene()
 
 		// ****************************************************************************************************************************
 
-		modelMatHP = glm::translate(modelMatHP, pos);
-
 		const double scale = it->m_Radius * pit->scale / AGLU;
-		modelMatHP = glm::scale(modelMatHP, glm::dvec3(scale, scale, scale));
-		modelMatHP = glm::rotate(modelMatHP, pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0));
-		modelMatHP = glm::rotate(modelMatHP, it->rotation, glm::dvec3(0, 0, 1));
+		const glm::dmat4 modelMatHP = glm::rotate(glm::rotate(glm::scale(glm::translate(glm::dmat4(1), pos), glm::dvec3(scale, scale, scale)), pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0)), it->rotation, glm::dvec3(0, 0, 1));
 
 		const glm::mat4 modelMat(modelMatHP);
 		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
@@ -900,8 +895,6 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 			
 				camera.Tick();
 				if (keyDown) camera.Move(movement);				
-				
-				OnPaint();
 			}
 			else
 			{
@@ -947,9 +940,9 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 				}
 
 				SetBillboardText(str.c_str());
-
-				Invalidate(0);
 			}
+
+			Invalidate(0);
 		}
 	}
 
