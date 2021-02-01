@@ -389,7 +389,19 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 					if (shadow > 0. || proj < 0)
 					{
 						vec4 shadowColor = texture(shadowTexture, TexCoord);
-						
+
+						// just a trick to make the lights in the shadow texture light up
+						// this way the lights at night on Earth can be seen much better
+						int lightUp = 0;
+						if (shadowColor.x > 0.6)
+							++lightUp;
+						if (shadowColor.y > 0.6)
+							++lightUp;
+						if (shadowColor.z > 0.6)
+							++lightUp;
+						if (lightUp >= 2)
+							shadowColor = shadowColor * 10;
+											
 						// without this 'trick' the contrast at terminator was too big
 						// at the terminator the angle between light and normal is 90 degrees, so the projection is 0
 						// then it goes negative up to -1 and so on
