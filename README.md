@@ -156,4 +156,8 @@ Gamma correction:
 
 ![Screenshot](Screenshots/gamma.png)
 
+Night on Earth after some changes to highlight the 'lights' in the night texture:
+
+![Screenshot](Screenshots/night.png)
+
 
