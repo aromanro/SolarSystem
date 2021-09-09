@@ -106,6 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,6 +132,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,6 +160,7 @@
       <PreprocessorDefinitions>GLEW_STATIC;WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -189,6 +192,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -216,11 +220,13 @@
     <ClInclude Include="BodyProperties.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraPropertyPage.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="ComputationThread.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DisplayPropertyPage.h" />
     <ClInclude Include="MemoryBitmap.h" />
+    <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OptionsPropertySheet.h" />
     <ClInclude Include="Rectangle.h" />
@@ -246,6 +252,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vector3D.h" />
     <ClInclude Include="VertexBufferRenderable.h" />
   </ItemGroup>
@@ -254,10 +261,12 @@
     <ClCompile Include="BodyProperties.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraPropertyPage.cpp" />
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComputationThread.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DisplayPropertyPage.cpp" />
     <ClCompile Include="MemoryBitmap.cpp" />
+    <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="OptionsPropertySheet.cpp" />
     <ClCompile Include="Rectangle.cpp" />
@@ -286,6 +295,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vector3D.inl" />
     <ClCompile Include="VertexBufferRenderable.cpp" />
   </ItemGroup>
