@@ -226,6 +226,7 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DisplayPropertyPage.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialTriangle.h" />
     <ClInclude Include="MemoryBitmap.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Options.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DisplayPropertyPage.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialTriangle.cpp" />
     <ClCompile Include="MemoryBitmap.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Options.cpp" />
