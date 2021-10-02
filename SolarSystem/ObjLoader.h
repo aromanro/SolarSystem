@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Triangle.h"
+#include "MaterialTriangle.h"
 
 #include "Material.h"
 
@@ -29,6 +29,6 @@ public:
 	static bool AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords/*, std::shared_ptr<Materials::Material> material*/, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles);
 
 	std::map<std::string, Material> materials;
-	std::vector<std::shared_ptr<OpenGL::Triangle>> triangles;
+	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
 };
 

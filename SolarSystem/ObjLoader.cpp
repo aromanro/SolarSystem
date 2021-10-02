@@ -286,6 +286,8 @@ bool ObjLoader::Load(const std::string& name, bool center)
 	}
 	*/
 
+	Material whiteMaterial; // it's gray, but whatever
+
 	// now build the object out of polygons, by splitting them to triangles
 	// splits it 'triangle-fan' style
 
@@ -305,6 +307,8 @@ bool ObjLoader::Load(const std::string& name, bool center)
 		else
 			material = WhiteMaterial;
 		*/
+
+		Material* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
 
 
 		int startPoint = 0;
@@ -349,7 +353,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 		size_t lastIndexTex = indextex3;
 		Vector3D<double> lastNormal(normals[indexnormal3]);
 
-		std::shared_ptr<OpenGL::Triangle> triangle = std::make_shared<OpenGL::Triangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal /*, material*/);
+		std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal , *material);
 
 		if (firstIndexTex >= 0)
 		{
@@ -406,7 +410,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 			const Vector3D<double>& nextPoint = vertices[nextIndexVertex];
 			const Vector3D<double>& nextNormal = normals[nextIndexNormal];
 
-			triangle = std::make_shared<OpenGL::Triangle>(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal/*, material*/);
+			triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal, *material);
 
 
 			if (firstIndexTex >= 0)

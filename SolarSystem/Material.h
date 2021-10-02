@@ -6,6 +6,8 @@
 class Material
 {
 public:
+	Material();
+
 	std::string name;
 
 	// for now handle only r g b specification, there can be also 'spectral' or 'xyz' specs, just ignore those for now
@@ -57,6 +59,8 @@ public:
 	void Clear()
 	{
 		name.clear();
+
+		illumination = Illumination::constant;
 
 		ambientColor = Color(0.1, 0.1, 0.1);
 		diffuseColor = Color(0.3, 0.3, 0.3);
