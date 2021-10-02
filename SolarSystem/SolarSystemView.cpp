@@ -124,7 +124,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyProgram(NULL), shadowProgram(NULL),
+	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyProgram(NULL), shadowProgram(NULL), spaceshipProgram(NULL),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -139,6 +139,7 @@ CSolarSystemView::~CSolarSystemView()
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyProgram();
+	ClearSpaceshipProgram();
 }
 
 
@@ -246,6 +247,35 @@ bool CSolarSystemView::SetupShadows()
 }
 
 
+
+bool CSolarSystemView::SetupSpaceship()
+{
+	if (NULL == spaceshipProgram)
+	{
+#ifdef DISPLAY_SPACESHIP
+		spaceshipProgram = new OpenGL::SpaceshipProgram();
+		if (!spaceshipProgram->SetShaders())
+		{
+			ClearSpaceshipProgram();
+
+			return false;
+		}
+	
+		if (!spaceshipProgram->getStatus())
+		{
+			AfxMessageBox(CString("Shadow CubeMap compile: ") + CString(spaceshipProgram->getStatusMessage()));
+			ClearShadowProgram();
+
+			return false;
+		}
+
+		spaceshipProgram->DetachShaders();
+#endif
+	}
+
+	return true;
+}
+
 void CSolarSystemView::Setup()
 {
 	if (inited) return;
@@ -335,6 +365,8 @@ void CSolarSystemView::Setup()
 	SetupSkyBox();
 
 	SetupShadows();
+
+	SetupSpaceship();
 
 	wglMakeCurrent(NULL, NULL);
 
@@ -499,6 +531,8 @@ void CSolarSystemView::RenderScene()
 		DisplayBilboard();
 
 	program->UnUse();
+
+	RenderSpaceship();
 }
 
 void CSolarSystemView::RenderShadowScene()
@@ -566,6 +600,45 @@ void CSolarSystemView::RenderSky()
 
 		const glm::mat4 mat(matHP);
 		skyProgram->Draw(mat);
+	}
+}
+
+void CSolarSystemView::RenderSpaceship()
+{
+	if (spaceshipProgram)
+	{
+		glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
+
+		spaceshipProgram->Use();
+
+		if (shadowProgram) shadowProgram->depthCubemap.Bind();
+
+		//glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
+		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
+
+		glm::dmat4 precisionMat(camera.getMatrixDouble());
+		precisionMat = glm::inverse(precisionMat);
+
+		const glm::dvec3 pos(0, 0, -0.150);
+
+		precisionMat = glm::translate(precisionMat, pos);
+
+		const double scale = 0.0025f;
+		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
+
+		const glm::mat4 modelMat(precisionMat);
+
+		precisionMat = glm::transpose(glm::inverse(precisionMat));
+		glm::mat3 transpInvModelMat(precisionMat);
+
+		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+
+
+		// TODO: Display the spaceship
+
+
+		spaceshipProgram->UnUse();
 	}
 }
 
@@ -992,6 +1065,7 @@ void CSolarSystemView::Reset()
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyProgram();
+	ClearSpaceshipProgram();
 
 	inited = false;
 
@@ -1052,6 +1126,11 @@ void CSolarSystemView::ClearShadowProgram()
 	shadowProgram = NULL;
 }
 
+void CSolarSystemView::ClearSpaceshipProgram()
+{
+	delete spaceshipProgram;
+	spaceshipProgram = NULL;
+}
 
 void CSolarSystemView::SetSpeeds(double translate, double rotate)
 {

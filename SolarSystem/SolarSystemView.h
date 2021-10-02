@@ -21,6 +21,8 @@
 #include "SolarSystemBodies.h"
 #include "SolarSystemGLProgram.h"
 
+#include "SpaceshipProgram.h"
+
 #include "MemoryBitmap.h"
 
 class CSolarSystemDoc;
@@ -67,6 +69,8 @@ private:
 	OpenGL::SkyBase *skyProgram;
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
 
+	OpenGL::SpaceshipProgram *spaceshipProgram;
+
 	class Uniforms {
 	public:
 		Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights);
@@ -112,6 +116,8 @@ private:
 	void RenderShadowScene();
 	void RenderSky();
 
+	void RenderSpaceship();
+
 	void Resize(GLsizei h, GLsizei w);
 	
 	void MoonHack(const BodyPropList::iterator& pit, const BodyList::iterator& it, glm::dvec3& pos);
@@ -121,6 +127,8 @@ private:
 	bool SetupShaders();
 	bool SetupSkyBox();
 	bool SetupShadows();
+	bool SetupSpaceship();
+
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -141,6 +149,8 @@ public:
 	void ClearProgram();
 	void ClearSkyProgram();
 	void ClearShadowProgram();
+	void ClearSpaceshipProgram();
+
 	void SetSpeeds(double translate, double rotate);
 	void EnableAntialias();
 	void DisableAntialias();

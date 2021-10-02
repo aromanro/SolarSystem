@@ -15,7 +15,7 @@ namespace OpenGL {
         SpaceshipProgram();
         virtual ~SpaceshipProgram();
 
-        bool SetupShaders();
+        bool SetShaders();
 
 
         // vertex shader parameters

@@ -23,7 +23,7 @@ namespace OpenGL {
 
 	}
 
-	bool SpaceshipProgram::SetupShaders()
+	bool SpaceshipProgram::SetShaders()
 	{
 		if (!SetupVertexShader()) return false;
 		else if (!SetupFragmentShader()) return false;
