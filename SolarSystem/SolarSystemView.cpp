@@ -1081,7 +1081,7 @@ void CSolarSystemView::DisableAntialias()
 
 void CSolarSystemView::DisplayBilboard()
 {
-	glm::dmat4 precisionMat((glm::mat4)camera);
+	glm::dmat4 precisionMat(camera.getMatrixDouble());
 	precisionMat = glm::inverse(precisionMat);
 
 	const glm::dvec3 pos(0, -0.038, -0.101);
