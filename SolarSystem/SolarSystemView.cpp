@@ -180,7 +180,10 @@ bool CSolarSystemView::SetupSkyBox()
 		}
 
 		if (skyProgram)
+		{
+			skyProgram->DetachShaders();
 			return true;
+		}
 	}
 
 	if (NULL == skyProgram)
@@ -206,6 +209,8 @@ bool CSolarSystemView::SetupSkyBox()
 
 			return false;
 		}
+
+		skyProgram->DetachShaders();
 	}
 
 	return true;
@@ -233,6 +238,8 @@ bool CSolarSystemView::SetupShadows()
 
 			return false;
 		}
+
+		shadowProgram->DetachShaders();
 	}
 
 	return true;
@@ -318,6 +325,9 @@ void CSolarSystemView::Setup()
 		ClearProgram();
 		return;
 	}
+
+	program->DetachShaders();
+
 	program->SetupLights(doc->m_SolarSystem.m_BodyProperties);
 
 	if (theApp.options.drawTextures) doc->m_SolarSystem.LoadTextures();

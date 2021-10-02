@@ -462,7 +462,7 @@ bool ObjLoader::IsConcaveVertex(const Polygon& polygon, const std::vector<Vector
 {
 	sine = 0;
 	const size_t pp = (cp == 0 ? polygon.size() : cp) - 1;
-	const size_t np = (cp == polygon.size() - 1) ? 0 : cp + 1;
+	const size_t np = (cp == polygon.size()) - 1 ? 0 : 1ULL + cp;
 
 	const size_t indpp = std::get<0>(polygon[pp]);
 	if (indpp < 0 || indpp >= vertices.size()) return false;

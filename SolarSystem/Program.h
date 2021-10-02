@@ -12,10 +12,11 @@ namespace OpenGL {
 	protected:
 		std::list<GLuint> shaders;
 
-		void DetachShaders();
 	public:
 		Program();
 		virtual ~Program();
+
+		void DetachShaders();
 
 		virtual void Bind() override; // it's actually a link
 		virtual GLuint getType() const override;
