@@ -136,6 +136,9 @@ CSolarSystemView::~CSolarSystemView()
 	delete sphere;
 	delete billboardRectangle;
 	delete billboardTexture;
+#ifdef DISPLAY_SPACESHIP
+	delete triangle;
+#endif	
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyProgram();
@@ -351,6 +354,13 @@ void CSolarSystemView::Setup()
 
 	billboardTexture = new OpenGL::Texture();
 	
+
+#ifdef DISPLAY_SPACESHIP
+	const int translateDown = 0;
+	triangle = new OpenGL::Triangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0), true);
+#endif
+
+
 	if (!SetupShaders()) {
 		ClearProgram();
 		return;
@@ -521,18 +531,18 @@ void CSolarSystemView::RenderScene()
 			glUniform1i(program->useShadowTextLocation, 0);
 			glUniform1i(program->useSpecularTextLocation, 0);
 			glUniform1i(program->useNormalTextLocation, 0);
-
 		}
 
 		sphere->Draw();
 	}
 
-	if (theApp.options.showBillboard) 
-		DisplayBilboard();
-
 	program->UnUse();
+	RenderSpaceship(mat);
 
-	RenderSpaceship();
+	// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
+	program->Use();
+	if (theApp.options.showBillboard)
+		DisplayBilboard();
 }
 
 void CSolarSystemView::RenderShadowScene()
@@ -603,18 +613,18 @@ void CSolarSystemView::RenderSky()
 	}
 }
 
-void CSolarSystemView::RenderSpaceship()
+void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 {
 	if (spaceshipProgram)
 	{
-		glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
+		//glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
 
 		spaceshipProgram->Use();
 
-		if (shadowProgram) shadowProgram->depthCubemap.Bind();
+		//if (shadowProgram) shadowProgram->depthCubemap.Bind();
 
 		//glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
-		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
+		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 		glm::dmat4 precisionMat(camera.getMatrixDouble());
 		precisionMat = glm::inverse(precisionMat);
@@ -631,12 +641,15 @@ void CSolarSystemView::RenderSpaceship()
 		precisionMat = glm::transpose(glm::inverse(precisionMat));
 		glm::mat3 transpInvModelMat(precisionMat);
 
-		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
-		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 
 
 		// TODO: Display the spaceship
 
+#ifdef DISPLAY_SPACESHIP
+		triangle->Draw();
+#endif
 
 		spaceshipProgram->UnUse();
 	}
@@ -1061,6 +1074,12 @@ void CSolarSystemView::Reset()
 
 	delete billboardTexture;
 	billboardTexture = NULL;
+
+#ifdef DISPLAY_SPACESHIP
+	delete triangle;
+	triangle = NULL;
+#endif	
+
 
 	ClearProgram();
 	ClearShadowProgram();

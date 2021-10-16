@@ -62,27 +62,27 @@ namespace OpenGL {
 
 			layout(location = 0) in vec3 position;
 			layout(location = 1) in vec3 normal;
-			layout(location = 2) in vec2 texCoord;
-			layout(location = 3) in vec3 tangent;
+			//layout(location = 2) in vec2 texCoord;
+			//layout(location = 3) in vec3 tangent;
 
 			uniform mat4 transformMat;
 			uniform mat4 modelMat;
 			uniform mat3 transpInvModelMat;
 
-			out vec2 TexCoord;
+			//out vec2 TexCoord;
 			out vec3 FragPos;
 			out vec3 Normal;
-			out vec3 Tangent;
+			//out vec3 Tangent;
 			//out vec3 Bitangent;
 
 			void main()
 			{
 				gl_Position = transformMat * modelMat * vec4(position.x, position.y, position.z, 1.0);
-				TexCoord = texCoord;
+				//TexCoord = texCoord;
 				FragPos = vec3(modelMat * vec4(position, 1.0f));
 
 				Normal = normalize(transpInvModelMat * normal);
-				Tangent = normalize(transpInvModelMat * tangent);
+				//Tangent = normalize(transpInvModelMat * tangent);
 			}
 		));
 
@@ -105,6 +105,10 @@ namespace OpenGL {
 		// just white for now, but it will become way more complex
 		fragmentShader.setSource(GLSL(
 			out vec4 outputColor;
+			
+			in vec3 FragPos;
+			in vec3 Normal;
+
 			void main()
 			{
 				outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);

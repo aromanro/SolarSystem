@@ -25,6 +25,11 @@
 
 #include "MemoryBitmap.h"
 
+//#define DISPLAY_SPACESHIP 1
+#ifdef DISPLAY_SPACESHIP
+#include "Triangle.h" // TODO: for tests, remove it later
+#endif
+
 class CSolarSystemDoc;
 
 
@@ -71,6 +76,10 @@ private:
 
 	OpenGL::SpaceshipProgram *spaceshipProgram;
 
+#ifdef DISPLAY_SPACESHIP
+	OpenGL::Triangle* triangle; // for tests, remove it later
+#endif
+
 	class Uniforms {
 	public:
 		Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights);
@@ -116,7 +125,7 @@ private:
 	void RenderShadowScene();
 	void RenderSky();
 
-	void RenderSpaceship();
+	void RenderSpaceship(glm::mat4& mat);
 
 	void Resize(GLsizei h, GLsizei w);
 	
