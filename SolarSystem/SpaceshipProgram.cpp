@@ -124,6 +124,8 @@ namespace OpenGL {
 		}
 
 		Attach(fragmentShader);
+
+		return true;
 	}
 
 

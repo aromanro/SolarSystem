@@ -77,7 +77,7 @@ private:
 	OpenGL::SpaceshipProgram *spaceshipProgram;
 
 #ifdef DISPLAY_SPACESHIP
-	OpenGL::Triangle* triangle; // for tests, remove it later
+	OpenGL::OpenGLTriangle* triangle; // for tests, remove it later
 #endif
 
 	class Uniforms {

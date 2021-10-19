@@ -357,7 +357,7 @@ void CSolarSystemView::Setup()
 
 #ifdef DISPLAY_SPACESHIP
 	const int translateDown = 0;
-	triangle = new OpenGL::Triangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0), true);
+	triangle = new OpenGL::OpenGLTriangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0));
 #endif
 
 

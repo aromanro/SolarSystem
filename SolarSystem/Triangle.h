@@ -10,13 +10,14 @@
 
 namespace OpenGL {
 
-	class Triangle : public VertexBufferRenderable
+
+	class Triangle
 	{
 	public:
 		Triangle() : area(0), U1(-1), V1(-1), U2(-1), V2(-1), U3(-1), V3(-1), useInterpolation(true), threeNormals(true) {}
-		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, bool initOpengl = false);
-		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const Vector3D<double>& n1, const Vector3D<double>& n2, const Vector3D<double>& n3, bool initOpengl = false);
-
+		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c);
+		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const Vector3D<double>& n1, const Vector3D<double>& n2, const Vector3D<double>& n3);
+		virtual ~Triangle() {}
 
 		void Translate(const Vector3D<double>& t)
 		{
@@ -30,7 +31,7 @@ namespace OpenGL {
 			A = A.RotateAround(v, angle);
 			B = B.RotateAround(v, angle);
 			C = C.RotateAround(v, angle);
-			
+
 			edge1 = B - A;
 			edge2 = C - A;
 			// area does not change
@@ -52,7 +53,7 @@ namespace OpenGL {
 			C *= scale;
 			edge1 *= scale;
 			edge2 *= scale;
-			
+
 			area *= scale * scale;
 		}
 
@@ -92,23 +93,19 @@ namespace OpenGL {
 			if (threeNormals)
 			{
 				const double w = 1. - u - v;
-				
+
 				return (w * normal1 + u * normal2 + v * normal3).Normalize();
 			}
-			
+
 			return normal;
 		}
-
-
-		virtual void Draw() override;
-		void DrawInstanced(unsigned int count);
 
 		Vector3D<double> A, B, C;
 
 		double U1, V1, U2, V2, U3, V3;
 
 	protected:
-		void Init(bool initOpengl = false);
+		void Init();
 
 		bool threeNormals;
 
@@ -126,6 +123,33 @@ namespace OpenGL {
 		Vector3D<double> edge2;
 
 		bool useInterpolation;
+	};
+
+
+	class OpenGLTriangle : public VertexBufferRenderable, public Triangle
+	{
+	public:
+		OpenGLTriangle() : VertexBufferRenderable(), Triangle() {}
+		OpenGLTriangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c)
+			: VertexBufferRenderable(), Triangle(a, b, c)
+		{
+			Init();
+		}
+
+		OpenGLTriangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const Vector3D<double>& n1, const Vector3D<double>& n2, const Vector3D<double>& n3)
+			: VertexBufferRenderable(), Triangle(a, b, c, n1, n2, n3)
+		{
+			Init();
+		}
+
+		virtual ~OpenGLTriangle() {};
+
+
+		virtual void Draw() override;
+		void DrawInstanced(unsigned int count);
+
+	protected:
+		void Init();
 	};
 
 }
