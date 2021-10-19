@@ -221,6 +221,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraPropertyPage.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="ComplexObject.h" />
     <ClInclude Include="ComputationThread.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cube.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraPropertyPage.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="ComplexObject.cpp" />
     <ClCompile Include="ComputationThread.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DisplayPropertyPage.cpp" />

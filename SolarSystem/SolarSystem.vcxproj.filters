@@ -144,6 +144,9 @@
     <ClInclude Include="SpaceshipProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ComplexObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SolarSystem.cpp">
@@ -261,6 +264,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceshipProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComplexObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

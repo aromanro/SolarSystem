@@ -54,9 +54,9 @@ namespace OpenGL {
 
 		const int STRIDE_SIZE = 6; // 3 for vertex, 3 for normal, maybe later 3 for tangent - the one with texture will add 2 for texture coordinate
 		GLfloat vertices[] = {
-			A.X, A.Y, A.Z, normal1.X, normal1.Y, normal1.Z,
-			B.X, B.Y, B.Z, normal2.X, normal2.Y, normal2.Z,
-			C.X, C.Y, C.Z, normal3.X, normal3.Y, normal3.Z
+			static_cast<GLfloat>(A.X), static_cast<GLfloat>(A.Y), static_cast<GLfloat>(A.Z), static_cast<GLfloat>(normal1.X), static_cast<GLfloat>(normal1.Y), static_cast<GLfloat>(normal1.Z),
+			static_cast<GLfloat>(B.X), static_cast<GLfloat>(B.Y), static_cast<GLfloat>(B.Z), static_cast<GLfloat>(normal2.X), static_cast<GLfloat>(normal2.Y), static_cast<GLfloat>(normal2.Z),
+			static_cast<GLfloat>(C.X), static_cast<GLfloat>(C.Y), static_cast<GLfloat>(C.Z), static_cast<GLfloat>(normal3.X), static_cast<GLfloat>(normal3.Y), static_cast<GLfloat>(normal3.Z)
 		};
 
 		Renderable::Bind();
