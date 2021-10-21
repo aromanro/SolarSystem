@@ -137,8 +137,10 @@ CSolarSystemView::~CSolarSystemView()
 	delete billboardRectangle;
 	delete billboardTexture;
 #ifdef DISPLAY_SPACESHIP
-	delete triangle;
+	//delete triangle;
 #endif	
+	delete spaceship;
+
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyProgram();
@@ -253,9 +255,10 @@ bool CSolarSystemView::SetupShadows()
 
 bool CSolarSystemView::SetupSpaceship()
 {
+	if (spaceship == NULL) return false;
+
 	if (NULL == spaceshipProgram)
 	{
-#ifdef DISPLAY_SPACESHIP
 		spaceshipProgram = new OpenGL::SpaceshipProgram();
 		if (!spaceshipProgram->SetShaders())
 		{
@@ -273,7 +276,6 @@ bool CSolarSystemView::SetupSpaceship()
 		}
 
 		spaceshipProgram->DetachShaders();
-#endif
 	}
 
 	return true;
@@ -356,8 +358,20 @@ void CSolarSystemView::Setup()
 	
 
 #ifdef DISPLAY_SPACESHIP
-	const int translateDown = 0;
-	triangle = new OpenGL::OpenGLTriangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0));
+	//const int translateDown = 0;
+	//triangle = new OpenGL::OpenGLTriangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0));
+
+	if (!theApp.options.spaceshipObjFile.IsEmpty())
+	{
+		ObjLoader objLoader;
+		CT2CA convAnsiString(theApp.options.spaceshipObjFile);
+		std::string spaceshipFile(convAnsiString);
+		if (objLoader.Load(spaceshipFile))
+		{
+			spaceship = new OpenGL::ComplexObject(objLoader);
+		}
+	}
+
 #endif
 
 
@@ -376,7 +390,7 @@ void CSolarSystemView::Setup()
 
 	SetupShadows();
 
-	SetupSpaceship();
+	if (spaceship) SetupSpaceship();
 
 	wglMakeCurrent(NULL, NULL);
 
@@ -536,11 +550,15 @@ void CSolarSystemView::RenderScene()
 		sphere->Draw();
 	}
 
-	program->UnUse();
-	RenderSpaceship(mat);
+	if (spaceship && spaceshipProgram)
+	{
+		program->UnUse();
+		RenderSpaceship(mat);
 
-	// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
-	program->Use();
+		// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
+		program->Use();
+	}
+
 	if (theApp.options.showBillboard)
 		DisplayBilboard();
 }
@@ -615,7 +633,7 @@ void CSolarSystemView::RenderSky()
 
 void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 {
-	if (spaceshipProgram)
+	if (spaceship && spaceshipProgram)
 	{
 		//glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
 
@@ -648,8 +666,10 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		// TODO: Display the spaceship
 
 #ifdef DISPLAY_SPACESHIP
-		triangle->Draw();
+		//triangle->Draw();
 #endif
+
+		spaceship->Draw();
 
 		spaceshipProgram->UnUse();
 	}
@@ -1076,11 +1096,13 @@ void CSolarSystemView::Reset()
 	billboardTexture = NULL;
 
 #ifdef DISPLAY_SPACESHIP
-	delete triangle;
-	triangle = NULL;
-#endif	
+	//delete triangle;
+	//triangle = NULL;
+#endif
 
-
+	delete spaceship;
+	spaceship = NULL;
+	
 	ClearProgram();
 	ClearShadowProgram();
 	ClearSkyProgram();

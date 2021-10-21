@@ -112,6 +112,7 @@ namespace OpenGL {
 		double area;
 		Vector3D<double> normal; // the computed normal, it's the real one
 
+	public:
 		// normals supplied by other means, for each vertex (for example by loading from an obj file or programmatically)
 		// they are not necessarily the same as the normal above
 		// they can be used to 'fake' a curved triangle, by computing a normal in the hit point using them, based on barycentric coordinates
@@ -119,6 +120,7 @@ namespace OpenGL {
 		Vector3D<double> normal2;
 		Vector3D<double> normal3;
 
+	protected:
 		Vector3D<double> edge1;
 		Vector3D<double> edge2;
 

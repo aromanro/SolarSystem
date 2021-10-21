@@ -1,4 +1,5 @@
 #pragma once
+
 class Options
 {
 public:
@@ -12,6 +13,8 @@ public:
 	unsigned int scrollSpeed;
 
 	bool showBillboard;
+
+	CString spaceshipObjFile;
 
 	Options();
 	~Options();

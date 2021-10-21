@@ -28,6 +28,29 @@ public:
 
 	static bool AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const Material& material, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles);
 
+	// TODO: add rotate, scale, translate...
+	void Translate(const Vector3D<double>& t)
+	{
+		for (auto& obj : triangles)
+			obj->Translate(t);
+
+	}
+
+	void RotateAround(const Vector3D<double>& v, double angle)
+	{
+		for (auto& obj : triangles)
+			obj->RotateAround(v, angle);
+	}
+
+
+	void Scale(double s)
+	{
+		for (auto& obj : triangles)
+			obj->Scale(s);
+	}
+
+	std::string dir;
+
 	std::map<std::string, Material> materials;
 	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
 };

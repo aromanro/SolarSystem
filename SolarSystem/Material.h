@@ -25,6 +25,8 @@ public:
 	std::string diffuseTexture; // map_Kd
 	std::string specularTexture; // map_Ks
 
+	std::string bumpTexture;
+
 
 	// WARNING: there can be Ns and d textures as well, but I ignore them for now
 

@@ -41,6 +41,11 @@ bool Options::Load()
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"showBillboard", 0));
 	showBillboard = (res != 0 ? true : false);
 
+	spaceshipObjFile = theApp.GetProfileString(L"options", L"spaceship");
+
+	// TODO: remove this later, it's for tests until there is UI added for it
+	if (spaceshipObjFile.IsEmpty())
+		spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Akira\\Akira\\akira.obj";
 
 	return true;
 }
@@ -58,6 +63,8 @@ bool Options::Save()
 	theApp.WriteProfileInt(L"options", L"scrollSpeed", (int)scrollSpeed);
 
 	theApp.WriteProfileInt(L"options", L"showBillboard", showBillboard ? 1 : 0);
+
+	theApp.WriteProfileString(L"options", L"spaceship", spaceshipObjFile);
 
 	return false;
 }

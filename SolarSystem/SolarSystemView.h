@@ -26,9 +26,9 @@
 #include "MemoryBitmap.h"
 
 //#define DISPLAY_SPACESHIP 1
-#ifdef DISPLAY_SPACESHIP
-#include "Triangle.h" // TODO: for tests, remove it later
-#endif
+
+#include "ObjLoader.h"
+#include "ComplexObject.h"
 
 class CSolarSystemDoc;
 
@@ -75,9 +75,10 @@ private:
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
 
 	OpenGL::SpaceshipProgram *spaceshipProgram;
+	OpenGL::ComplexObject* spaceship = NULL;
 
 #ifdef DISPLAY_SPACESHIP
-	OpenGL::OpenGLTriangle* triangle; // for tests, remove it later
+	//OpenGL::OpenGLTriangle* triangle = NULL; // for tests, remove it later
 #endif
 
 	class Uniforms {
