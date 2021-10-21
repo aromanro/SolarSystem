@@ -551,7 +551,7 @@ bool ObjLoader::IsConcave(const Polygon& polygon, const std::vector<Vector3D<dou
 	return false;
 }
 
-bool ObjLoader::AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords/*, std::shared_ptr<Materials::Material> material*/, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles)
+bool ObjLoader::AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const Material& material, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles)
 {
 	const size_t indexvertex1 = std::get<0>(polygon[ind1]);
 	const size_t indextex1 = std::get<1>(polygon[ind1]);
@@ -581,7 +581,7 @@ bool ObjLoader::AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon
 	size_t lastIndexTex = indextex3;
 	Vector3D<double> lastNormal(normals[indexnormal3]);
 
-	std::shared_ptr<OpenGL::Triangle> triangle = std::make_shared<OpenGL::Triangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal/*, material*/);
+	std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, material);
 
 	if (firstIndexTex >= 0)
 	{
