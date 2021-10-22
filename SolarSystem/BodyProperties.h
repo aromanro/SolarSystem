@@ -38,6 +38,9 @@ public:
 	bool LoadTexture();
 	void CleanTexture();
 
+	static OpenGL::Texture* LoadTexture(const CString& name, int bindNo = 0, int bpp = 24);
+	static OpenGL::Texture* LoadNormalTexture(const CString& name, double bumpParam, int bindNo);
+
 protected:
 	static double GetPixelValue(const CImage& img, int x, int y);
 };

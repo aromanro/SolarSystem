@@ -70,89 +70,105 @@ bool BodyProperties::LoadTexture()
 		}
 	}
 
+	shadowTexture = LoadTexture(shadowFile, 2, 24);
+	specularTexture = LoadTexture(specularFile, 3, 8);
+	normalTexture = LoadNormalTexture(normalFile, bumpParam, 4);
 
-	if (!shadowFile.IsEmpty())
+	texture = LoadTexture(imgFile);
+	if (texture) return true;
+
+	return false;
+}
+
+// the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
+double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
+{
+	const int width = img.GetWidth();
+	const int height = img.GetHeight();
+
+	if (x < 0) x += width;
+	else if (x >= width) x -= width;
+	
+	if (y < 0) y += height;
+	else if (y >= height) y -= height;
+
+	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
+	if (paddr) return *paddr / 255.;
+
+	// this is very slow!
+	//COLORREF rgb = img.GetPixel(x, y);
+	//return ((double)GetRValue(rgb) + (double)GetGValue(rgb) + (double)GetBValue(rgb)) / (3. * 255.);
+
+	return 0.;
+}
+
+
+void BodyProperties::CleanTexture()
+{
+	delete texture;
+	texture = NULL;
+
+	delete transparentTexture;
+	transparentTexture = NULL;
+
+	delete shadowTexture;
+	shadowTexture = NULL;
+
+	delete specularTexture;
+	specularTexture = NULL;
+
+	delete normalTexture;
+	normalTexture = NULL;
+
+	transparentTextureAlpha = false;
+}
+
+
+OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo, int bpp)
+{
+	OpenGL::Texture* texture = NULL;
+
+	if (!imgFile.IsEmpty())
 	{
 		try {
 			CImage skin;
-			skin.Load(shadowFile);
+			skin.Load(imgFile);
 
-			if (!(skin.IsNull() || skin.GetBPP() != 24))
-			{
+			if (skin.IsNull() || skin.GetBPP() != bpp) return NULL;
 
-				// ideally they should be power of 2 but even values should do
+			// ideally they should be power of 2 but even values should do
 
-				// check if it's even
-				unsigned int dim = skin.GetWidth();
-				if (!(dim % 2))
-				{
+			// check if it's even
+			unsigned int dim = skin.GetWidth();
+			if (dim % 2) return NULL;
 
-					// check if it's even
-					dim = skin.GetHeight();
-					if (!(dim % 2))
-					{
+			// check if it's even
+			dim = skin.GetHeight();
+			if (dim % 2) return NULL;
 
-						shadowTexture = new OpenGL::Texture();
-						unsigned char* buf = NULL;
+			texture = new OpenGL::Texture();
+			unsigned char* buf = NULL;
 
-						if (skin.GetPitch() < 0)
-							buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
-						else
-							buf = static_cast<unsigned char*>(skin.GetBits());
+			if (skin.GetPitch() < 0)
+				buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+			else
+				buf = static_cast<unsigned char*>(skin.GetBits());
 
-						shadowTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 2);
-					}
-				}
-			}
+			texture->setData(buf, skin.GetWidth(), skin.GetHeight(), bindNo, bpp / 8);
 		}
 		catch (...)
 		{
-			delete shadowTexture;
-			shadowTexture = NULL;
+			delete texture;
+			texture = NULL;
 		}
 	}
 
+	return texture;
+}
 
-	if (!specularFile.IsEmpty())
-	{
-		try {
-			CImage skin;
-			skin.Load(specularFile);
-
-			if (!(skin.IsNull() || skin.GetBPP() != 8))
-			{
-				// ideally they should be power of 2 but even values should do
-
-				// check if it's even
-				unsigned int dim = skin.GetWidth();
-				if (!(dim % 2))
-				{
-
-					// check if it's even
-					dim = skin.GetHeight();
-					if (!(dim % 2))
-					{
-
-						specularTexture = new OpenGL::Texture();
-						unsigned char* buf = NULL;
-
-						if (skin.GetPitch() < 0)
-							buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
-						else
-							buf = static_cast<unsigned char*>(skin.GetBits());
-
-						specularTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 3, 1);
-					}
-				}
-			}
-		}
-		catch (...)
-		{
-			delete specularTexture;
-			specularTexture = NULL;
-		}
-	}
-
+OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, double bumpParam, int bindNo)
+{
+	OpenGL::Texture* normalTexture = NULL;
 
 	if (!normalFile.IsEmpty())
 	{
@@ -210,7 +226,7 @@ bool BodyProperties::LoadTexture()
 									// Sobel
 									const double dX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
 									const double dY = bottomLeft - topLeft + 2. * (bottom - top) + bottomRight - topRight;
-									
+
 									const double dZ = bumpParam; // make it smaller to increase the slope 
 
 									glm::vec3 v(-dX, -dY, dZ);
@@ -224,10 +240,10 @@ bool BodyProperties::LoadTexture()
 									memoryBitmap.SetPixel(x, y, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
 								}
 							}
-							
+
 							//memoryBitmap.Save(CString("C:\\temp\\") + normalFile);
 
-							memoryBitmap.SetIntoTexture(*normalTexture, 4);
+							memoryBitmap.SetIntoTexture(*normalTexture, bindNo);
 						}
 					}
 				}
@@ -240,87 +256,5 @@ bool BodyProperties::LoadTexture()
 		}
 	}
 
-
-	if (!imgFile.IsEmpty())
-	{
-		try {
-			CImage skin;
-			skin.Load(imgFile);
-
-			if (skin.IsNull()) return false;
-			else if (skin.GetBPP() != 24) return false;
-
-			// ideally they should be power of 2 but even values should do
-
-			// check if it's even
-			unsigned int dim = skin.GetWidth();
-			if (dim % 2) return false;
-
-			// check if it's even
-			dim = skin.GetHeight();
-			if (dim % 2) return false;
-
-			texture = new OpenGL::Texture();
-			unsigned char* buf = NULL;
-
-			if (skin.GetPitch() < 0)
-				buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
-			else 
-				buf = static_cast<unsigned char*>(skin.GetBits());
-
-			texture->setData(buf, skin.GetWidth(), skin.GetHeight());
-
-			return true;
-		}
-		catch (...)
-		{
-			delete texture;
-			texture = NULL;
-		}
-	}
-
-	return false;
-}
-
-// the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
-double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
-{
-	const int width = img.GetWidth();
-	const int height = img.GetHeight();
-
-	if (x < 0) x += width;
-	else if (x >= width) x -= width;
-	
-	if (y < 0) y += height;
-	else if (y >= height) y -= height;
-
-	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
-	if (paddr) return *paddr / 255.;
-
-	// this is very slow!
-	//COLORREF rgb = img.GetPixel(x, y);
-	//return ((double)GetRValue(rgb) + (double)GetGValue(rgb) + (double)GetBValue(rgb)) / (3. * 255.);
-
-	return 0.;
-}
-
-
-void BodyProperties::CleanTexture()
-{
-	delete texture;
-	texture = NULL;
-
-	delete transparentTexture;
-	transparentTexture = NULL;
-
-	delete shadowTexture;
-	shadowTexture = NULL;
-
-	delete specularTexture;
-	specularTexture = NULL;
-
-	delete normalTexture;
-	normalTexture = NULL;
-
-	transparentTextureAlpha = false;
+	return normalTexture;
 }

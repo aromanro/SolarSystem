@@ -632,9 +632,9 @@ void ObjLoader::LeftTrim(std::string& line)
 }
 
 
-bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dir)
+bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath)
 {
-	std::ifstream infile(dir + name);
+	std::ifstream infile(dirPath + name);
 
 	if (!infile) return false;
 
