@@ -36,7 +36,6 @@ bool BodyProperties::LoadTexture()
 
 			if (!(skin.IsNull() || (skin.GetBPP() != 24 && skin.GetBPP() != 32)))
 			{
-
 				// ideally they should be power of 2 but even values should do
 
 				// check if it's even

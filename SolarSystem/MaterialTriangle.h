@@ -14,7 +14,6 @@ namespace OpenGL {
     public:
         MaterialTriangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const Vector3D<double>& n1, const Vector3D<double>& n2, const Vector3D<double>& n3, const Material& mat);
 
-    protected:
         Material material;
     };
 

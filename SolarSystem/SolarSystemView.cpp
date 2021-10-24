@@ -368,7 +368,7 @@ void CSolarSystemView::Setup()
 		std::string spaceshipFile(convAnsiString);
 		if (objLoader.Load(spaceshipFile))
 		{
-			spaceship = new OpenGL::ComplexObject(objLoader);
+			spaceship = new OpenGL::ComplexObjectCompositeMaterials(objLoader);
 		}
 	}
 

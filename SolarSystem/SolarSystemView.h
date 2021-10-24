@@ -75,7 +75,7 @@ private:
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
 
 	OpenGL::SpaceshipProgram *spaceshipProgram;
-	OpenGL::ComplexObject* spaceship = NULL;
+	OpenGL::ComplexObjectCompositeMaterials* spaceship = NULL;
 
 #ifdef DISPLAY_SPACESHIP
 	//OpenGL::OpenGLTriangle* triangle = NULL; // for tests, remove it later

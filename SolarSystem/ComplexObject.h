@@ -7,11 +7,14 @@
 
 namespace OpenGL {
 
-	// TODO: implement it!
+
+
 	class ComplexObject : public VertexBufferRenderable
 	{
 	public:
-		ComplexObject(const ObjLoader& loader); //pass it with the loaded file!
+		ComplexObject();
+
+		int Load(const ObjLoader& loader, int startIndex = 0);
 
 		virtual void Draw() override;
 		void DrawInstanced(unsigned int count);
@@ -20,5 +23,15 @@ namespace OpenGL {
 		int vertexCount = 0;
 	};
 
+	class ComplexObjectCompositeMaterials
+	{
+	public:
+		ComplexObjectCompositeMaterials(const ObjLoader& loader);
+
+		void Draw();
+		void DrawInstanced(unsigned int count);
+
+		std::vector<std::shared_ptr<ComplexObject>> complexObjects;
+	};
 }
 
