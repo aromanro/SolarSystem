@@ -669,7 +669,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		//triangle->Draw();
 #endif
 
-		spaceship->Draw();
+		spaceship->Draw(*spaceshipProgram);
 
 		spaceshipProgram->UnUse();
 	}

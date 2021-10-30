@@ -4,6 +4,9 @@
 #include <memory>
 #include "ObjLoader.h"
 
+#include "Material.h"
+#include "Texture.h"
+#include "SpaceshipProgram.h"
 
 namespace OpenGL {
 
@@ -19,8 +22,14 @@ namespace OpenGL {
 		virtual void Draw() override;
 		void DrawInstanced(unsigned int count);
 
+		void SetValues(SpaceshipProgram& program);
+
 	protected:
+		Material material;
 		int vertexCount = 0;
+
+		std::shared_ptr<Texture> ambientTexture;
+		std::shared_ptr<Texture> diffuseTexture;
 	};
 
 	class ComplexObjectCompositeMaterials
@@ -28,7 +37,7 @@ namespace OpenGL {
 	public:
 		ComplexObjectCompositeMaterials(const ObjLoader& loader);
 
-		void Draw();
+		void Draw(SpaceshipProgram& program);
 		void DrawInstanced(unsigned int count);
 
 		std::vector<std::shared_ptr<ComplexObject>> complexObjects;
