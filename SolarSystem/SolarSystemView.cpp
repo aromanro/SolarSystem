@@ -651,7 +651,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		precisionMat = glm::translate(precisionMat, pos);
 
-		const double scale = 0.0025f;
+		const double scale = 0.005f;
 		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
 
 		const glm::mat4 modelMat(precisionMat);

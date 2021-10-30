@@ -152,8 +152,12 @@ namespace OpenGL {
 			{
 				vec4 color;
 				
-				if (useDiffuseTexture == 1) color = texture(diffuseTexture, TexCoord);
+				if (useDiffuseTexture == 1) color = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 				else color = vec4(diffuseColor, 1.0f);
+
+				if (useAmbientTexture == 1) color = color + texture(ambientTexture, TexCoord) * vec4(ambientColor, 1.0f);
+				else color = color + vec4(diffuseColor, 1.0f);
+
 
 				outputColor = color;
 			}
