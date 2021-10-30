@@ -95,7 +95,11 @@ namespace OpenGL {
 			const std::string path = loader.dir + material.ambientTexture;
 			CString fileName(path.c_str());
 			ambientTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
-			if (ambientTexture) ++bindNo;
+			if (ambientTexture)
+			{
+				++bindNo;
+				ambientTexture->GenerateMipmaps();
+			}
 		}
 
 		if (!material.diffuseTexture.empty())
@@ -103,7 +107,11 @@ namespace OpenGL {
 			const std::string path = loader.dir + material.diffuseTexture;
 			CString fileName(path.c_str());
 			diffuseTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
-			if (diffuseTexture) ++bindNo;
+			if (diffuseTexture)
+			{
+				++bindNo;
+				diffuseTexture->GenerateMipmaps();
+			}
 		}
 
 		return endIndex;
@@ -120,8 +128,8 @@ namespace OpenGL {
 		else
 		{
 			glUniform1i(program.useDiffuseTextureLocation, 0);
+			glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
 		}
-		glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
 
 		if (ambientTexture)
 		{
@@ -131,8 +139,8 @@ namespace OpenGL {
 		else
 		{
 			glUniform1i(program.useAmbientTextureLocation, 0);
+			glUniform3f(program.ambientColorLocation, static_cast<float>(material.ambientColor.r), static_cast<float>(material.ambientColor.g), static_cast<float>(material.ambientColor.b));
 		}
-		glUniform3f(program.ambientColorLocation, static_cast<float>(material.ambientColor.r), static_cast<float>(material.ambientColor.g), static_cast<float>(material.ambientColor.b));
 	}
 
 
