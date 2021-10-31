@@ -51,6 +51,8 @@ namespace OpenGL {
 
 		// fragment shader uniform parameters
 
+		illuminationLocation = glGetUniformLocation(getID(), "illumination");
+
 		ambientColorLocation = glGetUniformLocation(getID(), "ambientColor");  //Ka
 		diffuseColorLocation = glGetUniformLocation(getID(), "diffuseColor");  //Kd
 		specularColorLocation = glGetUniformLocation(getID(), "specularColor"); //Ks
@@ -122,6 +124,8 @@ namespace OpenGL {
 
 		// just white for now, but it will become way more complex
 		fragmentShader.setSource(GLSL(
+
+			uniform int illumination;
 
 			uniform vec3 ambientColor;  //Ka
 			uniform vec3 diffuseColor;  //Kd

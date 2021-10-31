@@ -18,30 +18,32 @@ namespace OpenGL {
         bool SetShaders();
 
         // vertex shader parameters
-        GLint matLocation;
-        GLint modelMatLocation;
-        GLint transpInvModelMatLocation;
+        GLint matLocation = 0;
+        GLint modelMatLocation = 0;
+        GLint transpInvModelMatLocation = 0;
 
         // fragment shader uniform parameters
 
-        GLint ambientColorLocation;  //Ka
-        GLint diffuseColorLocation;  //Kd
-        GLint specularColorLocation; //Ks
+        GLint illuminationLocation = 0;
 
-        GLint exponentLocation;
+        GLint ambientColorLocation = 0;  //Ka
+        GLint diffuseColorLocation = 0;  //Kd
+        GLint specularColorLocation = 0; //Ks
 
-        GLint useAmbientTextureLocation;
-        GLint useDiffuseTextureLocation;
-        GLint useSpecularTextureLocation;
-        GLint useExponentTextureLocation;
-        GLint useBumpTextureLocation;
+        GLint exponentLocation = 0;
 
-        GLint ambientTextureLocation; // map_Ka
-        GLint diffuseTextureLocation; // map_Kd
-        GLint specularTextureLocation; // map_Ks
+        GLint useAmbientTextureLocation = 0;
+        GLint useDiffuseTextureLocation = 0;
+        GLint useSpecularTextureLocation = 0;
+        GLint useExponentTextureLocation = 0;
+        GLint useBumpTextureLocation = 0;
 
-        GLint exponentTextureLocation; // map_Ns
-        GLint bumpTextureLocation; // map_bump or bump
+        GLint ambientTextureLocation = 0; // map_Ka
+        GLint diffuseTextureLocation = 0; // map_Kd
+        GLint specularTextureLocation = 0; // map_Ks
+
+        GLint exponentTextureLocation = 0; // map_Ns
+        GLint bumpTextureLocation = 0; // map_bump or bump
     protected:
         void getUniformsLocations();
         bool SetupVertexShader();

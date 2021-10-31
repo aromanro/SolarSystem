@@ -120,6 +120,9 @@ namespace OpenGL {
 	void ComplexObject::SetValues(SpaceshipProgram& program)
 	{
 		// TODO: Implement it completely
+
+		glUniform1i(program.illuminationLocation, static_cast<int>(material.illumination));
+
 		if (diffuseTexture)
 		{
 			diffuseTexture->Bind();
