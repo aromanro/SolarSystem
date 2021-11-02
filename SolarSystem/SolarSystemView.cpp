@@ -82,6 +82,36 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 }
 
 
+
+CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::SpaceshipProgram& program, unsigned int nrlights)
+{
+	USES_CONVERSION;
+
+	// lights
+
+	if (nrlights == 0)
+	{
+		program.lights[0].lightPos = glm::vec3(-farPlaneDistance, -farPlaneDistance, 0);
+	}
+	else
+	{
+		unsigned int light = 0;
+
+		auto pit = m_SolarSystem.m_BodyProperties.begin();
+		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		{
+			if (pit->isSun)
+			{
+				program.lights[light].lightPos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+				++light;
+			}
+		}
+	}
+
+}
+
+
 CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights)
 {
 	// light
@@ -276,6 +306,9 @@ bool CSolarSystemView::SetupSpaceship()
 		}
 
 		spaceshipProgram->DetachShaders();
+
+		CSolarSystemDoc* doc = GetDocument();
+		if (doc) program->SetupLights(doc->m_SolarSystem.m_BodyProperties);
 	}
 
 	return true;
@@ -553,6 +586,7 @@ void CSolarSystemView::RenderScene()
 	if (spaceship && spaceshipProgram)
 	{
 		program->UnUse();
+
 		RenderSpaceship(mat);
 
 		// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
@@ -636,8 +670,13 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 	if (spaceship && spaceshipProgram)
 	{
 		//glm::mat4 mat(perspectiveMatrix * (glm::dmat4)camera);
+		CSolarSystemDoc* doc = GetDocument();
+		if (!doc) return;
 
 		spaceshipProgram->Use();
+
+		SpaceshipUniforms params(doc->m_SolarSystem, *spaceshipProgram, spaceshipProgram->nrlights);
+
 
 		//if (shadowProgram) shadowProgram->depthCubemap.Bind();
 

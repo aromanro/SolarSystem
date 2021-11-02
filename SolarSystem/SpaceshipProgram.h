@@ -2,6 +2,7 @@
 #include "Program.h"
 
 #include "VertexBufferRenderable.h"
+#include "SolarSystemBodies.h"
 
 #include <glm.hpp>
 
@@ -16,6 +17,18 @@ namespace OpenGL {
         virtual ~SpaceshipProgram();
 
         bool SetShaders();
+
+        void SetupLights(BodyPropList& BodyProperties);
+
+        struct Light {
+            GLint lightDirPos = 0;
+            GLint attenPos = 0;
+            glm::dvec3 lightPos;
+        };
+
+        std::vector<Light> lights;
+
+        unsigned int nrlights;
 
         // vertex shader parameters
         GLint matLocation = 0;

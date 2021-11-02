@@ -14,7 +14,7 @@
 namespace OpenGL {
 
 	SpaceshipProgram::SpaceshipProgram()
-		: matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0)
+		: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0)
 	{	
 	}
 
@@ -22,6 +22,45 @@ namespace OpenGL {
 	{
 
 	}
+
+	void SpaceshipProgram::SetupLights(BodyPropList& BodyProperties)
+	{
+		//	nrlights = 0;
+		lights.clear();
+
+
+		for (const auto& body : BodyProperties)
+			if (body.isSun) {
+				lights.emplace_back(Light());
+			}
+
+		if (0 == nrlights) lights.emplace_back(Light());
+
+		USES_CONVERSION;
+
+		// lights uniforms positions
+
+		if (nrlights == 0)
+		{
+			lights[0].attenPos = glGetUniformLocation(getID(), "Lights[0].lightDir");
+			lights[0].lightDirPos = glGetUniformLocation(getID(), "Lights[0].atten");
+		}
+		else
+		{
+			for (unsigned int light = 0; light < nrlights; ++light)
+			{
+				CString param;
+
+				param.Format(L"Lights[%d].lightDir", light);
+				lights[light].lightDirPos = glGetUniformLocation(getID(), W2A(param));
+
+				param.Format(L"Lights[%d].atten", light);
+				lights[light].attenPos = glGetUniformLocation(getID(), W2A(param));
+			}
+		}
+	}
+
+
 
 	bool SpaceshipProgram::SetShaders()
 	{
@@ -123,7 +162,17 @@ namespace OpenGL {
 		OpenGL::FragmentShader fragmentShader;
 
 		// just white for now, but it will become way more complex
-		fragmentShader.setSource(GLSL(
+		CString shaderSrc;
+		shaderSrc.Format(CString(GLSL(
+			\n#define NRLIGHTS % d\n
+
+			precision highp float;
+
+			struct Light {
+				vec3 lightDir;
+				float atten;
+			};
+			uniform Light Lights[NRLIGHTS];
 
 			uniform int illumination;
 
@@ -165,8 +214,10 @@ namespace OpenGL {
 
 				outputColor = color;
 			}
-		));
+		)), nrlights == 0 ? 1 : nrlights);
 
+		USES_CONVERSION;
+		fragmentShader.setSource(W2A(shaderSrc));
 
 		if (fragmentShader.getStatus() == false)
 		{

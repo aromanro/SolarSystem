@@ -91,6 +91,11 @@ private:
 		ShadowUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights);
 	};
 	
+	class SpaceshipUniforms {
+	public:
+		SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::SpaceshipProgram& program, unsigned int nrlights);
+	};
+
 	
 	bool keyDown;
 	bool ctrl;
