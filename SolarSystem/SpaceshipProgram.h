@@ -16,7 +16,7 @@ namespace OpenGL {
         SpaceshipProgram();
         virtual ~SpaceshipProgram();
 
-        bool SetShaders();
+        bool SetShaders(unsigned int nrLights);
 
         void SetupLights(BodyPropList& BodyProperties);
 

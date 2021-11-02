@@ -289,8 +289,10 @@ bool CSolarSystemView::SetupSpaceship()
 
 	if (NULL == spaceshipProgram)
 	{
+		if (NULL == program) return false;
+
 		spaceshipProgram = new OpenGL::SpaceshipProgram();
-		if (!spaceshipProgram->SetShaders())
+		if (!spaceshipProgram->SetShaders(program->nrlights))
 		{
 			ClearSpaceshipProgram();
 
@@ -308,7 +310,7 @@ bool CSolarSystemView::SetupSpaceship()
 		spaceshipProgram->DetachShaders();
 
 		CSolarSystemDoc* doc = GetDocument();
-		if (doc) program->SetupLights(doc->m_SolarSystem.m_BodyProperties);
+		if (doc) spaceshipProgram->SetupLights(doc->m_SolarSystem.m_BodyProperties);
 	}
 
 	return true;

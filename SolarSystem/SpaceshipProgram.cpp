@@ -62,8 +62,10 @@ namespace OpenGL {
 
 
 
-	bool SpaceshipProgram::SetShaders()
+	bool SpaceshipProgram::SetShaders(unsigned int nrLights)
 	{
+		nrlights = nrLights;
+
 		if (!SetupVertexShader()) return false;
 		else if (!SetupFragmentShader()) return false;
 
