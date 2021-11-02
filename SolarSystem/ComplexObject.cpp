@@ -114,6 +114,42 @@ namespace OpenGL {
 			}
 		}
 
+		if (!material.specularTexture.empty())
+		{
+			const std::string path = loader.dir + material.specularTexture;
+			CString fileName(path.c_str());
+			specularTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
+			if (specularTexture)
+			{
+				++bindNo;
+				specularTexture->GenerateMipmaps();
+			}
+		}
+
+		if (!material.exponentTexture.empty())
+		{
+			const std::string path = loader.dir + material.exponentTexture;
+			CString fileName(path.c_str());
+			exponentTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo, 8));
+			if (exponentTexture)
+			{
+				++bindNo;
+				exponentTexture->GenerateMipmaps();
+			}
+		}
+
+		if (!material.bumpTexture.empty())
+		{
+			const std::string path = loader.dir + material.bumpTexture;
+			CString fileName(path.c_str());
+			bumpTexture = std::shared_ptr<Texture>(BodyProperties::LoadNormalTexture(fileName, 2, bindNo));
+			if (bumpTexture)
+			{
+				++bindNo;
+				bumpTexture->GenerateMipmaps();
+			}
+		}
+
 		return endIndex;
 	}
 
@@ -131,8 +167,8 @@ namespace OpenGL {
 		else
 		{
 			glUniform1i(program.useDiffuseTextureLocation, 0);
-			glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
 		}
+		glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
 
 		if (ambientTexture)
 		{
@@ -142,7 +178,41 @@ namespace OpenGL {
 		else
 		{
 			glUniform1i(program.useAmbientTextureLocation, 0);
-			glUniform3f(program.ambientColorLocation, static_cast<float>(material.ambientColor.r), static_cast<float>(material.ambientColor.g), static_cast<float>(material.ambientColor.b));
+		}
+		glUniform3f(program.ambientColorLocation, static_cast<float>(material.ambientColor.r), static_cast<float>(material.ambientColor.g), static_cast<float>(material.ambientColor.b));
+
+		if (specularTexture)
+		{
+			specularTexture->Bind();
+			glUniform1i(program.useSpecularTextureLocation, 1);
+		}
+		else
+		{
+			glUniform1i(program.useSpecularTextureLocation, 0);
+		}
+		glUniform3f(program.specularColorLocation, static_cast<float>(material.specularColor.r), static_cast<float>(material.specularColor.g), static_cast<float>(material.specularColor.b));
+
+
+		if (exponentTexture)
+		{
+			exponentTexture->Bind();
+			glUniform1i(program.useExponentTextureLocation, 1);
+		}
+		else
+		{
+			glUniform1i(program.useExponentTextureLocation, 0);
+		}
+		glUniform1f(program.exponentLocation, static_cast<float>(material.exponent));
+		
+
+		if (bumpTexture)
+		{
+			bumpTexture->Bind();
+			glUniform1i(program.useBumpTextureLocation, 1);
+		}
+		else
+		{
+			glUniform1i(program.useBumpTextureLocation, 0);
 		}
 	}
 

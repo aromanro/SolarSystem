@@ -30,6 +30,10 @@ namespace OpenGL {
 
 		std::shared_ptr<Texture> ambientTexture;
 		std::shared_ptr<Texture> diffuseTexture;
+		std::shared_ptr<Texture> specularTexture;
+		
+		std::shared_ptr<Texture> exponentTexture;
+		std::shared_ptr<Texture> bumpTexture;
 	};
 
 	class ComplexObjectCompositeMaterials
