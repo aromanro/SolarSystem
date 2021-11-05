@@ -40,6 +40,8 @@
 #define new DEBUG_NEW
 #endif
 
+static const double lightCoeff = 0.000001;
+
 
 CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights)
 {
@@ -476,9 +478,7 @@ void CSolarSystemView::RenderScene()
 
 	glUniform1i(program->useAlphaBlend, 0);
 
-	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
-
-	static const double lightCoeff = 0.000001;
+	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();	
 
 	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
 	{
@@ -679,16 +679,27 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		SpaceshipUniforms params(doc->m_SolarSystem, *spaceshipProgram, spaceshipProgram->nrlights);
 
+		const glm::dvec3 pos(0, 0, -0.150);
 
-		//if (shadowProgram) shadowProgram->depthCubemap.Bind();
+		const glm::dvec3 spaceshipPos = glm::dvec3(camera.eyePos.X / AGLU, camera.eyePos.Y / AGLU, camera.eyePos.Z / AGLU) + pos;
+
+		for (unsigned int i = 0; i < (spaceshipProgram->nrlights == 0 ? 1 : spaceshipProgram->nrlights); ++i)
+		{
+			glm::dvec3 lightDir = spaceshipProgram->lights[i].lightPos - spaceshipPos;
+
+			// linear instead of quadratic and using a coefficient that provides enough light even for Pluto
+			const float atten = static_cast<float>(1. / (1. + lightCoeff * glm::length(lightDir)));
+
+			lightDir = glm::normalize(lightDir);
+			glUniform3f(spaceshipProgram->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
+			glUniform1f(spaceshipProgram->lights[i].attenPos, atten);
+		}
 
 		//glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 		glm::dmat4 precisionMat(camera.getMatrixDouble());
 		precisionMat = glm::inverse(precisionMat);
-
-		const glm::dvec3 pos(0, 0, -0.150);
 
 		precisionMat = glm::translate(precisionMat, pos);
 
