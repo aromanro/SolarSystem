@@ -685,28 +685,37 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
-		glm::dmat4 precisionMat(camera.getMatrixDouble());
-
-		precisionMat = glm::inverse(precisionMat);
-
 		const glm::dvec3 pos(0, 0, 0.150);
 
-		precisionMat = glm::translate(precisionMat, -pos);
+		const double cameraX = camera.eyePos.X / AGLU;
+		const double cameraY = camera.eyePos.Y / AGLU;
+		const double cameraZ = camera.eyePos.Z / AGLU;
+		const glm::dvec3 spaceshipPos = glm::dvec3(cameraX, cameraY, cameraZ) + pos;
+		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(cameraX), static_cast<float>(cameraY), static_cast<float>(cameraZ));
+
+
+		glm::dmat4 precisionMat(camera.getMatrixDouble());
+		precisionMat = glm::inverse(precisionMat); 
+		const glm::mat3 rotationMatrix(precisionMat);
+
+		precisionMat = glm::translate(precisionMat, -pos); 
 
 		const double scale = 0.005f;
-		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
+		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale)); // now scale the spaceship
 
-		const glm::mat4 modelMat(precisionMat);
+		// then rotate it and so on...
 
-		precisionMat = glm::transpose(glm::inverse(precisionMat));
-		glm::mat3 transpInvModelMat(precisionMat);
 
+
+		const glm::dmat4 modelMatHP = glm::translate(precisionMat * glm::dmat4(1), spaceshipPos);
+
+		const glm::mat4 modelMat(modelMatHP);
+		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
+
+		
 		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 
-
-		const glm::dvec3 spaceshipPos = glm::dvec3(camera.eyePos.X / AGLU, camera.eyePos.Y / AGLU, camera.eyePos.Z / AGLU) + pos;
-		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
 
 		for (unsigned int i = 0; i < (spaceshipProgram->nrlights == 0 ? 1 : spaceshipProgram->nrlights); ++i)
 		{
@@ -1264,10 +1273,16 @@ void CSolarSystemView::DisplayBilboard()
 	const double scale = 0.0025f;
 	precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
 	
-	const glm::mat4 modelMat(precisionMat);
 
-	precisionMat = glm::transpose(glm::inverse(precisionMat));
-	glm::mat3 transpInvModelMat(precisionMat);
+	const double cameraX = camera.eyePos.X / AGLU;
+	const double cameraY = camera.eyePos.Y / AGLU;
+	const double cameraZ = camera.eyePos.Z / AGLU;
+	const glm::dvec3 billboardPos = glm::dvec3(cameraX, cameraY, cameraZ) + pos;
+
+
+	const glm::dmat4 modelMatHP = glm::translate(precisionMat * glm::dmat4(1), billboardPos);
+	const glm::mat4 modelMat(modelMatHP);
+	const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
 
 	glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 	glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
