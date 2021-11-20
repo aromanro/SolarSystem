@@ -45,8 +45,6 @@ static const double lightCoeff = 0.000001;
 
 CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights)
 {
-	USES_CONVERSION;
-
 	// lights
 
 	if (nrlights == 0)
@@ -87,8 +85,6 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 
 CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::SpaceshipProgram& program, unsigned int nrlights)
 {
-	USES_CONVERSION;
-
 	// lights
 
 	if (nrlights == 0)

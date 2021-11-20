@@ -36,8 +36,6 @@ void SolarSystemGLProgram::SetupLights(BodyPropList& BodyProperties)
 
 	if (0 == nrlights) lights.emplace_back(Light());
 
-	USES_CONVERSION;
-
 	// lights uniforms positions
 
 	if (nrlights == 0)
@@ -47,6 +45,8 @@ void SolarSystemGLProgram::SetupLights(BodyPropList& BodyProperties)
 	}
 	else
 	{
+		USES_CONVERSION;
+
 		for (unsigned int light = 0; light < nrlights; ++light)
 		{
 			CString param;
