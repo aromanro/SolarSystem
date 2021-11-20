@@ -88,66 +88,50 @@ namespace OpenGL {
 		delete[] vertices;
 
 		// TODO: load the material here: basically load the textures
-		int bindNo = 0;
 		material = loader.triangles[startIndex]->material;
 		if (!material.ambientTexture.empty())
 		{
 			const std::string path = loader.dir + material.ambientTexture;
 			CString fileName(path.c_str());
-			ambientTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
+			ambientTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName));
 			if (ambientTexture)
-			{
-				++bindNo;
 				ambientTexture->GenerateMipmaps();
-			}
 		}
 
 		if (!material.diffuseTexture.empty())
 		{
 			const std::string path = loader.dir + material.diffuseTexture;
 			CString fileName(path.c_str());
-			diffuseTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
+			diffuseTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 1));
 			if (diffuseTexture)
-			{
-				++bindNo;
 				diffuseTexture->GenerateMipmaps();
-			}
 		}
 
 		if (!material.specularTexture.empty())
 		{
 			const std::string path = loader.dir + material.specularTexture;
 			CString fileName(path.c_str());
-			specularTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo));
+			specularTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 2));
 			if (specularTexture)
-			{
-				++bindNo;
 				specularTexture->GenerateMipmaps();
-			}
 		}
 
 		if (!material.exponentTexture.empty())
 		{
 			const std::string path = loader.dir + material.exponentTexture;
 			CString fileName(path.c_str());
-			exponentTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, bindNo, 8));
+			exponentTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 3, 8));
 			if (exponentTexture)
-			{
-				++bindNo;
 				exponentTexture->GenerateMipmaps();
-			}
 		}
 
 		if (!material.bumpTexture.empty())
 		{
 			const std::string path = loader.dir + material.bumpTexture;
 			CString fileName(path.c_str());
-			bumpTexture = std::shared_ptr<Texture>(BodyProperties::LoadNormalTexture(fileName, 2, bindNo));
+			bumpTexture = std::shared_ptr<Texture>(BodyProperties::LoadNormalTexture(fileName, 2, 4));
 			if (bumpTexture)
-			{
-				++bindNo;
 				bumpTexture->GenerateMipmaps();
-			}
 		}
 
 		return endIndex;
@@ -156,19 +140,6 @@ namespace OpenGL {
 	void ComplexObject::SetValues(SpaceshipProgram& program)
 	{
 		// TODO: Implement it completely
-
-		glUniform1i(program.illuminationLocation, static_cast<int>(material.illumination));
-
-		if (diffuseTexture)
-		{
-			diffuseTexture->Bind();
-			glUniform1i(program.useDiffuseTextureLocation, 1);
-		}
-		else
-		{
-			glUniform1i(program.useDiffuseTextureLocation, 0);
-		}
-		glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
 
 		if (ambientTexture)
 		{
@@ -181,9 +152,21 @@ namespace OpenGL {
 		}
 		glUniform3f(program.ambientColorLocation, static_cast<float>(material.ambientColor.r), static_cast<float>(material.ambientColor.g), static_cast<float>(material.ambientColor.b));
 
+		if (diffuseTexture)
+		{
+			diffuseTexture->Bind(1);
+			glUniform1i(program.useDiffuseTextureLocation, 1);
+		}
+		else
+		{
+			glUniform1i(program.useDiffuseTextureLocation, 0);
+		}
+		glUniform3f(program.diffuseColorLocation, static_cast<float>(material.diffuseColor.r), static_cast<float>(material.diffuseColor.g), static_cast<float>(material.diffuseColor.b));
+
+
 		if (specularTexture)
 		{
-			specularTexture->Bind();
+			specularTexture->Bind(2);
 			glUniform1i(program.useSpecularTextureLocation, 1);
 		}
 		else
@@ -195,7 +178,7 @@ namespace OpenGL {
 
 		if (exponentTexture)
 		{
-			exponentTexture->Bind();
+			exponentTexture->Bind(3);
 			glUniform1i(program.useExponentTextureLocation, 1);
 		}
 		else
@@ -207,7 +190,7 @@ namespace OpenGL {
 
 		if (bumpTexture)
 		{
-			bumpTexture->Bind();
+			bumpTexture->Bind(4);
 			glUniform1i(program.useBumpTextureLocation, 1);
 		}
 		else
@@ -215,7 +198,14 @@ namespace OpenGL {
 			glUniform1i(program.useBumpTextureLocation, 0);
 		}
 
-
+		// now things from 'material':
+		glUniform1i(program.illuminationLocation, static_cast<GLint>(material.illumination));
+		glUniform1f(program.exponentLocation, (GLfloat)material.exponent);
+		glUniform3f(program.ambientColorLocation, (GLfloat)material.ambientColor.r, (GLfloat)material.ambientColor.g, (GLfloat)material.ambientColor.b);
+		glUniform3f(program.diffuseColorLocation, (GLfloat)material.diffuseColor.r, (GLfloat)material.diffuseColor.g, (GLfloat)material.diffuseColor.b);
+		glUniform3f(program.specularColorLocation, (GLfloat)material.specularColor.r, (GLfloat)material.specularColor.g, (GLfloat)material.specularColor.b);
+		// no 'emission' for now
+		//glUniform3f(program.emissionColorLocation, material.emissionColor.r, material.emissionColor.g, material.emissionColor.b);
 	}
 
 

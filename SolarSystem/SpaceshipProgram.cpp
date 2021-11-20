@@ -231,7 +231,6 @@ namespace OpenGL {
 					e *= texture(exponentTexture, TexCoord).x;
 
 				float spec = pow(val, e);
-
 				if (1 == useSpecularTexture)
 				{
 					float specProc = texture(specularTexture, TexCoord)[0];
@@ -240,7 +239,6 @@ namespace OpenGL {
 				}
 				else
 				{
-					float spec = pow(val, e);
 					color = 0.7 * color + 0.3 * spec * specularColor;
 				}
 					
@@ -250,13 +248,14 @@ namespace OpenGL {
 			void main()
 			{
 				vec4 color;
-				vec4 ambient;
-
-				if (useAmbientTexture == 1) ambient = texture(ambientTexture, TexCoord) * vec4(ambientColor, 1.0f);
-				else ambient = vec4(ambientColor, 1.0f);
 
 				if (illumination != 0)
 				{
+					vec4 ambient;
+
+					if (useAmbientTexture == 1) ambient = texture(ambientTexture, TexCoord) * vec4(ambientColor, 1.0f);
+					else ambient = vec4(ambientColor, 1.0f);
+
 					vec3 viewVec = viewPos - FragPos;
 					vec3 viewDir = normalize(viewVec);
 					vec3 normal = normalize(Normal);
@@ -271,7 +270,15 @@ namespace OpenGL {
 					light = clamp(light, 0, 1);				
 					color = 0.1 * ambient + 0.9 * vec4(light, 1.0f);
 				}
-				else color = ambient;
+				else
+				{
+					vec4 diffuse;
+
+					if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
+					else diffuse = vec4(diffuseColor, 1.0f);
+
+					color = diffuse;
+				}
 				
 
 				outputColor = color;

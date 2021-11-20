@@ -107,7 +107,6 @@ CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_Sola
 		}
 	}
 
-
 	glUniform1i(program.ambientTextureLocation, 0);
 	glUniform1i(program.diffuseTextureLocation, 1);
 	glUniform1i(program.specularTextureLocation, 2);
@@ -595,6 +594,9 @@ void CSolarSystemView::RenderScene()
 
 		// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
 		program->Use();
+
+		glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
+		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 	}
 
 	if (theApp.options.showBillboard)
@@ -681,7 +683,26 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		SpaceshipUniforms params(doc->m_SolarSystem, *spaceshipProgram, spaceshipProgram->nrlights);
 
-		const glm::dvec3 pos(0, 0, -0.150);
+		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
+
+		glm::dmat4 precisionMat(camera.getMatrixDouble());
+
+		precisionMat = glm::inverse(precisionMat);
+
+		const glm::dvec3 pos(0, 0, 0.150);
+
+		precisionMat = glm::translate(precisionMat, -pos);
+
+		const double scale = 0.005f;
+		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
+
+		const glm::mat4 modelMat(precisionMat);
+
+		precisionMat = glm::transpose(glm::inverse(precisionMat));
+		glm::mat3 transpInvModelMat(precisionMat);
+
+		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 
 
 		const glm::dvec3 spaceshipPos = glm::dvec3(camera.eyePos.X / AGLU, camera.eyePos.Y / AGLU, camera.eyePos.Z / AGLU) + pos;
@@ -699,23 +720,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 			glUniform1f(spaceshipProgram->lights[i].attenPos, atten);
 		}
 
-		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
-		glm::dmat4 precisionMat(camera.getMatrixDouble());
-		precisionMat = glm::inverse(precisionMat);
-
-		precisionMat = glm::translate(precisionMat, pos);
-
-		const double scale = 0.005f;
-		precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
-
-		const glm::mat4 modelMat(precisionMat);
-
-		precisionMat = glm::transpose(glm::inverse(precisionMat));
-		glm::mat3 transpInvModelMat(precisionMat);
-
-		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
-		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
 
 		spaceship->Draw(*spaceshipProgram);
 
@@ -1252,9 +1257,9 @@ void CSolarSystemView::DisplayBilboard()
 	glm::dmat4 precisionMat(camera.getMatrixDouble());
 	precisionMat = glm::inverse(precisionMat);
 
-	const glm::dvec3 pos(0, -0.038, -0.101);
+	const glm::dvec3 pos(0, 0.038, 0.101);
 
-	precisionMat = glm::translate(precisionMat, pos);
+	precisionMat = glm::translate(precisionMat, -pos);
 
 	const double scale = 0.0025f;
 	precisionMat = glm::scale(precisionMat, glm::dvec3(scale, scale, scale));
