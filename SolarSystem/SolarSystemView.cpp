@@ -1279,7 +1279,7 @@ void CSolarSystemView::DisplayBilboard()
 	const glm::dvec3 billboardPos = glm::dvec3(cameraX, cameraY, cameraZ) + pos;
 
 
-	const glm::dmat4 modelMatHP = glm::translate(precisionMat * glm::dmat4(1), billboardPos);
+	const glm::dmat4 modelMatHP = glm::translate(precisionMat, billboardPos);
 	const glm::mat4 modelMat(modelMatHP);
 	const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
 
