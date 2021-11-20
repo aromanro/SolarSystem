@@ -107,6 +107,12 @@ CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_Sola
 		}
 	}
 
+
+	glUniform1i(program.ambientTextureLocation, 0);
+	glUniform1i(program.diffuseTextureLocation, 1);
+	glUniform1i(program.specularTextureLocation, 2);
+	glUniform1i(program.exponentTextureLocation, 3);
+	glUniform1i(program.bumpTextureLocation, 4);
 }
 
 
@@ -677,7 +683,9 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		const glm::dvec3 pos(0, 0, -0.150);
 
+
 		const glm::dvec3 spaceshipPos = glm::dvec3(camera.eyePos.X / AGLU, camera.eyePos.Y / AGLU, camera.eyePos.Z / AGLU) + pos;
+		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
 
 		for (unsigned int i = 0; i < (spaceshipProgram->nrlights == 0 ? 1 : spaceshipProgram->nrlights); ++i)
 		{
@@ -691,7 +699,6 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 			glUniform1f(spaceshipProgram->lights[i].attenPos, atten);
 		}
 
-		//glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(camera.eyePos.X / AGLU), static_cast<float>(camera.eyePos.Y / AGLU), static_cast<float>(camera.eyePos.Z / AGLU));
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 		glm::dmat4 precisionMat(camera.getMatrixDouble());
@@ -709,13 +716,6 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
-
-
-		// TODO: Display the spaceship
-
-#ifdef DISPLAY_SPACESHIP
-		//triangle->Draw();
-#endif
 
 		spaceship->Draw(*spaceshipProgram);
 

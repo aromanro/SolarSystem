@@ -112,6 +112,8 @@ namespace OpenGL {
 
 		exponentTextureLocation = glGetUniformLocation(getID(), "exponentTexture"); // map_Ns
 		bumpTextureLocation = glGetUniformLocation(getID(), "bumpTexture"); // map_bump or bump
+
+		viewPosLocation = glGetUniformLocation(getID(), "viewPos");
 	}
 
 	bool SpaceshipProgram::SetupVertexShader()
@@ -196,23 +198,81 @@ namespace OpenGL {
 
 			uniform sampler2D exponentTexture; // map_Ns
 			uniform sampler2D bumpTexture; // map_bump or bump
-
-			out vec4 outputColor;
 			
+			uniform vec3 viewPos;
+
 		    in vec2 TexCoord;
 			in vec3 FragPos;
 			in vec3 Normal;
 
+			out vec4 outputColor;
+
+
+			vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal)
+			{
+				// Diffuse shading
+				vec4 diffuse;
+
+				if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
+				else diffuse = vec4(diffuseColor, 1.0f);
+
+				float proj = dot(normal, lightDir);
+				float diff = max(proj, 0.0);
+
+				vec3 color = diff * diffuse.xyz;
+				if (illumination < 2) return color;
+
+				// Specular shading
+				vec3 halfwayDir = normalize(lightDir + viewDir);
+				float val = max(dot(normal, halfwayDir), 0.0);
+
+				float e = exponent;
+				if (1 == useExponentTexture)
+					e *= texture(exponentTexture, TexCoord).x;
+
+				float spec = pow(val, e);
+
+				if (1 == useSpecularTexture)
+				{
+					float specProc = texture(specularTexture, TexCoord)[0];
+					float oneMinusProc = 1. - specProc;
+					color = oneMinusProc * color + specProc * spec * specularColor;
+				}
+				else
+				{
+					float spec = pow(val, e);
+					color = 0.7 * color + 0.3 * spec * specularColor;
+				}
+					
+				return color;
+			}
+
 			void main()
 			{
 				vec4 color;
+				vec4 ambient;
+
+				if (useAmbientTexture == 1) ambient = texture(ambientTexture, TexCoord) * vec4(ambientColor, 1.0f);
+				else ambient = vec4(ambientColor, 1.0f);
+
+				if (illumination != 0)
+				{
+					vec3 viewVec = viewPos - FragPos;
+					vec3 viewDir = normalize(viewVec);
+					vec3 normal = normalize(Normal);
+
+					vec3 light = vec3(0.0f);
+
+					for (int i = 0; i < NRLIGHTS; ++i)
+					{
+						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal);
+					}
+
+					light = clamp(light, 0, 1);				
+					color = 0.1 * ambient + 0.9 * vec4(light, 1.0f);
+				}
+				else color = ambient;
 				
-				if (useDiffuseTexture == 1) color = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
-				else color = vec4(diffuseColor, 1.0f);
-
-				if (useAmbientTexture == 1) color = color + texture(ambientTexture, TexCoord) * vec4(ambientColor, 1.0f);
-				else color = color + vec4(diffuseColor, 1.0f);
-
 
 				outputColor = color;
 			}

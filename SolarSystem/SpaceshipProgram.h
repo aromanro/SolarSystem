@@ -57,6 +57,8 @@ namespace OpenGL {
 
         GLint exponentTextureLocation = 0; // map_Ns
         GLint bumpTextureLocation = 0; // map_bump or bump
+
+        GLint viewPosLocation = 0;
     protected:
         void getUniformsLocations();
         bool SetupVertexShader();

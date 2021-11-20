@@ -214,6 +214,8 @@ namespace OpenGL {
 		{
 			glUniform1i(program.useBumpTextureLocation, 0);
 		}
+
+
 	}
 
 
