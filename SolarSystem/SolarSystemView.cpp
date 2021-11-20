@@ -696,7 +696,6 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		glm::dmat4 precisionMat(camera.getMatrixDouble());
 		precisionMat = glm::inverse(precisionMat); 
-		const glm::mat3 rotationMatrix(precisionMat);
 
 		precisionMat = glm::translate(precisionMat, -pos); 
 
@@ -707,7 +706,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 
 
-		const glm::dmat4 modelMatHP = glm::translate(precisionMat * glm::dmat4(1), spaceshipPos);
+		const glm::dmat4 modelMatHP = glm::translate(precisionMat, spaceshipPos);
 
 		const glm::mat4 modelMat(modelMatHP);
 		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
