@@ -187,7 +187,8 @@ namespace OpenGL {
 		}
 		glUniform1f(program.exponentLocation, static_cast<float>(material.exponent));
 		
-
+		// there is no bump mapping for now
+		/*
 		if (bumpTexture)
 		{
 			bumpTexture->Bind(4);
@@ -197,13 +198,10 @@ namespace OpenGL {
 		{
 			glUniform1i(program.useBumpTextureLocation, 0);
 		}
+		*/
 
 		// now things from 'material':
 		glUniform1i(program.illuminationLocation, static_cast<GLint>(material.illumination));
-		glUniform1f(program.exponentLocation, (GLfloat)material.exponent);
-		glUniform3f(program.ambientColorLocation, (GLfloat)material.ambientColor.r, (GLfloat)material.ambientColor.g, (GLfloat)material.ambientColor.b);
-		glUniform3f(program.diffuseColorLocation, (GLfloat)material.diffuseColor.r, (GLfloat)material.diffuseColor.g, (GLfloat)material.diffuseColor.b);
-		glUniform3f(program.specularColorLocation, (GLfloat)material.specularColor.r, (GLfloat)material.specularColor.g, (GLfloat)material.specularColor.b);
 		// no 'emission' for now
 		//glUniform3f(program.emissionColorLocation, material.emissionColor.r, material.emissionColor.g, material.emissionColor.b);
 	}

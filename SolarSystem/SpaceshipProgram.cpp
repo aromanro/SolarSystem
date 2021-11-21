@@ -230,7 +230,7 @@ namespace OpenGL {
 				if (1 == useExponentTexture)
 					e *= texture(exponentTexture, TexCoord).x;
 
-				float spec = pow(val, e);
+				float spec = pow(val, e);				
 				if (1 == useSpecularTexture)
 				{
 					float specProc = texture(specularTexture, TexCoord)[0];
@@ -238,8 +238,9 @@ namespace OpenGL {
 					color = oneMinusProc * color + specProc * spec * specularColor;
 				}
 				else
-				{
-					color = 0.7 * color + 0.3 * spec * specularColor;
+				{				
+					// no need to multiply them with weight factors, they seem to be already weighted in the obj file
+					color = color + spec * specularColor;
 				}
 					
 				return color;
@@ -266,7 +267,8 @@ namespace OpenGL {
 					}
 
 					light = clamp(light, 0, 1);				
-					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);
+
+					outputColor = 0.1 * ambient + 0.9 * vec4(light, 1.0f);
 				}
 				else
 				{
