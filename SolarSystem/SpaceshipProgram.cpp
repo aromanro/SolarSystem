@@ -247,8 +247,6 @@ namespace OpenGL {
 
 			void main()
 			{
-				vec4 color;
-
 				if (illumination != 0)
 				{
 					vec4 ambient;
@@ -268,7 +266,7 @@ namespace OpenGL {
 					}
 
 					light = clamp(light, 0, 1);				
-					color = 0.1 * ambient + 0.9 * vec4(light, 1.0f);
+					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);
 				}
 				else
 				{
@@ -277,11 +275,8 @@ namespace OpenGL {
 					if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 					else diffuse = vec4(diffuseColor, 1.0f);
 
-					color = diffuse;
+					outputColor = diffuse;
 				}
-				
-
-				outputColor = color;
 			}
 		)), nrlights == 0 ? 1 : nrlights);
 
