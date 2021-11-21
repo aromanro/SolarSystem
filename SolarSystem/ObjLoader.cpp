@@ -879,6 +879,18 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 		}
 	}
 
+	// correct some things
+	if (mat.ambientTexture.empty())
+		mat.ambientTexture = mat.diffuseTexture;
+
+	if (mat.ambientColor.TotalAbsorbant())
+		mat.ambientColor = mat.diffuseColor;
+
+	if (mat.diffuseTexture.empty())
+		mat.diffuseTexture = mat.diffuseTexture;
+
+	if (mat.diffuseColor.TotalAbsorbant())
+		mat.diffuseColor = mat.ambientColor;
 
 	if (!mat.IsEmpty() && materials.find(mat.name) != materials.end())
 		materials[mat.name] = mat;
