@@ -396,9 +396,6 @@ void CSolarSystemView::Setup()
 	
 
 #ifdef DISPLAY_SPACESHIP
-	//const int translateDown = 0;
-	//triangle = new OpenGL::OpenGLTriangle(Vector3D<double>(-5., 5. - translateDown, 0), Vector3D<double>(-5., -5. - translateDown, 0), Vector3D<double>(5., 0 - translateDown, 0));
-
 	if (!theApp.options.spaceshipObjFile.IsEmpty())
 	{
 		ObjLoader objLoader;
@@ -409,7 +406,6 @@ void CSolarSystemView::Setup()
 			spaceship = new OpenGL::ComplexObjectCompositeMaterials(objLoader);
 		}
 	}
-
 #endif
 
 
@@ -697,15 +693,11 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(cameraX), static_cast<float>(cameraY), static_cast<float>(cameraZ));
 
-		glm::dmat4 precisionMat(camera.getMatrixDouble());		
-		
+		glm::dmat4 precisionMat(camera.getMatrixDouble());				
 		precisionMat[3][0] = 0;
 		precisionMat[3][1] = 0;
 		precisionMat[3][2] = 0;
 
-		//const double scale = 0.005f;
-		//const double scale = 5.0f;
-		//const double scale = 0.5f;
 		const double scale = 0.01f;
 
 		const glm::dvec3 spaceshipPos = cameraVector + pos;
@@ -733,8 +725,6 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 			glUniform3f(spaceshipProgram->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
 			glUniform1f(spaceshipProgram->lights[i].attenPos, atten);
 		}
-
-
 
 		spaceship->Draw(*spaceshipProgram);
 
@@ -1002,24 +992,36 @@ bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
 			if (ctrl) movement = OpenGL::Camera::Movements::pitchUp;
 			else if (shift) movement = OpenGL::Camera::Movements::moveUp;
 			else movement = OpenGL::Camera::Movements::moveForward;
+
+			if (ctrl || shift) spaceshipOrientation.RotateUp();
+
 			handled = true;
 			break;
 		case VK_DOWN:
 			if (ctrl) movement = OpenGL::Camera::Movements::pitchDown;
 			else if (shift) movement = OpenGL::Camera::Movements::moveDown;
 			else movement = OpenGL::Camera::Movements::moveBackward;
+
+			if (ctrl || shift) spaceshipOrientation.RotateDown();
+
 			handled = true;
 			break;
 		case VK_LEFT:
 			if (ctrl) movement = OpenGL::Camera::Movements::yawLeft;
 			else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
 			else movement = OpenGL::Camera::Movements::moveLeft;
+
+			if (!shift) spaceshipOrientation.RotateLeft();
+
 			handled = true;
 			break;
 		case VK_RIGHT:
 			if (ctrl) movement = OpenGL::Camera::Movements::yawRight;
 			else if (shift) movement = OpenGL::Camera::Movements::rollRight;
 			else movement = OpenGL::Camera::Movements::moveRight;
+
+			if (!shift) spaceshipOrientation.RotateRight();
+
 			handled = true;
 			break;
 		case VK_ADD:
@@ -1077,7 +1079,9 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 				doc->RetrieveData();
 			
 				camera.Tick();
-				if (keyDown) camera.Move(movement);				
+				if (keyDown) camera.Move(movement);	
+
+				spaceshipOrientation.Tick();
 			}
 			else
 			{
@@ -1162,11 +1166,6 @@ void CSolarSystemView::Reset()
 	delete billboardTexture;
 	billboardTexture = NULL;
 
-#ifdef DISPLAY_SPACESHIP
-	//delete triangle;
-	//triangle = NULL;
-#endif
-
 	delete spaceship;
 	spaceship = NULL;
 	
@@ -1209,6 +1208,8 @@ void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	camera.RotateTowards(angle - numticks * camera.GetRotateAngle(), towards);
 	camera.ProgressiveRotate(towards, numticks);
+
+	// TODO: do something with the spaceship as well!
 
 	CView::OnLButtonDown(nFlags, point);
 }

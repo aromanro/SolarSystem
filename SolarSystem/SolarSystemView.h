@@ -30,6 +30,8 @@
 #include "ObjLoader.h"
 #include "ComplexObject.h"
 
+#include "SpaceshipOrientation.h"
+
 class CSolarSystemDoc;
 
 
@@ -77,9 +79,7 @@ private:
 	OpenGL::SpaceshipProgram *spaceshipProgram;
 	OpenGL::ComplexObjectCompositeMaterials* spaceship = NULL;
 
-#ifdef DISPLAY_SPACESHIP
-	//OpenGL::OpenGLTriangle* triangle = NULL; // for tests, remove it later
-#endif
+	SpaceshipOrientation spaceshipOrientation;
 
 	class Uniforms {
 	public:

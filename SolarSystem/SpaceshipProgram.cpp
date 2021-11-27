@@ -268,7 +268,7 @@ namespace OpenGL {
 
 					light = clamp(light, 0, 1);				
 
-					outputColor = 0.1 * ambient + 0.9 * vec4(light, 1.0f);
+					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);
 				}
 				else
 				{
