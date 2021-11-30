@@ -45,8 +45,8 @@ bool Options::Load()
 
 	// TODO: remove this later, it's for tests until there is UI added for it
 	if (spaceshipObjFile.IsEmpty())
-		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Akira\\Akira\\akira.obj";		 
-		spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Prometheus\\Prometheus NX 59650\\prometheus.obj";
+		spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Akira\\Akira\\akira.obj";		 
+		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Prometheus\\Prometheus NX 59650\\prometheus.obj";
 		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Starcruisermilitary\\starcruiser military\\Starcruiser military.obj";
 
 	return true;

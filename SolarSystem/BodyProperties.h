@@ -43,5 +43,6 @@ public:
 
 protected:
 	static double GetPixelValue(const CImage& img, int x, int y);
+	static void ResizeToEven(CImage& skin);
 };
 

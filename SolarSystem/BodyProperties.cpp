@@ -36,6 +36,8 @@ bool BodyProperties::LoadTexture()
 
 			if (!(skin.IsNull() || (skin.GetBPP() != 24 && skin.GetBPP() != 32)))
 			{
+				ResizeToEven(skin);
+
 				// ideally they should be power of 2 but even values should do
 
 				// check if it's even
@@ -122,6 +124,27 @@ void BodyProperties::CleanTexture()
 	transparentTextureAlpha = false;
 }
 
+void BodyProperties::ResizeToEven(CImage& skin)
+{
+	// resize it if needed
+	if (skin.GetWidth() % 2 || skin.GetHeight() % 2)
+	{
+		int iNewWidth = skin.GetWidth();
+		if (iNewWidth % 2) ++iNewWidth;
+		int iNewHeight = skin.GetHeight();
+		if (iNewHeight % 2) ++iNewHeight;
+
+		CImage newImage;
+		newImage.Create(iNewWidth, iNewHeight, skin.GetBPP());
+		SetStretchBltMode(newImage.GetDC(), COLORONCOLOR);
+
+		skin.StretchBlt(newImage.GetDC(), 0, 0, iNewWidth, iNewHeight, 0, 0, skin.GetWidth(), skin.GetHeight(), SRCCOPY);
+
+		skin.Destroy();
+		skin.Attach(newImage.Detach());
+	}
+}
+
 
 OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo, int bpp)
 {
@@ -134,6 +157,8 @@ OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo,
 			skin.Load(imgFile);
 
 			if (skin.IsNull() || skin.GetBPP() != bpp) return NULL;
+
+			ResizeToEven(skin);
 
 			// ideally they should be power of 2 but even values should do
 
@@ -177,6 +202,7 @@ OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, do
 
 			if (!skin.IsNull() && (skin.GetBPP() == 8 || skin.GetBPP() == 24))
 			{
+				ResizeToEven(skin);
 
 				// ideally they should be power of 2 but even values should do
 
