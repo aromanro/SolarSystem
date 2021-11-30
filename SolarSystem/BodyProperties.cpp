@@ -140,6 +140,8 @@ void BodyProperties::ResizeToEven(CImage& skin)
 
 		skin.StretchBlt(newImage.GetDC(), 0, 0, iNewWidth, iNewHeight, 0, 0, skin.GetWidth(), skin.GetHeight(), SRCCOPY);
 
+		newImage.ReleaseDC();
+
 		skin.Destroy();
 		skin.Attach(newImage.Detach());
 	}
