@@ -14,11 +14,24 @@ public:
 
 	bool showBillboard;
 
+	// spaceship related
 	CString spaceshipObjFile;
+
+	double translate; // how much to translate it to be in front of the camera
+	double scale; // how much to scale it to have it to the desired size
+
+	// how much to rotate it to have it in the desired orientation in relation with the camera
+	double rotateX;
+	double rotateY;
+	double rotateZ;
+
 
 	Options();
 	~Options();
 	bool Load();
 	bool Save();
+
+protected:
+	static double GetDouble(LPCTSTR param, double defval);
 };
 

@@ -10,7 +10,8 @@
 
 Options::Options()
 	: gammaCorrection(false), showSkyBox(true), drawShadows(true), drawTextures(true),
-	translationSpeed(100), rotationSpeed(100), scrollSpeed(100), showBillboard(false)
+	translationSpeed(100), rotationSpeed(100), scrollSpeed(100), showBillboard(false),
+	translate(0.2), scale(0.01), rotateX(0), rotateY(0), rotateZ(0)
 {
 }
 
@@ -49,6 +50,12 @@ bool Options::Load()
 		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Prometheus\\Prometheus NX 59650\\prometheus.obj";
 		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Starcruisermilitary\\starcruiser military\\Starcruiser military.obj";
 
+	translate = GetDouble(L"translate", 0.2);
+	scale = GetDouble(L"scale", 0.01);
+	rotateX = GetDouble(L"rotateX", 0);
+	rotateY = GetDouble(L"rotateY", 0);
+	rotateZ = GetDouble(L"rotateZ", 0);
+
 	return true;
 }
 
@@ -68,5 +75,27 @@ bool Options::Save()
 
 	theApp.WriteProfileString(L"options", L"spaceship", spaceshipObjFile);
 
+	theApp.WriteProfileBinary(L"options", L"translate", (LPBYTE)&translate, sizeof(double));
+	theApp.WriteProfileBinary(L"options", L"scale", (LPBYTE)&scale, sizeof(double));
+	theApp.WriteProfileBinary(L"options", L"rotateX", (LPBYTE)&rotateX, sizeof(double));
+	theApp.WriteProfileBinary(L"options", L"rotateY", (LPBYTE)&rotateY, sizeof(double));
+	theApp.WriteProfileBinary(L"options", L"rotateZ", (LPBYTE)&rotateZ, sizeof(double));
+
 	return false;
+}
+
+double Options::GetDouble(LPCTSTR param, double defval)
+{
+	double val = defval;
+
+	UINT sz = 0;
+	LPBYTE buf = NULL;
+
+	if (theApp.GetProfileBinary(L"options", param, &buf, &sz))
+	{
+		if (sizeof(double) == sz) val = *((double*)buf);
+		delete[] buf;
+	}
+
+	return val;
 }

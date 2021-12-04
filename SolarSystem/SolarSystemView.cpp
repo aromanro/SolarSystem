@@ -689,7 +689,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		const Vector3D<double> forward = camera.getNormalizedForward();
 		glm::dvec3 pos(forward.X, forward.Y, forward.Z);
-		pos *= 0.2;
+		pos *= theApp.options.translate;
 
 		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(cameraX), static_cast<float>(cameraY), static_cast<float>(cameraZ));
 
@@ -698,12 +698,15 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		precisionMat[3][1] = 0;
 		precisionMat[3][2] = 0;
 
-		const double scale = 0.01f;
+		const double scale = theApp.options.scale;
 
 		const glm::dvec3 spaceshipPos = cameraVector + pos;
 
 
-		const glm::dmat4 modelMatHP = glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * glm::transpose(precisionMat);
+		const glm::dmat4 modelMatHP =
+			glm::rotate(glm::rotate(glm::rotate(
+					glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * glm::transpose(precisionMat),
+				theApp.options.rotateZ * M_PI / 180., glm::dvec3(0, 0, 1)), theApp.options.rotateY * M_PI / 180., glm::dvec3(0, 1, 0)), theApp.options.rotateX * M_PI / 180., glm::dvec3(1, 0, 0));
 
 
 		const glm::mat4 modelMat(modelMatHP);
