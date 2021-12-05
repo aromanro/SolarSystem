@@ -14,6 +14,7 @@
 #include "OptionsPropertySheet.h"
 #include "DisplayPropertyPage.h"
 #include "CameraPropertyPage.h"
+#include "SpaceshipPropertyPage.h"
 
 
 #ifdef _DEBUG
@@ -497,9 +498,11 @@ void CMainFrame::OnSimulateOptions()
 	OptionsPropertySheet* sheet = new OptionsPropertySheet(L"Options");
 	DisplayPropertyPage page1;
 	CameraPropertyPage page2;
+	SpaceshipPropertyPage page3;
 
 	sheet->AddPage(&page1);
 	sheet->AddPage(&page2);
+	sheet->AddPage(&page3);
 
 	sheet->DoModal();
 	delete sheet;

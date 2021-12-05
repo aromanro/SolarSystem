@@ -29,6 +29,8 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_DISPLAYPROPERTYPAGE         310
 #define IDD_CAMERAPROPERTYPAGE          311
+#define IDD_DISPLAYPROPERTYPAGE1        312
+#define IDD_SPACESHIPPROPERTYPAGE       312
 #define IDC_CHECK1                      1000
 #define IDC_CHECK2                      1001
 #define IDC_CHECK3                      1002
