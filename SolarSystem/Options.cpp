@@ -44,12 +44,6 @@ bool Options::Load()
 
 	spaceshipObjFile = theApp.GetProfileString(L"options", L"spaceship");
 
-	// TODO: remove this later, it's for tests until there is UI added for it
-	if (spaceshipObjFile.IsEmpty())
-		spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Akira\\Akira\\akira.obj";		 
-		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Prometheus\\Prometheus NX 59650\\prometheus.obj";
-		//spaceshipObjFile = L"C:\\Work\\Blog\\Media\\Spaceships\\Starcruisermilitary\\starcruiser military\\Starcruiser military.obj";
-
 	translate = GetDouble(L"translate", 0.2);
 	scale = GetDouble(L"scale", 0.01);
 	rotateX = GetDouble(L"rotateX", 0);

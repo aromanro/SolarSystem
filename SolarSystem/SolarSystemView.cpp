@@ -169,9 +169,6 @@ CSolarSystemView::~CSolarSystemView()
 	delete sphere;
 	delete billboardRectangle;
 	delete billboardTexture;
-#ifdef DISPLAY_SPACESHIP
-	//delete triangle;
-#endif	
 	delete spaceship;
 
 	ClearProgram();
@@ -395,7 +392,6 @@ void CSolarSystemView::Setup()
 	billboardTexture = new OpenGL::Texture();
 	
 
-#ifdef DISPLAY_SPACESHIP
 	if (!theApp.options.spaceshipObjFile.IsEmpty())
 	{
 		ObjLoader objLoader;
@@ -406,7 +402,6 @@ void CSolarSystemView::Setup()
 			spaceship = new OpenGL::ComplexObjectCompositeMaterials(objLoader);
 		}
 	}
-#endif
 
 
 	if (!SetupShaders()) {

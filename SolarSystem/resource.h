@@ -29,7 +29,6 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_DISPLAYPROPERTYPAGE         310
 #define IDD_CAMERAPROPERTYPAGE          311
-#define IDD_DISPLAYPROPERTYPAGE1        312
 #define IDD_SPACESHIPPROPERTYPAGE       312
 #define IDC_CHECK1                      1000
 #define IDC_CHECK2                      1001
@@ -44,6 +43,15 @@
 #define IDC_MFCLINK1                    1008
 #define IDC_STATIC3                     1009
 #define IDC_MFCLINK2                    1009
+#define IDC_EDIT1                       1010
+#define IDC_EDIT2                       1011
+#define IDC_EDIT3                       1012
+#define IDC_EDIT4                       1013
+#define IDC_EDIT5                       1014
+#define IDC_EDIT6                       1015
+#define IDC_BUTTON1                     1016
+#define IDC_BUTTON3                     1018
+#define IDC_BUTTON2                     1018
 #define ID_VIEW_FULLSCREEN              32771
 #define ID_SIMULATE_RUN                 32772
 #define ID_SLIDER                       32776
@@ -56,7 +64,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32782
-#define _APS_NEXT_CONTROL_VALUE         1010
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

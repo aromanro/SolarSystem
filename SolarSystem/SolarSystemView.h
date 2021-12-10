@@ -25,8 +25,6 @@
 
 #include "MemoryBitmap.h"
 
-//#define DISPLAY_SPACESHIP 1
-
 #include "ObjLoader.h"
 #include "ComplexObject.h"
 
