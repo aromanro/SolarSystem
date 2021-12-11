@@ -61,4 +61,6 @@ void SolarSystemBodies::LoadTextures()
 			body.normalTexture->UnBind();
 		}
 	}
+
+	BodyProperties::ClearTexturesCache();
 }

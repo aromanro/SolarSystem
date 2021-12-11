@@ -391,18 +391,14 @@ void CSolarSystemView::Setup()
 
 	billboardTexture = new OpenGL::Texture();
 	
-
 	if (!theApp.options.spaceshipObjFile.IsEmpty())
 	{
 		ObjLoader objLoader;
 		CT2CA convAnsiString(theApp.options.spaceshipObjFile);
 		std::string spaceshipFile(convAnsiString);
 		if (objLoader.Load(spaceshipFile))
-		{
 			spaceship = new OpenGL::ComplexObjectCompositeMaterials(objLoader);
-		}
 	}
-
 
 	if (!SetupShaders()) {
 		ClearProgram();
@@ -413,7 +409,8 @@ void CSolarSystemView::Setup()
 
 	program->SetupLights(doc->m_SolarSystem.m_BodyProperties);
 
-	if (theApp.options.drawTextures) doc->m_SolarSystem.LoadTextures();
+	if (theApp.options.drawTextures)
+		doc->m_SolarSystem.LoadTextures();
 
 	SetupSkyBox();
 

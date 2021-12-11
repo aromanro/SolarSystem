@@ -252,6 +252,8 @@ namespace OpenGL {
 			startIndex = complexObjects[i]->Load(loader, startIndex);
 			++i;
 		}
+
+		BodyProperties::ClearTexturesCache();
 	}
 
 	void ComplexObjectCompositeMaterials::Draw(SpaceshipProgram& program)

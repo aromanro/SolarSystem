@@ -2,6 +2,9 @@
 
 #include "Texture.h"
 
+#include <memory>
+#include <map>
+
 class BodyProperties
 {
 public:
@@ -35,14 +38,21 @@ public:
 
 	BodyProperties();
 	~BodyProperties();
+
 	bool LoadTexture();
 	void CleanTexture();
 
 	static OpenGL::Texture* LoadTexture(const CString& name, int bindNo = 0, int bpp = 24);
 	static OpenGL::Texture* LoadNormalTexture(const CString& name, double bumpParam, int bindNo);
 
+	static std::shared_ptr<CImage> Load(const CString& name);
+
+	static void ClearTexturesCache();
+
 protected:
 	static double GetPixelValue(const CImage& img, int x, int y);
 	static void ResizeToEven(CImage& skin);
+
+	static std::map<CString, std::shared_ptr<CImage>> texturesMap;
 };
 

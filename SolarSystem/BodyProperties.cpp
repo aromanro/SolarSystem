@@ -8,6 +8,9 @@
 #define new DEBUG_NEW
 #endif
 
+std::map<CString, std::shared_ptr<CImage>> BodyProperties::texturesMap = {};
+
+
 BodyProperties::BodyProperties()
 	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), normalTexture(NULL), transparentTextureAlpha(false), bumpParam(2.), parentIndex(-1)
 {
@@ -27,39 +30,36 @@ BodyProperties::~BodyProperties()
 bool BodyProperties::LoadTexture()
 {
 	CleanTexture();
-	
+
 	if (!transparentFile.IsEmpty())
 	{
 		try {
-			CImage skin;
-			skin.Load(transparentFile);
-
-			if (!(skin.IsNull() || (skin.GetBPP() != 24 && skin.GetBPP() != 32)))
+			auto skin = Load(transparentFile);
+			if (skin && !((skin->GetBPP() != 24 && skin->GetBPP() != 32)))
 			{
-				ResizeToEven(skin);
-
 				// ideally they should be power of 2 but even values should do
-
+				// 'Load' should resize the image to even, the checks are legacy but I'll let them here
+				 
 				// check if it's even
-				unsigned int dim = skin.GetWidth();
+				unsigned int dim = skin->GetWidth();
 				if (!(dim % 2))
 				{
 
 					// check if it's even
-					dim = skin.GetHeight();
+					dim = skin->GetHeight();
 					if (!(dim % 2))
 					{
 
 						transparentTexture = new OpenGL::Texture();
 						unsigned char* buf = NULL;
 
-						if (skin.GetPitch() < 0)
-							buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+						if (skin->GetPitch() < 0)
+							buf = static_cast<unsigned char*>(skin->GetPixelAddress(0, skin->GetHeight() - 1));
 						else
-							buf = static_cast<unsigned char*>(skin.GetBits());
+							buf = static_cast<unsigned char*>(skin->GetBits());
 
-						transparentTextureAlpha = skin.GetBPP() == 32;
-						transparentTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 1, transparentTextureAlpha ? 4 : 3);
+						transparentTextureAlpha = skin->GetBPP() == 32;
+						transparentTexture->setData(buf, skin->GetWidth(), skin->GetHeight(), 1, transparentTextureAlpha ? 4 : 3);
 					}
 				}
 			}
@@ -89,7 +89,7 @@ double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 
 	if (x < 0) x += width;
 	else if (x >= width) x -= width;
-	
+
 	if (y < 0) y += height;
 	else if (y >= height) y -= height;
 
@@ -155,32 +155,30 @@ OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo,
 	if (!imgFile.IsEmpty())
 	{
 		try {
-			CImage skin;
-			skin.Load(imgFile);
-
-			if (skin.IsNull() || skin.GetBPP() != bpp) return NULL;
-
-			ResizeToEven(skin);
+			auto skin = Load(imgFile);
+			if (!skin || skin->GetBPP() != bpp) return NULL;
 
 			// ideally they should be power of 2 but even values should do
 
+			// 'Load' should resize the image to even, the checks are legacy but I'll let them here
+
 			// check if it's even
-			unsigned int dim = skin.GetWidth();
+			unsigned int dim = skin->GetWidth();
 			if (dim % 2) return NULL;
 
 			// check if it's even
-			dim = skin.GetHeight();
+			dim = skin->GetHeight();
 			if (dim % 2) return NULL;
 
 			texture = new OpenGL::Texture();
 			unsigned char* buf = NULL;
 
-			if (skin.GetPitch() < 0)
-				buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+			if (skin->GetPitch() < 0)
+				buf = static_cast<unsigned char*>(skin->GetPixelAddress(0, skin->GetHeight() - 1));
 			else
-				buf = static_cast<unsigned char*>(skin.GetBits());
+				buf = static_cast<unsigned char*>(skin->GetBits());
 
-			texture->setData(buf, skin.GetWidth(), skin.GetHeight(), bindNo, bpp / 8);
+			texture->setData(buf, skin->GetWidth(), skin->GetHeight(), bindNo, bpp / 8);
 		}
 		catch (...)
 		{
@@ -199,56 +197,55 @@ OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, do
 	if (!normalFile.IsEmpty())
 	{
 		try {
-			CImage skin;
-			skin.Load(normalFile);
+			auto skin = Load(normalFile);
 
-			if (!skin.IsNull() && (skin.GetBPP() == 8 || skin.GetBPP() == 24))
+			if (skin && (skin->GetBPP() == 8 || skin->GetBPP() == 24))
 			{
-				ResizeToEven(skin);
-
 				// ideally they should be power of 2 but even values should do
 
+				// 'Load' should resize the image to even, the checks are legacy but I'll let them here
+
 				// check if it's even
-				unsigned int dim = skin.GetWidth();
+				unsigned int dim = skin->GetWidth();
 				if (!(dim % 2))
 				{
 
 					// check if it's even
-					dim = skin.GetHeight();
+					dim = skin->GetHeight();
 					if (!(dim % 2))
 					{
 						normalTexture = new OpenGL::Texture();
 						unsigned char* buf = NULL;
 
-						if (skin.GetBPP() == 24)
+						if (skin->GetBPP() == 24)
 						{
-							if (skin.GetPitch() < 0)
-								buf = static_cast<unsigned char*>(skin.GetPixelAddress(0, skin.GetHeight() - 1));
+							if (skin->GetPitch() < 0)
+								buf = static_cast<unsigned char*>(skin->GetPixelAddress(0, skin->GetHeight() - 1));
 							else
-								buf = static_cast<unsigned char*>(skin.GetBits());
+								buf = static_cast<unsigned char*>(skin->GetBits());
 
-							normalTexture->setData(buf, skin.GetWidth(), skin.GetHeight(), 4);
+							normalTexture->setData(buf, skin->GetWidth(), skin->GetHeight(), 4);
 						}
 						else
 						{
 							// if it's a bump map, there is some work to do
-							MemoryBitmap memoryBitmap(skin.GetWidth(), skin.GetHeight());
+							MemoryBitmap memoryBitmap(skin->GetWidth(), skin->GetHeight());
 
 							// TODO: set the normal map into the memory bitmap (using Sobel to convert from bump map)
 
-							for (int y = 0; y < skin.GetHeight(); ++y)
+							for (int y = 0; y < skin->GetHeight(); ++y)
 							{
-								for (int x = 0; x < skin.GetWidth(); ++x)
+								for (int x = 0; x < skin->GetWidth(); ++x)
 								{
-									const double top = GetPixelValue(skin, x, y + 1);
-									const double bottom = GetPixelValue(skin, x, y - 1);
-									const double left = GetPixelValue(skin, x - 1, y);
-									const double right = GetPixelValue(skin, x + 1, y);
+									const double top = GetPixelValue(*skin, x, y + 1);
+									const double bottom = GetPixelValue(*skin, x, y - 1);
+									const double left = GetPixelValue(*skin, x - 1, y);
+									const double right = GetPixelValue(*skin, x + 1, y);
 
-									const double topLeft = GetPixelValue(skin, x - 1, y + 1);
-									const double bottomLeft = GetPixelValue(skin, x - 1, y - 1);
-									const double topRight = GetPixelValue(skin, x + 1, y + 1);
-									const double bottomRight = GetPixelValue(skin, x + 1, y - 1);
+									const double topLeft = GetPixelValue(*skin, x - 1, y + 1);
+									const double bottomLeft = GetPixelValue(*skin, x - 1, y - 1);
+									const double topRight = GetPixelValue(*skin, x + 1, y + 1);
+									const double bottomRight = GetPixelValue(*skin, x + 1, y - 1);
 
 									// Sobel
 									const double dX = topRight - topLeft + 2. * (right - left) + bottomRight - bottomLeft;
@@ -285,3 +282,38 @@ OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, do
 
 	return normalTexture;
 }
+
+
+void BodyProperties::ClearTexturesCache()
+{
+	texturesMap.clear();
+}
+
+std::shared_ptr<CImage> BodyProperties::Load(const CString& name)
+{
+	try {
+		if (texturesMap.find(name) != texturesMap.end())
+			return texturesMap.at(name);
+
+		CImage* skin = new CImage();
+		skin->Load(name);
+		if (skin->IsNull())
+		{
+			delete skin;
+			return {};
+		}
+
+		ResizeToEven(*skin);
+
+		std::shared_ptr<CImage> sp(skin);
+		texturesMap.emplace(name, sp);
+
+		return sp;
+	}
+	catch (...)
+	{
+	}
+
+	return {};
+}
+
