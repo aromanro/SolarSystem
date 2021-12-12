@@ -120,7 +120,8 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.exponentTexture;
 			CString fileName(path.c_str());
-			exponentTexture = BodyProperties::LoadTexture(fileName, 3, 8);
+			// I have to find an obj file with an exponent texture to check what is their format: 8bpp or 3 bytes
+			exponentTexture = BodyProperties::LoadTexture(fileName, 3/*, 8*/);
 			if (exponentTexture)
 				exponentTexture->GenerateMipmaps();
 		}
