@@ -24,11 +24,11 @@ public:
 	CString specularFile;
 	CString normalFile; // might be a bump mapping file, with one gray channel, in this case use Sobel to compute the normals
 
-	OpenGL::Texture* texture;
-	OpenGL::Texture* transparentTexture;
-	OpenGL::Texture* shadowTexture;
-	OpenGL::Texture* specularTexture;
-	OpenGL::Texture* normalTexture;
+	std::shared_ptr<OpenGL::Texture> texture;
+	std::shared_ptr<OpenGL::Texture> transparentTexture;
+	std::shared_ptr<OpenGL::Texture> shadowTexture;
+	std::shared_ptr<OpenGL::Texture> specularTexture;
+	std::shared_ptr<OpenGL::Texture> normalTexture;
 
 	bool transparentTextureAlpha;
 
@@ -42,8 +42,8 @@ public:
 	bool LoadTexture();
 	void CleanTexture();
 
-	static OpenGL::Texture* LoadTexture(const CString& name, int bindNo = 0, int bpp = 24);
-	static OpenGL::Texture* LoadNormalTexture(const CString& name, double bumpParam, int bindNo);
+	static std::shared_ptr<OpenGL::Texture> LoadTexture(const CString& name, int bindNo = 0, int bpp = 24);
+	static std::shared_ptr<OpenGL::Texture> LoadNormalTexture(const CString& name, double bumpParam, int bindNo);
 
 	static std::shared_ptr<CImage> Load(const CString& name);
 

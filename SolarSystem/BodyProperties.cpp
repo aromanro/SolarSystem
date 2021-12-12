@@ -19,11 +19,6 @@ BodyProperties::BodyProperties()
 
 BodyProperties::~BodyProperties()
 {
-	delete normalTexture;
-	delete specularTexture;
-	delete transparentTexture;
-	delete shadowTexture;
-	delete texture;
 }
 
 
@@ -50,7 +45,7 @@ bool BodyProperties::LoadTexture()
 					if (!(dim % 2))
 					{
 
-						transparentTexture = new OpenGL::Texture();
+						transparentTexture = std::make_shared<OpenGL::Texture>();
 						unsigned char* buf = NULL;
 
 						if (skin->GetPitch() < 0)
@@ -66,8 +61,7 @@ bool BodyProperties::LoadTexture()
 		}
 		catch (...)
 		{
-			delete transparentTexture;
-			transparentTexture = NULL;
+			transparentTexture.reset();
 		}
 	}
 
@@ -106,20 +100,11 @@ double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 
 void BodyProperties::CleanTexture()
 {
-	delete texture;
-	texture = NULL;
-
-	delete transparentTexture;
-	transparentTexture = NULL;
-
-	delete shadowTexture;
-	shadowTexture = NULL;
-
-	delete specularTexture;
-	specularTexture = NULL;
-
-	delete normalTexture;
-	normalTexture = NULL;
+	texture.reset();
+	transparentTexture.reset();
+	shadowTexture.reset();
+	specularTexture.reset();
+	normalTexture.reset();
 
 	transparentTextureAlpha = false;
 }
@@ -148,9 +133,9 @@ void BodyProperties::ResizeToEven(CImage& skin)
 }
 
 
-OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo, int bpp)
+std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgFile, int bindNo, int bpp)
 {
-	OpenGL::Texture* texture = NULL;
+	std::shared_ptr<OpenGL::Texture> texture;
 
 	if (!imgFile.IsEmpty())
 	{
@@ -170,7 +155,7 @@ OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo,
 			dim = skin->GetHeight();
 			if (dim % 2) return NULL;
 
-			texture = new OpenGL::Texture();
+			texture = std::make_shared<OpenGL::Texture>();
 			unsigned char* buf = NULL;
 
 			if (skin->GetPitch() < 0)
@@ -182,17 +167,16 @@ OpenGL::Texture* BodyProperties::LoadTexture(const CString& imgFile, int bindNo,
 		}
 		catch (...)
 		{
-			delete texture;
-			texture = NULL;
+			texture.reset();
 		}
 	}
 
 	return texture;
 }
 
-OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, double bumpParam, int bindNo)
+std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString& normalFile, double bumpParam, int bindNo)
 {
-	OpenGL::Texture* normalTexture = NULL;
+	std::shared_ptr<OpenGL::Texture> normalTexture;
 
 	if (!normalFile.IsEmpty())
 	{
@@ -214,7 +198,7 @@ OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, do
 					dim = skin->GetHeight();
 					if (!(dim % 2))
 					{
-						normalTexture = new OpenGL::Texture();
+						normalTexture = std::make_shared<OpenGL::Texture>();
 						unsigned char* buf = NULL;
 
 						if (skin->GetBPP() == 24)
@@ -275,8 +259,7 @@ OpenGL::Texture* BodyProperties::LoadNormalTexture(const CString& normalFile, do
 		}
 		catch (...)
 		{
-			delete normalTexture;
-			normalTexture = NULL;
+			normalTexture.reset();
 		}
 	}
 
