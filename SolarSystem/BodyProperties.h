@@ -53,6 +53,9 @@ protected:
 	static double GetPixelValue(const CImage& img, int x, int y);
 	static void ResizeToEven(CImage& skin);
 
+	static std::shared_ptr<OpenGL::Texture> CachedTexture(const CString& path, int bindNo, int nrBytes);
+
 	static std::map<CString, std::shared_ptr<CImage>> texturesMap;
+	static std::map<std::tuple<CString, int, int>, std::shared_ptr<OpenGL::Texture>> glTexturesMap;
 };
 

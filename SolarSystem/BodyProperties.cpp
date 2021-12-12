@@ -9,6 +9,7 @@
 #endif
 
 std::map<CString, std::shared_ptr<CImage>> BodyProperties::texturesMap = {};
+std::map<std::tuple<CString, int, int>, std::shared_ptr<OpenGL::Texture>> BodyProperties::glTexturesMap = {};
 
 
 BodyProperties::BodyProperties()
@@ -29,6 +30,8 @@ bool BodyProperties::LoadTexture()
 	if (!transparentFile.IsEmpty())
 	{
 		try {
+			transparentTexture = CachedTexture(transparentFile, 0, 3);
+
 			auto skin = Load(transparentFile);
 			if (skin && !((skin->GetBPP() != 24 && skin->GetBPP() != 32)))
 			{
@@ -55,6 +58,8 @@ bool BodyProperties::LoadTexture()
 
 						transparentTextureAlpha = skin->GetBPP() == 32;
 						transparentTexture->setData(buf, skin->GetWidth(), skin->GetHeight(), 1, transparentTextureAlpha ? 4 : 3);
+
+						glTexturesMap[std::make_tuple(transparentFile, 0, 3)] = transparentTexture;
 					}
 				}
 			}
@@ -135,7 +140,8 @@ void BodyProperties::ResizeToEven(CImage& skin)
 
 std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgFile, int bindNo, int bpp)
 {
-	std::shared_ptr<OpenGL::Texture> texture;
+	const int nrBytes = bpp / 8;
+	std::shared_ptr<OpenGL::Texture> texture = CachedTexture(imgFile, bindNo, nrBytes);
 
 	if (!imgFile.IsEmpty())
 	{
@@ -163,7 +169,9 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgF
 			else
 				buf = static_cast<unsigned char*>(skin->GetBits());
 
-			texture->setData(buf, skin->GetWidth(), skin->GetHeight(), bindNo, bpp / 8);
+			texture->setData(buf, skin->GetWidth(), skin->GetHeight(), bindNo, nrBytes);
+
+			glTexturesMap[std::make_tuple(imgFile, bindNo, nrBytes)] = texture;
 		}
 		catch (...)
 		{
@@ -176,7 +184,7 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgF
 
 std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString& normalFile, double bumpParam, int bindNo)
 {
-	std::shared_ptr<OpenGL::Texture> normalTexture;
+	std::shared_ptr<OpenGL::Texture> normalTexture = CachedTexture(normalFile, bindNo, 3);
 
 	if (!normalFile.IsEmpty())
 	{
@@ -208,7 +216,7 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 							else
 								buf = static_cast<unsigned char*>(skin->GetBits());
 
-							normalTexture->setData(buf, skin->GetWidth(), skin->GetHeight(), 4);
+							normalTexture->setData(buf, skin->GetWidth(), skin->GetHeight(), bindNo);
 						}
 						else
 						{
@@ -253,6 +261,8 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 
 							memoryBitmap.SetIntoTexture(*normalTexture, bindNo);
 						}
+
+						glTexturesMap[std::make_tuple(normalFile, bindNo, 3)] = normalTexture;
 					}
 				}
 			}
@@ -270,6 +280,7 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 void BodyProperties::ClearTexturesCache()
 {
 	texturesMap.clear();
+	glTexturesMap.clear();
 }
 
 std::shared_ptr<CImage> BodyProperties::Load(const CString& name)
@@ -300,3 +311,13 @@ std::shared_ptr<CImage> BodyProperties::Load(const CString& name)
 	return {};
 }
 
+std::shared_ptr<OpenGL::Texture> BodyProperties::CachedTexture(const CString& path, int bindNo, int nrBytes)
+{
+	if (path.IsEmpty()) return {};
+
+	auto index = std::make_tuple(path, bindNo, nrBytes);
+	if (glTexturesMap.find(index) != glTexturesMap.end())
+		return glTexturesMap.at(index);
+
+	return {};
+}

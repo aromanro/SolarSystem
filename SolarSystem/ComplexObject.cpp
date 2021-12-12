@@ -93,7 +93,7 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.ambientTexture;
 			CString fileName(path.c_str());
-			ambientTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName));
+			ambientTexture = BodyProperties::LoadTexture(fileName);
 			if (ambientTexture)
 				ambientTexture->GenerateMipmaps();
 		}
@@ -102,7 +102,7 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.diffuseTexture;
 			CString fileName(path.c_str());
-			diffuseTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 1));
+			diffuseTexture = BodyProperties::LoadTexture(fileName, 1);
 			if (diffuseTexture)
 				diffuseTexture->GenerateMipmaps();
 		}
@@ -111,7 +111,7 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.specularTexture;
 			CString fileName(path.c_str());
-			specularTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 2));
+			specularTexture = BodyProperties::LoadTexture(fileName, 2);
 			if (specularTexture)
 				specularTexture->GenerateMipmaps();
 		}
@@ -120,7 +120,7 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.exponentTexture;
 			CString fileName(path.c_str());
-			exponentTexture = std::shared_ptr<Texture>(BodyProperties::LoadTexture(fileName, 3, 8));
+			exponentTexture = BodyProperties::LoadTexture(fileName, 3, 8);
 			if (exponentTexture)
 				exponentTexture->GenerateMipmaps();
 		}
@@ -129,7 +129,7 @@ namespace OpenGL {
 		{
 			const std::string path = loader.dir + material.bumpTexture;
 			CString fileName(path.c_str());
-			bumpTexture = std::shared_ptr<Texture>(BodyProperties::LoadNormalTexture(fileName, 2, 4));
+			bumpTexture = BodyProperties::LoadNormalTexture(fileName, 2, 4);
 			if (bumpTexture)
 				bumpTexture->GenerateMipmaps();
 		}
