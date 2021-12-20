@@ -636,8 +636,6 @@ void CSolarSystemView::RenderShadowScene()
 		sphere->Draw();
 	}
 
-	glFlush();
-
 	glCullFace(GL_BACK);
 	shadowProgram->depthMapFBO.UnBind();
 	shadowProgram->UnUse();
@@ -783,6 +781,8 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 
 		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
 		if (theApp.options.showSkyBox) RenderSky();
+
+
 		RenderScene();
 
 		//glFlush(); // not really needed, SwapBuffers should take care of things
