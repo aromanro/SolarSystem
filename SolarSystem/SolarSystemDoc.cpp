@@ -191,7 +191,7 @@ HRESULT CSolarSystemDoc::LoadFromXmlString(const CString& str)
 
 void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 {
-	m_SolarSystem.m_Bodies.clear();
+	m_SolarSystem.m_BodiesPosition.clear();
 
 	{
 		MSXML::IXMLDOMNodeListPtr pSolarSystem = pDocument->getElementsByTagName(L"SolarSystem");
@@ -215,20 +215,21 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		while (pRecordNode)
 		{
 			m_SolarSystem.m_Bodies.emplace_back(MolecularDynamics::Body());
+			m_SolarSystem.m_BodiesPosition.emplace_back(MolecularDynamics::BodyPosition());
 			m_SolarSystem.m_BodyProperties.emplace_back(BodyProperties());
 
-			LoadBodyXml(pRecordNode, m_SolarSystem.m_Bodies.back(), m_SolarSystem.m_BodyProperties.back());
+			LoadBodyXml(pRecordNode, m_SolarSystem.m_Bodies.back(), m_SolarSystem.m_BodiesPosition.back(), m_SolarSystem.m_BodyProperties.back());
 			
 			pRecordNode = pRecordsList->nextNode();
 		}
 	}
 
-	m_SolarSystem.m_Bodies.shrink_to_fit();
+	m_SolarSystem.m_BodiesPosition.shrink_to_fit();
 	m_SolarSystem.m_BodyProperties.shrink_to_fit();
 }
 
 
-void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics::Body& body, BodyProperties& props)
+void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics::Body& body, MolecularDynamics::BodyPosition& bodyPosition, BodyProperties& props)
 {
 	props.isSun = GetXmlBoolValue(node, L"IsSun", false);
 	props.isMoon = GetXmlBoolValue(node, L"IsMoon", false);
@@ -248,18 +249,17 @@ void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics
 	props.scaleDistance = GetXmlDoubleValue(node, L"ScaleDistance", 1.);
 
 	body.rotationPeriod = GetXmlDoubleValue(node, L"RotationPeriod", 1) * 24 * 3600;
-
 	body.m_Mass = GetXmlDoubleValue(node, L"Mass", 0);
 	body.m_Radius = GetXmlDoubleValue(node, L"Radius", 0);
 
-	body.m_Position.X = GetXmlDoubleValue(node, L"XPosition", 0);
-	body.m_Position.Y = GetXmlDoubleValue(node, L"YPosition", 0);
-	body.m_Position.Z = GetXmlDoubleValue(node, L"ZPosition", 0);
+	bodyPosition.m_Position.X = GetXmlDoubleValue(node, L"XPosition", 0);
+	bodyPosition.m_Position.Y = GetXmlDoubleValue(node, L"YPosition", 0);
+	bodyPosition.m_Position.Z = GetXmlDoubleValue(node, L"ZPosition", 0);
 
 
-	body.m_Velocity.X = GetXmlDoubleValue(node, L"XVelocity", 0);
-	body.m_Velocity.Y = GetXmlDoubleValue(node, L"YVelocity", 0);
-	body.m_Velocity.Z = GetXmlDoubleValue(node, L"ZVelocity", 0);
+	bodyPosition.m_Velocity.X = GetXmlDoubleValue(node, L"XVelocity", 0);
+	bodyPosition.m_Velocity.Y = GetXmlDoubleValue(node, L"YVelocity", 0);
+	bodyPosition.m_Velocity.Z = GetXmlDoubleValue(node, L"ZVelocity", 0);
 
 }
 
@@ -332,7 +332,7 @@ void CSolarSystemDoc::RetrieveData()
 	{
 		std::lock_guard<std::mutex> lock(m_Thread.m_DataSection);
 
-		m_SolarSystem.m_Bodies.swap(m_Thread.GetBodies());
+		m_SolarSystem.m_BodiesPosition.swap(m_Thread.GetBodies());
 		m_SolarSystem.m_simulationTime = m_Thread.simulationTime;
 	}
 	
@@ -347,22 +347,20 @@ void CSolarSystemDoc::LoadFile(const CString& fileName)
 
 	LoadXmlFile(fileName);
 
-	auto pit = m_SolarSystem.m_BodyProperties.begin();
-	for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	for (int planetIndex = 0; planetIndex < m_SolarSystem.m_BodiesPosition.size(); ++planetIndex)
 	{
 		glm::mat4 modelMat(1);
-		glm::vec3 pos = glm::vec3(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+		glm::vec3 pos = glm::vec3(m_SolarSystem.m_BodiesPosition[planetIndex].m_Position.X / AGLU, m_SolarSystem.m_BodiesPosition[planetIndex].m_Position.Y / AGLU, m_SolarSystem.m_BodiesPosition[planetIndex].m_Position.Z / AGLU);
 
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.)
+		if (m_SolarSystem.m_BodyProperties[planetIndex].isMoon && m_SolarSystem.m_BodyProperties[planetIndex].scaleDistance != 1.)
 		{
-
 			auto pmit = m_SolarSystem.m_BodyProperties.begin();
 
-			int index = 0;
-			for (auto mit = m_SolarSystem.m_Bodies.begin(); mit != m_SolarSystem.m_Bodies.end(); ++mit, ++pmit, ++index)
+			int parentIndex = 0;
+			for (auto mit = m_SolarSystem.m_BodiesPosition.begin(); mit != m_SolarSystem.m_BodiesPosition.end(); ++mit, ++pmit, ++parentIndex)
 			{
 				if (pmit->isMoon || pmit->isSun) continue; // ignore a collision with another moon or with the sun
 
@@ -370,9 +368,9 @@ void CSolarSystemDoc::LoadFile(const CString& fileName)
 				const glm::vec3 fromvec = pos - mpos;
 				const double dist = glm::length(fromvec);
 
-				if (dist <= 1.05 * (mit->m_Radius * pmit->scale + it->m_Radius * pit->scale) / AGLU)
+				if (dist <= 1.05 * (m_SolarSystem.m_Bodies[parentIndex].m_Radius * pmit->scale + m_SolarSystem.m_Bodies[planetIndex].m_Radius * m_SolarSystem.m_BodyProperties[planetIndex].scale) / AGLU)
 				{
-					pit->parentIndex = index;
+					m_SolarSystem.m_BodyProperties[planetIndex].parentIndex = parentIndex;
 					break;
 				}
 			}
@@ -382,7 +380,8 @@ void CSolarSystemDoc::LoadFile(const CString& fileName)
 
 void CSolarSystemDoc::StartThread()
 {
-	m_Thread.SetBodies(m_SolarSystem.m_Bodies, 0);
+	m_Thread.SetBodies(m_SolarSystem.m_Bodies);
+	m_Thread.SetBodiesPosition(m_SolarSystem.m_BodiesPosition, 0);
 	m_Thread.StartThread();
 }
 

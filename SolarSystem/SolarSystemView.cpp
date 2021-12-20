@@ -56,7 +56,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 		unsigned int light = 0;
 
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -96,7 +96,7 @@ CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_Sola
 		unsigned int light = 0;
 
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -123,7 +123,7 @@ CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSyste
 	if (nrlights == 0) lightPos = glm::vec3(-farPlaneDistance, -farPlaneDistance, 0);
 	else {
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_Bodies.begin(); it != m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -425,7 +425,7 @@ void CSolarSystemView::Setup()
 	inited = true;
 }
 
-void CSolarSystemView::MoonHack(const BodyPropList::iterator& pit, const BodyList::iterator& it, glm::dvec3& pos)
+void CSolarSystemView::MoonHack(const BodyList::iterator& bit, const BodyPropList::iterator& pit, const BodyPositionList::iterator& it, glm::dvec3& pos)
 {
 	CSolarSystemDoc *doc = GetDocument();
 
@@ -433,17 +433,18 @@ void CSolarSystemView::MoonHack(const BodyPropList::iterator& pit, const BodyLis
 		return;
 
 	const MolecularDynamics::Body& parent = doc->m_SolarSystem.m_Bodies[pit->parentIndex];
+	const MolecularDynamics::BodyPosition& parentPosition = doc->m_SolarSystem.m_BodiesPosition[pit->parentIndex];
 	const BodyProperties& parentProps = doc->m_SolarSystem.m_BodyProperties[pit->parentIndex];
 
 	// should not happen, but be safe
 	if (parentProps.isMoon || parentProps.isSun) 
 		return;
 
-	glm::dvec3 mpos(parent.m_Position.X / AGLU, parent.m_Position.Y / AGLU, parent.m_Position.Z / AGLU);
+	glm::dvec3 mpos(parentPosition.m_Position.X / AGLU, parentPosition.m_Position.Y / AGLU, parentPosition.m_Position.Z / AGLU);
 	const glm::dvec3 fromvec = pos - mpos;
 	const double dist = glm::length(fromvec);
 
-	if (dist <= (parent.m_Radius * parentProps.scale + it->m_Radius * pit->scale) / AGLU)
+	if (dist <= (parent.m_Radius * parentProps.scale + bit->m_Radius * pit->scale) / AGLU)
 		pos = mpos + glm::dvec3(fromvec.x * pit->scaleDistance, fromvec.y * pit->scaleDistance, fromvec.z * pit->scaleDistance);
 }
 
@@ -467,9 +468,9 @@ void CSolarSystemView::RenderScene()
 
 	glUniform1i(program->useAlphaBlend, 0);
 
-	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();	
-
-	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	auto bit = doc->m_SolarSystem.m_Bodies.begin();
+	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();		
+	for (auto it = doc->m_SolarSystem.m_BodiesPosition.begin(); it != doc->m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit, ++bit)
 	{
 		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
@@ -477,11 +478,11 @@ void CSolarSystemView::RenderScene()
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, it, pos);
 
 		// ****************************************************************************************************************************
 
-		const double scale = it->m_Radius * pit->scale / AGLU;
+		const double scale = bit->m_Radius * pit->scale / AGLU;
 		const glm::dmat4 modelMatHP = glm::rotate(glm::rotate(glm::scale(glm::translate(glm::dmat4(1), pos), glm::dvec3(scale, scale, scale)), pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0)), it->rotation, glm::dvec3(0, 0, 1));
 
 		const glm::mat4 modelMat(modelMatHP);
@@ -612,8 +613,9 @@ void CSolarSystemView::RenderShadowScene()
 
 	ShadowUniforms params(doc->m_SolarSystem, *shadowProgram, program->nrlights);
 
+	auto bit = doc->m_SolarSystem.m_Bodies.begin();
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
-	for (auto it = doc->m_SolarSystem.m_Bodies.begin(); it != doc->m_SolarSystem.m_Bodies.end(); ++it, ++pit)
+	for (auto it = doc->m_SolarSystem.m_BodiesPosition.begin(); it != doc->m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit, ++bit)
 	{
 		if (pit->isSun) continue; // Suns don't drop a shadow, don't render them
 
@@ -623,11 +625,11 @@ void CSolarSystemView::RenderShadowScene()
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, it, pos);
 
 		// ****************************************************************************************************************************
 		modelMatHP = glm::translate(modelMatHP, pos);
-		const double scale = it->m_Radius * pit->scale / AGLU;
+		const double scale = bit->m_Radius * pit->scale / AGLU;
 		modelMatHP = glm::scale(modelMatHP, glm::dvec3(scale, scale, scale));
 
 		const glm::mat4 modelMat(modelMatHP);

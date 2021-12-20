@@ -21,7 +21,8 @@ namespace MolecularDynamics {
 		std::atomic_uint nrsteps;
 		std::atomic_bool newData;
 
-		BodyList m_SharedBodies;
+		BodyList m_BodyList;
+		BodyPositionList m_SharedBodiesPosition;
 
 		std::thread Thread;
 
@@ -42,22 +43,26 @@ namespace MolecularDynamics {
 
 		void SetNrSteps(unsigned int nr);
 
-		void SetBodies(const BodyList& bodies, double simulationTime);
-		BodyList& GetBodies();
+		void SetBodiesPosition(const BodyPositionList& BodiesPosition, double simulationTime);
+		void SetBodies(const BodyList& bodies)
+		{
+			m_BodyList = bodies;
+		}
+		BodyPositionList& GetBodies();
 
 		bool HasNewData() const { return newData; }
 
 	protected:
-		void Initialize(BodyList& m_Bodies);
+		void Initialize(const BodyList& Bodies, BodyPositionList& BodiesPosition);
 
-		inline static Vector3D<double> CalculateAcceleration(BodyList::const_iterator& it, BodyList& Bodies);
+		inline Vector3D<double> CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& Bodies);
 
 #ifdef USE_VERLET
-		inline void VerletStep(BodyList& Bodies, double period, double period2);
+		inline void VerletStep(BodyPositionList& Bodies, double period, double period2);
 #else
-		inline VelocityVerletStep(BodyList& Bodies, double period, double period2);
+		inline VelocityVerletStep(BodyPositionList& Bodies, double period, double period2);
 #endif
-		inline static void CalculateRotations(BodyList& Bodies, double period);
+		inline void CalculateRotations(BodyPositionList& Bodies, double period);
 		void Compute();
 
 		bool Wait();

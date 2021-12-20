@@ -19,7 +19,7 @@ SolarSystemBodies::~SolarSystemBodies()
 
 void SolarSystemBodies::clear()
 {
-	m_Bodies.clear();
+	m_BodiesPosition.clear();
 	m_BodyProperties.clear();
 	m_simulationTime = 0;
 }

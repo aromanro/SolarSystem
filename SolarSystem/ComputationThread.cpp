@@ -28,20 +28,21 @@ namespace MolecularDynamics {
 
 
 
-	inline Vector3D<double> ComputationThread::CalculateAcceleration(BodyList::const_iterator& it, BodyList& Bodies)
+	inline Vector3D<double> ComputationThread::CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& BodiesPosition)
 	{
 		static const double EPS2 = EPS*EPS;
 
 		Vector3D<double> acceleration(0., 0., 0.);
 
-		for (auto cit = Bodies.cbegin(); cit != Bodies.cend(); ++cit)
+		int i = 0;
+		for (auto cit = BodiesPosition.cbegin(); cit != BodiesPosition.cend(); ++cit, ++i)
 		{
 			if (cit == it) continue;
 
 			const Vector3D<double> r21 = cit->m_Position - it->m_Position;
 			const double length2 = r21 * r21;
 
-			acceleration += r21 * cit->m_Mass / ((length2 + EPS2) * sqrt(length2));
+			acceleration += r21 * m_BodyList[i].m_Mass / ((length2 + EPS2) * sqrt(length2));
 		}
 
 		return G * acceleration;
@@ -49,14 +50,14 @@ namespace MolecularDynamics {
 
 #ifdef USE_VERLET
 
-	inline void ComputationThread::VerletStep(BodyList& Bodies, double /*timestep*/, double timestep2)
+	inline void ComputationThread::VerletStep(BodyPositionList& BodiesPosition, double /*timestep*/, double timestep2)
 	{
 		int i = 0;
-		for (auto it = Bodies.cbegin(); it != Bodies.cend(); ++it, ++i)
-			accelerations[i] = CalculateAcceleration(it, Bodies);
+		for (auto it = BodiesPosition.cbegin(); it != BodiesPosition.cend(); ++it, ++i)
+			accelerations[i] = CalculateAcceleration(it, BodiesPosition);
 
 		i = 0;
-		for (auto it = Bodies.begin(); it != Bodies.end(); ++it, ++i)
+		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it, ++i)
 		{
 			const Vector3D<double> nextPosition = 2. * it->m_Position - it->m_PrevPosition + accelerations[i] * timestep2;
 			it->m_PrevPosition = it->m_Position;
@@ -67,15 +68,15 @@ namespace MolecularDynamics {
 #else
 
 
-	inline void ComputationThread::VelocityVerletStep(BodyList& Bodies, double timestep, double timestep2)
+	inline void ComputationThread::VelocityVerletStep(BodyPositionList& BodiesPosition, double timestep, double timestep2)
 	{
-		for (auto &body : Bodies)
+		for (auto &body : BodiesPosition)
 			body.m_Position += body.m_Velocity * timestep + 0.5 * body.m_Acceleration * timestep2;
 
-		for (auto it = Bodies.begin(); it != Bodies.end(); ++it)
+		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it)
 		{
 			it->m_PrevAcceleration = it->m_Acceleration;
-			it->m_Acceleration = CalculateAcceleration(it, Bodies);
+			it->m_Acceleration = CalculateAcceleration(it, BodiesPosition);
 
 			it->m_Velocity += (it->m_Acceleration + it->m_PrevAcceleration) * timestep * 0.5;
 		}
@@ -84,41 +85,44 @@ namespace MolecularDynamics {
 #endif
 
 
-	inline void ComputationThread::CalculateRotations(BodyList& Bodies, double timestep)
+	inline void ComputationThread::CalculateRotations(BodyPositionList& BodiesPosition, double timestep)
 	{
 		static const double maxLimit = 100 * TWO_M_PI;
 
-		for (auto &body : Bodies)
+		int i = 0;
+		for (auto &body : BodiesPosition)
 		{
-			const double angular_speed = TWO_M_PI / body.rotationPeriod;
+			const double angular_speed = TWO_M_PI / m_BodyList[i].rotationPeriod;
 			body.rotation += angular_speed * timestep;
 			
 			if (body.rotation >= maxLimit) body.rotation -= maxLimit;
 			else if (body.rotation < 0) body.rotation += maxLimit;
+
+			++i;
 		}
 	}
 
 
-	void ComputationThread::Initialize(BodyList& m_Bodies)
+	void ComputationThread::Initialize(const BodyList& BodyList, BodyPositionList& BodiesPosition)
 	{
 #ifdef USE_VERLET
 		const double timestep = m_timestep;
 		const double timestep2 = timestep*timestep;
 
-		accelerations.resize(m_Bodies.size());
+		accelerations.resize(BodiesPosition.size());
 		int i = 0;
-		for (auto it = m_Bodies.cbegin(); it != m_Bodies.cend(); ++it, ++i)
-			accelerations[i] = CalculateAcceleration(it, m_Bodies);
+		for (auto it = BodiesPosition.cbegin(); it != BodiesPosition.cend(); ++it, ++i)
+			accelerations[i] = CalculateAcceleration(it, BodiesPosition);
 
 		i = 0;
-		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it, ++i)
+		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it, ++i)
 		{
 			it->m_PrevPosition = it->m_Position;
 			it->m_Position += it->m_Velocity * timestep + 0.5 * accelerations[i] * timestep2;
 		}
 #else // VelocityVerlet
-		for (auto it = m_Bodies.begin(); it != m_Bodies.end(); ++it)
-			it->m_Acceleration = CalculateAcceleration(it, m_Bodies);
+		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it)
+			it->m_Acceleration = CalculateAcceleration(it, BodiesPosition);
 #endif	
 	}
 
@@ -129,8 +133,8 @@ namespace MolecularDynamics {
 		const double timestep = m_timestep;
 		const double timestep2 = timestep*timestep;
 
-		BodyList m_Bodies(GetBodies());
-		Initialize(m_Bodies);
+		BodyPositionList BodiesPosition(GetBodies());
+		Initialize(m_BodyList, BodiesPosition);
 
 		do
 		{
@@ -140,18 +144,18 @@ namespace MolecularDynamics {
 			for (unsigned int i = 0; i < local_nrsteps; ++i)
 			{
 #ifdef USE_VERLET
-				VerletStep(m_Bodies, timestep, timestep2);
+				VerletStep(BodiesPosition, timestep, timestep2);
 #else
-				VelocityVerletStep(m_Bodies, timestep, timestep2);
+				VelocityVerletStep(BodiesPosition, timestep, timestep2);
 #endif
 			}
 
 			const double simulatedTime = timestep * local_nrsteps;
 
-			CalculateRotations(m_Bodies, simulatedTime);
+			CalculateRotations(BodiesPosition, simulatedTime);
 
 			// give result to the main thread
-			SetBodies(m_Bodies, simulationTime + simulatedTime);
+			SetBodiesPosition(BodiesPosition, simulationTime + simulatedTime);
 		} while (!Wait()); // is signaled to kill? also waits for a signal to do more work
 	}
 
@@ -202,23 +206,23 @@ namespace MolecularDynamics {
 	}
 
 
-	void ComputationThread::SetBodies(const BodyList& bodies, double curSimulationTime)
+	void ComputationThread::SetBodiesPosition(const BodyPositionList& bodiesPosition, double curSimulationTime)
 	{
 		{
 			std::lock_guard<std::mutex> lock(m_DataSection);
 
 			simulationTime = curSimulationTime;
-			m_SharedBodies = bodies;
+			m_SharedBodiesPosition = bodiesPosition;
 		}
 
 		newData = true;
 	}
 
 
-	BodyList& ComputationThread::GetBodies()
+	BodyPositionList& ComputationThread::GetBodies()
 	{
 		newData = false;
-		return m_SharedBodies;
+		return m_SharedBodiesPosition;
 	}
 
 }
