@@ -326,10 +326,14 @@ void CSolarSystemDoc::LoadXmlFile(const CString& name)
 }
 
 
-void CSolarSystemDoc::RetrieveData()
+bool CSolarSystemDoc::RetrieveData()
 {
+	bool result = false;
+
 	if (m_Thread.HasNewData())
 	{
+		result = true;
+
 		std::lock_guard<std::mutex> lock(m_Thread.m_DataSection);
 
 		m_SolarSystem.m_BodiesPosition.swap(m_Thread.GetBodies());
@@ -338,6 +342,8 @@ void CSolarSystemDoc::RetrieveData()
 	
 	m_Thread.SetNrSteps(nrsteps);
 	if (!stopped) m_Thread.SignalWantMore();
+
+	return result;
 }
 
 

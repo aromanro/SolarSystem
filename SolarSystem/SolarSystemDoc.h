@@ -70,7 +70,7 @@ public:
 	void LoadXmlFile(const CString& name);
 
 	CSolarSystemView* GetMainView(void);
-	void RetrieveData();
+	bool RetrieveData();
 	void LoadFile(const CString& fileName);
 	void StopThread();
 	void StartThread();

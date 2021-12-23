@@ -43,7 +43,7 @@
 static const double lightCoeff = 0.000001;
 
 
-CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights)
+CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, SolarSystemGLProgram& program, unsigned int nrlights)
 {
 	// lights
 
@@ -56,7 +56,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 		unsigned int light = 0;
 
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
+		for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -83,7 +83,7 @@ CSolarSystemView::Uniforms::Uniforms(SolarSystemBodies& m_SolarSystem, SolarSyst
 
 
 
-CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::SpaceshipProgram& program, unsigned int nrlights)
+CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, OpenGL::SpaceshipProgram& program, unsigned int nrlights)
 {
 	// lights
 
@@ -96,7 +96,7 @@ CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_Sola
 		unsigned int light = 0;
 
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
+		for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -115,7 +115,7 @@ CSolarSystemView::SpaceshipUniforms::SpaceshipUniforms(SolarSystemBodies& m_Sola
 }
 
 
-CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights)
+CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights)
 {
 	// light
 	glm::vec3 lightPos;
@@ -123,7 +123,7 @@ CSolarSystemView::ShadowUniforms::ShadowUniforms(SolarSystemBodies& m_SolarSyste
 	if (nrlights == 0) lightPos = glm::vec3(-farPlaneDistance, -farPlaneDistance, 0);
 	else {
 		auto pit = m_SolarSystem.m_BodyProperties.begin();
-		for (auto it = m_SolarSystem.m_BodiesPosition.begin(); it != m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit)
+		for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit)
 		{
 			if (pit->isSun)
 			{
@@ -433,7 +433,7 @@ void CSolarSystemView::MoonHack(const BodyList::iterator& bit, const BodyPropLis
 		return;
 
 	const MolecularDynamics::Body& parent = doc->m_SolarSystem.m_Bodies[pit->parentIndex];
-	const MolecularDynamics::BodyPosition& parentPosition = doc->m_SolarSystem.m_BodiesPosition[pit->parentIndex];
+	const MolecularDynamics::BodyPosition& parentPosition = m_BodiesPosition[pit->parentIndex];
 	const BodyProperties& parentProps = doc->m_SolarSystem.m_BodyProperties[pit->parentIndex];
 
 	// should not happen, but be safe
@@ -461,7 +461,7 @@ void CSolarSystemView::RenderScene()
 
 	if (shadowProgram) shadowProgram->depthCubemap.Bind();
 
-	Uniforms params(doc->m_SolarSystem, *program, program->nrlights);
+	Uniforms params(doc->m_SolarSystem, m_BodiesPosition, *program, program->nrlights);
 
 	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
 	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
@@ -470,7 +470,7 @@ void CSolarSystemView::RenderScene()
 
 	auto bit = doc->m_SolarSystem.m_Bodies.begin();
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();		
-	for (auto it = doc->m_SolarSystem.m_BodiesPosition.begin(); it != doc->m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit, ++bit)
+	for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit, ++bit)
 	{
 		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
@@ -611,11 +611,11 @@ void CSolarSystemView::RenderShadowScene()
 
 	glCullFace(GL_FRONT);
 
-	ShadowUniforms params(doc->m_SolarSystem, *shadowProgram, program->nrlights);
+	ShadowUniforms params(doc->m_SolarSystem, m_BodiesPosition, *shadowProgram, program->nrlights);
 
 	auto bit = doc->m_SolarSystem.m_Bodies.begin();
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();
-	for (auto it = doc->m_SolarSystem.m_BodiesPosition.begin(); it != doc->m_SolarSystem.m_BodiesPosition.end(); ++it, ++pit, ++bit)
+	for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit, ++bit)
 	{
 		if (pit->isSun) continue; // Suns don't drop a shadow, don't render them
 
@@ -669,7 +669,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		spaceshipProgram->Use();
 
-		SpaceshipUniforms params(doc->m_SolarSystem, *spaceshipProgram, spaceshipProgram->nrlights);
+		SpaceshipUniforms params(doc->m_SolarSystem, m_BodiesPosition, *spaceshipProgram, spaceshipProgram->nrlights);
 
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
@@ -771,6 +771,10 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 {
 	if (inited)
 	{
+		// for now do this:
+		// TODO: Interpolate!
+		m_BodiesPosition = m_NewBodiesPosition;
+
 		wglMakeCurrent(m_hDC, m_hRC);
 
 		if (theApp.options.drawShadows) RenderShadowScene();
@@ -1073,7 +1077,27 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (1 == nIDEvent)
 			{
-				doc->RetrieveData();
+				BodyPositionList savePositions;
+				savePositions.swap(m_NewBodiesPosition);
+				double saveSimulationTime = m_newSimulationTime;
+
+				if (doc->RetrieveData())
+				{
+					m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
+					m_newSimulationTime = doc->m_SolarSystem.m_simulationTime;
+				
+					
+					if (savePositions.empty()) 
+					{
+						m_OldBodiesPosition = m_NewBodiesPosition;
+						m_oldSimulationTime = m_newSimulationTime;
+					}
+					else 
+					{
+						m_OldBodiesPosition.swap(savePositions);
+						m_oldSimulationTime = saveSimulationTime;
+					}
+				}
 			
 				camera.Tick();
 				if (keyDown) camera.Move(movement);	

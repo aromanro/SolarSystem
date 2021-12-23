@@ -79,19 +79,27 @@ private:
 
 	SpaceshipOrientation spaceshipOrientation;
 
+
+	BodyPositionList m_BodiesPosition; // interpolated
+
+	BodyPositionList m_NewBodiesPosition; // current step
+	double m_newSimulationTime = 0;
+	BodyPositionList m_OldBodiesPosition; // previous step
+	double m_oldSimulationTime = 0;
+
 	class Uniforms {
 	public:
-		Uniforms(SolarSystemBodies& m_SolarSystem, SolarSystemGLProgram& program, unsigned int nrlights);
+		Uniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, SolarSystemGLProgram& program, unsigned int nrlights);
 	};
 
 	class ShadowUniforms {
 	public:
-		ShadowUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights);
+		ShadowUniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, OpenGL::ShadowCubeMapProgram& program, unsigned int nrlights);
 	};
 	
 	class SpaceshipUniforms {
 	public:
-		SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, OpenGL::SpaceshipProgram& program, unsigned int nrlights);
+		SpaceshipUniforms(SolarSystemBodies& m_SolarSystem, BodyPositionList& m_BodiesPosition, OpenGL::SpaceshipProgram& program, unsigned int nrlights);
 	};
 
 	
@@ -141,6 +149,7 @@ private:
 	bool SetupSkyBox();
 	bool SetupShadows();
 	bool SetupSpaceship();
+
 
 public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
