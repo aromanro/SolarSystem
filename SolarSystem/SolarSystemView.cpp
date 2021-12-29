@@ -771,9 +771,27 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 {
 	if (inited)
 	{
-		// for now do this:
-		// TODO: Interpolate!
-		m_BodiesPosition = m_NewBodiesPosition;
+		CSolarSystemDoc* doc = GetDocument();
+		if (doc)
+		{
+			auto curTime = std::chrono::system_clock::now();
+			if (!doc->stopped && !m_NewBodiesPosition.empty())
+			{
+				long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+
+				double alpha = static_cast<double>(msDifference) / msFrame;
+
+				m_BodiesPosition.resize(m_NewBodiesPosition.size());
+				for (int i = 0; i < m_NewBodiesPosition.size(); ++i)
+				{
+					const double onemalpha = 1. - alpha;
+					m_BodiesPosition[i].m_Position = onemalpha * m_OldBodiesPosition[i].m_Position + alpha * m_NewBodiesPosition[i].m_Position;
+					m_BodiesPosition[i].rotation = onemalpha * m_OldBodiesPosition[i].rotation + alpha * m_NewBodiesPosition[i].rotation;
+				}
+			}
+			else
+				frameTime = curTime;
+		}
 
 		wglMakeCurrent(m_hDC, m_hRC);
 
@@ -1077,25 +1095,45 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (1 == nIDEvent)
 			{
-				BodyPositionList savePositions;
-				savePositions.swap(m_NewBodiesPosition);
-				double saveSimulationTime = m_newSimulationTime;
-
-				if (doc->RetrieveData())
+				bool firstTime = false;
+				if (m_NewBodiesPosition.empty())
 				{
-					m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
-					m_newSimulationTime = doc->m_SolarSystem.m_simulationTime;
-				
-					
-					if (savePositions.empty()) 
+					firstTime = true;
+					// first time called
+					frameTime = std::chrono::system_clock::now();
+
+					if (doc->RetrieveData())
 					{
-						m_OldBodiesPosition = m_NewBodiesPosition;
-						m_oldSimulationTime = m_newSimulationTime;
+						m_OldBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);					
+						m_NewBodiesPosition = m_OldBodiesPosition;
 					}
-					else 
+				}
+
+				if (!firstTime)
+				{
+					auto curTime = std::chrono::system_clock::now();
+					long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+
+					while (msDifference >= 0)
 					{
-						m_OldBodiesPosition.swap(savePositions);
-						m_oldSimulationTime = saveSimulationTime;
+						if (doc->stopped) break;
+
+						if (doc->RetrieveData())
+						{
+							msDifference -= msFrame;
+							frameTime += std::chrono::milliseconds(msFrame);
+
+							m_OldBodiesPosition.swap(m_NewBodiesPosition);
+							m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
+
+							if (msDifference >= msFrame)
+								std::this_thread::sleep_for(std::chrono::milliseconds(1));
+						}
+						else
+							std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+						//curTime = std::chrono::system_clock::now();
+						//msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
 					}
 				}
 			

@@ -10,6 +10,9 @@
 
 #include <glm.hpp>
 
+#include <ctime>
+#include <chrono>
+
 #include "Camera.h"
 
 #include "Program.h"
@@ -83,9 +86,9 @@ private:
 	BodyPositionList m_BodiesPosition; // interpolated
 
 	BodyPositionList m_NewBodiesPosition; // current step
-	double m_newSimulationTime = 0;
 	BodyPositionList m_OldBodiesPosition; // previous step
-	double m_oldSimulationTime = 0;
+
+	std::chrono::time_point<std::chrono::system_clock> frameTime;
 
 	class Uniforms {
 	public:

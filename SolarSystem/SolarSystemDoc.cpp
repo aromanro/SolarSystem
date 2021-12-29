@@ -53,9 +53,9 @@ BOOL CSolarSystemDoc::OnNewDocument()
 
 	LoadFile(CString(L"SolarSystem.xml"));
 
-	GetMainView()->Setup();
-
 	StartThread();
+
+	GetMainView()->Setup();
 
 	return TRUE;
 }

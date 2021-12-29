@@ -30,7 +30,7 @@ namespace MolecularDynamics {
 
 	inline Vector3D<double> ComputationThread::CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& BodiesPosition)
 	{
-		static const double EPS2 = EPS*EPS;
+		static const double EPS2 = EPS * EPS;
 
 		Vector3D<double> acceleration(0., 0., 0.);
 
@@ -70,7 +70,7 @@ namespace MolecularDynamics {
 
 	inline void ComputationThread::VelocityVerletStep(BodyPositionList& BodiesPosition, double timestep, double timestep2)
 	{
-		for (auto &body : BodiesPosition)
+		for (auto& body : BodiesPosition)
 			body.m_Position += body.m_Velocity * timestep + 0.5 * body.m_Acceleration * timestep2;
 
 		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it)
@@ -90,11 +90,11 @@ namespace MolecularDynamics {
 		static const double maxLimit = 100 * TWO_M_PI;
 
 		int i = 0;
-		for (auto &body : BodiesPosition)
+		for (auto& body : BodiesPosition)
 		{
 			const double angular_speed = TWO_M_PI / m_BodyList[i].rotationPeriod;
 			body.rotation += angular_speed * timestep;
-			
+
 			if (body.rotation >= maxLimit) body.rotation -= maxLimit;
 			else if (body.rotation < 0) body.rotation += maxLimit;
 
@@ -107,7 +107,7 @@ namespace MolecularDynamics {
 	{
 #ifdef USE_VERLET
 		const double timestep = m_timestep;
-		const double timestep2 = timestep*timestep;
+		const double timestep2 = timestep * timestep;
 
 		accelerations.resize(BodiesPosition.size());
 		int i = 0;
@@ -131,11 +131,13 @@ namespace MolecularDynamics {
 	void ComputationThread::Compute()
 	{
 		const double timestep = m_timestep;
-		const double timestep2 = timestep*timestep;
+		const double timestep2 = timestep * timestep;
 
 		BodyPositionList BodiesPosition(GetBodies());
 		Initialize(m_BodyList, BodiesPosition);
 
+
+		bool firstTime = true;
 		do
 		{
 			const unsigned int local_nrsteps = nrsteps;
@@ -154,9 +156,12 @@ namespace MolecularDynamics {
 
 			CalculateRotations(BodiesPosition, simulatedTime);
 
+			if (firstTime) firstTime = false;
+			else if (Wait()) break; // is signaled to kill? also waits for a signal to do more work
+
 			// give result to the main thread
 			SetBodiesPosition(BodiesPosition, simulationTime + simulatedTime);
-		} while (!Wait()); // is signaled to kill? also waits for a signal to do more work
+		} while (true); 
 	}
 
 	bool ComputationThread::Wait()
