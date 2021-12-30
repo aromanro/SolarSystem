@@ -199,7 +199,7 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		{
 			pSolarSystem->reset();
 			MSXML::IXMLDOMNodePtr pRecordNode = pSolarSystem->nextNode();
-			m_Thread.m_timestep = static_cast<unsigned int>(GetXmlIntValue(pRecordNode, L"TimeStep", 300));
+			m_Thread.m_timestep = static_cast<unsigned int>(GetXmlIntValue(pRecordNode, L"TimeStep", 60));
 		}
 	}
 
@@ -334,10 +334,9 @@ bool CSolarSystemDoc::RetrieveData()
 	{
 		result = true;
 
-		std::lock_guard<std::mutex> lock(m_Thread.m_DataSection);
-
-		m_SolarSystem.m_BodiesPosition.swap(m_Thread.GetBodies());
-		m_SolarSystem.m_simulationTime = m_Thread.simulationTime;
+		auto bodies = m_Thread.GetBodies();
+		m_SolarSystem.m_BodiesPosition.swap(bodies.first);
+		m_SolarSystem.m_simulationTime = bodies.second;
 	}
 	
 	m_Thread.SetNrSteps(nrsteps);

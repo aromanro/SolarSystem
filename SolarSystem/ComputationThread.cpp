@@ -10,6 +10,8 @@
 const double G = 6.67408E-11;
 const double TWO_M_PI = 2. * M_PI;
 
+const int maxQueueSize = 5;
+
 #define EPS 1E-8
 
 namespace MolecularDynamics {
@@ -133,35 +135,34 @@ namespace MolecularDynamics {
 		const double timestep = m_timestep;
 		const double timestep2 = timestep * timestep;
 
-		BodyPositionList BodiesPosition(GetBodies());
+		BodyPositionList BodiesPosition(m_BodiesPositions.front().first);
 		Initialize(m_BodyList, BodiesPosition);
 
 
-		bool firstTime = true;
 		do
 		{
 			const unsigned int local_nrsteps = nrsteps;
 
-			// do computations
-			for (unsigned int i = 0; i < local_nrsteps; ++i)
+			for (int n = 0; n < maxQueueSize; ++n)
 			{
+				// do computations
+				for (unsigned int i = 0; i < local_nrsteps; ++i)
+				{
 #ifdef USE_VERLET
-				VerletStep(BodiesPosition, timestep, timestep2);
+					VerletStep(BodiesPosition, timestep, timestep2);
 #else
-				VelocityVerletStep(BodiesPosition, timestep, timestep2);
+					VelocityVerletStep(BodiesPosition, timestep, timestep2);
 #endif
+				}
+
+				const double simulatedTime = timestep * local_nrsteps;
+
+				CalculateRotations(BodiesPosition, simulatedTime);
+
+				// give result to the main thread
+				if (SetBodiesPosition(BodiesPosition, simulationTime + simulatedTime)) break; // break the for if the results queue is filled
 			}
-
-			const double simulatedTime = timestep * local_nrsteps;
-
-			CalculateRotations(BodiesPosition, simulatedTime);
-
-			if (firstTime) firstTime = false;
-			else if (Wait()) break; // is signaled to kill? also waits for a signal to do more work
-
-			// give result to the main thread
-			SetBodiesPosition(BodiesPosition, simulationTime + simulatedTime);
-		} while (true); 
+		} while (!Wait()); // is signaled to kill? also waits for a signal to do more work
 	}
 
 	bool ComputationThread::Wait()
@@ -211,23 +212,41 @@ namespace MolecularDynamics {
 	}
 
 
-	void ComputationThread::SetBodiesPosition(const BodyPositionList& bodiesPosition, double curSimulationTime)
+	bool ComputationThread::SetBodiesPosition(const BodyPositionList& bodiesPosition, double curSimulationTime)
 	{
+		bool result = false;
 		{
 			std::lock_guard<std::mutex> lock(m_DataSection);
 
+			m_BodiesPositions.push(std::make_pair(bodiesPosition, curSimulationTime));
 			simulationTime = curSimulationTime;
-			m_SharedBodiesPosition = bodiesPosition;
+			
+			if (m_BodiesPositions.size() >= maxQueueSize) result = true;
 		}
 
 		newData = true;
+
+		return result;
 	}
 
 
-	BodyPositionList& ComputationThread::GetBodies()
+	std::pair<BodyPositionList,double> ComputationThread::GetBodies()
 	{
-		newData = false;
-		return m_SharedBodiesPosition;
+		std::pair<BodyPositionList, double> result;
+
+		{
+			std::lock_guard<std::mutex> lock(m_DataSection);
+
+			result.first.swap(m_BodiesPositions.front().first);
+			result.second = m_BodiesPositions.front().second;
+
+			m_BodiesPositions.pop();
+
+			if (m_BodiesPositions.empty()) 
+				newData = false;
+		}
+
+		return result;
 	}
 
 }

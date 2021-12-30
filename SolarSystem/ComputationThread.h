@@ -3,6 +3,7 @@
 #include <list>
 #include "SolarSystemBodies.h"
 
+#include <queue>
 #include <thread>
 #include <atomic>
 #include <mutex>
@@ -22,16 +23,19 @@ namespace MolecularDynamics {
 		std::atomic_bool newData;
 
 		BodyList m_BodyList;
-		BodyPositionList m_SharedBodiesPosition;
 
 		std::thread Thread;
 
 		std::vector<Vector3D<double>> accelerations;
-	public:
-		std::mutex m_DataSection;
 
-		unsigned int m_timestep;
+		std::queue<std::pair<BodyPositionList, double>>  m_BodiesPositions;
+
+		std::mutex m_DataSection;
+	
 		double simulationTime;
+
+	public:
+		unsigned int m_timestep;
 
 		ComputationThread();
 		~ComputationThread();
@@ -43,12 +47,15 @@ namespace MolecularDynamics {
 
 		void SetNrSteps(unsigned int nr);
 
-		void SetBodiesPosition(const BodyPositionList& BodiesPosition, double simulationTime);
+		// returns true if the buffer is filled
+		bool SetBodiesPosition(const BodyPositionList& BodiesPosition, double simulationTime);
+
 		void SetBodies(const BodyList& bodies)
 		{
 			m_BodyList = bodies;
 		}
-		BodyPositionList& GetBodies();
+
+		std::pair<BodyPositionList, double> GetBodies();
 
 		bool HasNewData() const { return newData; }
 

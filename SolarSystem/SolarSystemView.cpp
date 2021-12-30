@@ -774,6 +774,7 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 		CSolarSystemDoc* doc = GetDocument();
 		if (doc)
 		{
+			// interpolate between two frames
 			auto curTime = std::chrono::system_clock::now();
 			if (!doc->stopped && !m_NewBodiesPosition.empty())
 			{
@@ -1114,7 +1115,8 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 					auto curTime = std::chrono::system_clock::now();
 					long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
 
-					while (msDifference >= 0)
+					int count = 0; // this counter is here just to ensure it won't stay in this while for too much time (just in case)
+					while (msDifference >= msFrame / 2 && ++count < 10)
 					{
 						if (doc->stopped) break;
 
@@ -1125,15 +1127,12 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 
 							m_OldBodiesPosition.swap(m_NewBodiesPosition);
 							m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
-
-							if (msDifference >= msFrame)
-								std::this_thread::sleep_for(std::chrono::milliseconds(1));
 						}
 						else
 							std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-						//curTime = std::chrono::system_clock::now();
-						//msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+						curTime = std::chrono::system_clock::now();
+						msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
 					}
 				}
 			
@@ -1188,7 +1187,7 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 				SetBillboardText(str.c_str());
 			}
 
-			Invalidate(0);
+			RedrawWindow(0, 0, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_NOERASE | RDW_NOFRAME | RDW_UPDATENOW);
 		}
 	}
 
