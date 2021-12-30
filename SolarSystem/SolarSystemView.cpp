@@ -320,6 +320,9 @@ void CSolarSystemView::Setup()
 {
 	if (inited) return;
 
+	m_NewBodiesPosition.clear();
+	m_OldBodiesPosition.clear();
+
 	if (!m_hRC)
 	{
 		m_hRC = wglCreateContext(m_hDC);
@@ -778,14 +781,14 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 			auto curTime = std::chrono::system_clock::now();
 			if (!doc->stopped && !m_NewBodiesPosition.empty())
 			{
-				long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+				const long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
 
-				double alpha = static_cast<double>(msDifference) / msFrame;
+				const double alpha = static_cast<double>(msDifference) / msFrame;
+				const double onemalpha = 1. - alpha;
 
 				m_BodiesPosition.resize(m_NewBodiesPosition.size());
 				for (int i = 0; i < m_NewBodiesPosition.size(); ++i)
 				{
-					const double onemalpha = 1. - alpha;
 					m_BodiesPosition[i].m_Position = onemalpha * m_OldBodiesPosition[i].m_Position + alpha * m_NewBodiesPosition[i].m_Position;
 					m_BodiesPosition[i].rotation = onemalpha * m_OldBodiesPosition[i].rotation + alpha * m_NewBodiesPosition[i].rotation;
 				}
@@ -806,7 +809,6 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 
 		// render the skybox first otherwise there will be troubles with alpha blending if the scene renders a billboard
 		if (theApp.options.showSkyBox) RenderSky();
-
 
 		RenderScene();
 
@@ -1187,7 +1189,7 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 				SetBillboardText(str.c_str());
 			}
 
-			RedrawWindow(0, 0, RDW_INTERNALPAINT | RDW_INVALIDATE | RDW_NOERASE | RDW_NOFRAME | RDW_UPDATENOW);
+			RedrawWindow(0, 0, RDW_INTERNALPAINT | RDW_NOERASE | RDW_NOFRAME | RDW_UPDATENOW);
 		}
 	}
 
