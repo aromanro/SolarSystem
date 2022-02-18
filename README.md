@@ -1,6 +1,8 @@
 # SolarSystem
 A solar system simulator with velocity Verlet, using OpenGL for displaying.
 
+[![CodeFactor](https://www.codefactor.io/repository/github/aromanro/solarsystem/badge)](https://www.codefactor.io/repository/github/aromanro/solarsystem)
+
 A detailed description of the project is on the computational physics blog: https://compphys.go.ro/newtonian-gravity/
 
 ### PROGRAM IN ACTION
