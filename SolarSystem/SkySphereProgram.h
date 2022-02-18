@@ -22,7 +22,7 @@ namespace OpenGL {
 		public:
 			SkySphere(float r = 1., unsigned int lats = 32, unsigned int longs = 32);
 
-			virtual void Draw() override;
+			void Draw() override;
 		};
 
 		Texture* sphereTexture;
@@ -31,14 +31,15 @@ namespace OpenGL {
 		GLint textureLoc;
 
 		bool LoadTextureData(const CString& filename);
+
 	public:
 		SkySphereProgram();
 		virtual ~SkySphereProgram();
 
 		bool LoadTexture(const char* name = "Textures\\skysphere.jpg");
 
-		virtual void Draw(const glm::mat4& mat) override;
-		virtual bool SetShaders() override;
+		void Draw(const glm::mat4& mat) override;
+		bool SetShaders() override;
 	};
 
 }

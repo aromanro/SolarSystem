@@ -16,13 +16,11 @@ IMPLEMENT_DYNAMIC(OptionsPropertySheet, CMFCPropertySheet)
 OptionsPropertySheet::OptionsPropertySheet(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CMFCPropertySheet(nIDCaption, pParentWnd, iSelectPage), hIcon(0)
 {
-
 }
 
 OptionsPropertySheet::OptionsPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CMFCPropertySheet(pszCaption, pParentWnd, iSelectPage), hIcon(0)
 {
-
 }
 
 OptionsPropertySheet::~OptionsPropertySheet()

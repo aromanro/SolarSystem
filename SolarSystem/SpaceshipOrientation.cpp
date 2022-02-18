@@ -14,15 +14,12 @@ void SpaceshipOrientation::RotateUp()
 
 void SpaceshipOrientation::RotateDown()
 {
-
 }
 
 void SpaceshipOrientation::RotateLeft()
 {
-
 }
 
 void SpaceshipOrientation::RotateRight()
 {
-
 }

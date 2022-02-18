@@ -35,7 +35,6 @@ CSolarSystemDoc::CSolarSystemDoc()
 	: stopped(false), nrsteps(1)
 {
 	// TODO: add one-time construction code here
-
 }
 
 CSolarSystemDoc::~CSolarSystemDoc()
@@ -260,7 +259,6 @@ void CSolarSystemDoc::LoadBodyXml(MSXML::IXMLDOMNodePtr& node, MolecularDynamics
 	bodyPosition.m_Velocity.X = GetXmlDoubleValue(node, L"XVelocity", 0);
 	bodyPosition.m_Velocity.Y = GetXmlDoubleValue(node, L"YVelocity", 0);
 	bodyPosition.m_Velocity.Z = GetXmlDoubleValue(node, L"ZVelocity", 0);
-
 }
 
 CString CSolarSystemDoc::GetXmlValue(MSXML::IXMLDOMNodePtr pNode, const bstr_t& name, const CString& def)

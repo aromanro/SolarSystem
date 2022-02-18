@@ -488,8 +488,6 @@ void CMainFrame::OnFileOpen()
 			}
 		}
 	}
-	
-
 }
 
 

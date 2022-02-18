@@ -17,7 +17,6 @@ IMPLEMENT_DYNAMIC(CameraPropertyPage, CMFCPropertyPage)
 CameraPropertyPage::CameraPropertyPage()
 	: CMFCPropertyPage(IDD_CAMERAPROPERTYPAGE)
 {
-
 }
 
 CameraPropertyPage::~CameraPropertyPage()

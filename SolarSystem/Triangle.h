@@ -147,7 +147,7 @@ namespace OpenGL {
 		virtual ~OpenGLTriangle() {};
 
 
-		virtual void Draw() override;
+		void Draw() override;
 		void DrawInstanced(unsigned int count);
 
 	protected:

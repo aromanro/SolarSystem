@@ -47,8 +47,13 @@ namespace OpenGL {
 
 		std::list<Movement> movements;
 
-	public:
+		static bool NeedsRotation(Movements movement);
+		static bool NeedsTranslation(Movements movement);
 
+		void Rotate(Movements movement);
+		void Translate(Movements movement, bool fromMouse);
+
+	public:
 		Camera();
 		~Camera();
 

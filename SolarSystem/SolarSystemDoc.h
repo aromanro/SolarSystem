@@ -27,10 +27,7 @@ public:
 
 	unsigned int nrsteps;
 // Operations
-public:
-
 // Overrides
-public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 #ifdef SHARED_HANDLERS
@@ -45,8 +42,6 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-
-protected:
 
 // Generated message map functions
 protected:

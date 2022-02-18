@@ -34,9 +34,9 @@ namespace OpenGL {
 		VertexArrayObject();
 		virtual ~VertexArrayObject();
 
-		virtual void Bind() override;
-		virtual void UnBind() override;
-		virtual GLuint getType() const override;
+		void Bind() override;
+		void UnBind() override;
+		GLuint getType() const override;
 	};
 
 
@@ -45,9 +45,9 @@ namespace OpenGL {
 		BufferObject();
 		virtual ~BufferObject();
 
-		virtual void Bind() override;
-		virtual void UnBind() override;
-		virtual GLuint getType() const override;
+		void Bind() override;
+		void UnBind() override;
+		GLuint getType() const override;
 
 		void setData(const void *data, unsigned int len, GLenum type = GL_STATIC_DRAW);
 		void setSubData(const void *data, unsigned int len, unsigned int index = 0);
@@ -56,19 +56,19 @@ namespace OpenGL {
 	class VertexBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType() const override;
+		GLuint getType() const override;
 	};
 
 	class ElementBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType() const override;
+		GLuint getType() const override;
 	};
 
 	class UniformBufferObject : public BufferObject
 	{
 	public:
-		virtual GLuint getType() const override;
+		GLuint getType() const override;
 	};
 
 	class FrameBufferObject : public OpenGLObject
@@ -77,9 +77,9 @@ namespace OpenGL {
 		FrameBufferObject();
 		virtual ~FrameBufferObject();
 
-		virtual void Bind() override;
-		virtual void UnBind() override;
-		virtual GLuint getType() const override;
+		void Bind() override;
+		void UnBind() override;
+		GLuint getType() const override;
 	};
 
 }

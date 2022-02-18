@@ -19,7 +19,7 @@ namespace OpenGL {
 
 		int Load(const ObjLoader& loader, int startIndex = 0);
 
-		virtual void Draw() override;
+		void Draw() override;
 		void DrawInstanced(unsigned int count);
 
 		void SetValues(SpaceshipProgram& program);

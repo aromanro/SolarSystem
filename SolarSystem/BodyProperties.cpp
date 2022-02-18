@@ -42,12 +42,10 @@ bool BodyProperties::LoadTexture()
 				unsigned int dim = skin->GetWidth();
 				if (!(dim % 2))
 				{
-
 					// check if it's even
 					dim = skin->GetHeight();
 					if (!(dim % 2))
 					{
-
 						transparentTexture = std::make_shared<OpenGL::Texture>();
 						unsigned char* buf = NULL;
 
@@ -201,7 +199,6 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 				unsigned int dim = skin->GetWidth();
 				if (!(dim % 2))
 				{
-
 					// check if it's even
 					dim = skin->GetHeight();
 					if (!(dim % 2))

@@ -18,7 +18,7 @@ namespace OpenGL {
 		public:
 			SkyBox();
 
-			virtual void Draw() override;
+			void Draw() override;
 		};
 
 		class CubeMapTexture : public OpenGLObject
@@ -28,9 +28,9 @@ namespace OpenGL {
 			virtual ~CubeMapTexture();
 
 
-			virtual void Bind() override;
-			virtual void UnBind() override;
-			virtual GLuint getType() const override;
+			void Bind() override;
+			void UnBind() override;
+			GLuint getType() const override;
 
 			void setDataLeft(const void *data, int width, int height, int bpp = 24);
 			void setDataRight(const void *data, int width, int height, int bpp = 24);
@@ -44,15 +44,15 @@ namespace OpenGL {
 
 		CubeMapTexture* cubeMapTextures;
 		SkyBox *skyBox;
-	public:
 
+	public:
 		SkyBoxCubeMapProgram();
 		virtual ~SkyBoxCubeMapProgram();
 
 		bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 
-		virtual void Draw(const glm::mat4& mat) override;
-		virtual bool SetShaders() override;
+		void Draw(const glm::mat4& mat) override;
+		bool SetShaders() override;
 	};
 
 }

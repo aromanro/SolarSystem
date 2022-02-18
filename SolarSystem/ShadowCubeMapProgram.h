@@ -28,6 +28,7 @@ namespace OpenGL {
 		GLint farPlaneLoc;
 
 		void getUniformsLocations();
+
 	public:
 		ShadowCubeMapProgram();
 		virtual ~ShadowCubeMapProgram();
@@ -43,9 +44,9 @@ namespace OpenGL {
 			virtual ~CubeMapTexture();
 
 
-			virtual void Bind() override;
-			virtual void UnBind() override;
-			virtual GLuint getType() const override;
+			void Bind() override;
+			void UnBind() override;
+			GLuint getType() const override;
 		};
 
 		FrameBufferObject depthMapFBO;

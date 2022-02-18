@@ -146,25 +146,39 @@ namespace OpenGL {
 
 	void Camera::Move(Movements movement, bool fromMouse)
 	{
+		if (NeedsRotation(movement)) Rotate(movement);
+		else if (NeedsTranslation(movement)) Translate(movement, fromMouse);
+	}
+
+
+	bool Camera::NeedsRotation(Movements movement)
+	{
+		return movement == Movements::pitchUp ||
+			movement == Movements::pitchDown ||
+			movement == Movements::yawLeft ||
+			movement == Movements::rollLeft ||
+			movement == Movements::yawRight ||
+			movement == Movements::rollRight || movement == Movements::rotateTowards;
+	}
+
+	bool Camera::NeedsTranslation(Movements movement)
+	{
+		return movement == Movements::moveLeft ||
+			movement == Movements::moveRight ||
+			movement == Movements::moveDown ||
+			movement == Movements::moveForward ||
+			movement == Movements::moveBackward;
+	}
+
+	void Camera::Rotate(Movements movement)
+	{
 		switch (movement)
 		{
 		case Movements::pitchUp:
 			PitchUp(rotateAngle);
 			break;
-		case Movements::moveUp:
-			MoveUp(translateDist);
-			break;
-		case Movements::moveForward:
-			MoveForward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
-			break;
 		case Movements::pitchDown:
 			PitchDown(rotateAngle);
-			break;
-		case Movements::moveDown:
-			MoveDown(translateDist);
-			break;
-		case Movements::moveBackward:
-			MoveBackward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
 			break;
 		case Movements::yawLeft:
 			YawLeft(rotateAngle);
@@ -172,24 +186,43 @@ namespace OpenGL {
 		case Movements::rollLeft:
 			RollLeft(rotateAngle);
 			break;
-		case Movements::moveLeft:
-			MoveLeft(translateDist);
-			break;
 		case Movements::yawRight:
 			YawRight(rotateAngle);
 			break;
 		case Movements::rollRight:
 			RollRight(rotateAngle);
 			break;
-		case Movements::moveRight:
-			MoveRight(translateDist);
-			break;		
-		case Movements::rotateTowards:
-		case Movements::noMove:
+		default:
 			break;
 		}
 	}
 
+	void Camera::Translate(Movements movement, bool fromMouse)
+	{
+		switch (movement)
+		{
+		case Movements::moveUp:
+			MoveUp(translateDist);
+			break;
+		case Movements::moveLeft:
+			MoveLeft(translateDist);
+			break;
+		case Movements::moveRight:
+			MoveRight(translateDist);
+			break;
+		case Movements::moveDown:
+			MoveDown(translateDist);
+			break;
+		case Movements::moveForward:
+			MoveForward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
+			break;
+		case Movements::moveBackward:
+			MoveBackward(translateDist * (fromMouse ? theApp.options.scrollSpeed / 100. : 1.));
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 

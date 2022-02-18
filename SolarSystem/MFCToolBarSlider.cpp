@@ -146,7 +146,6 @@ void CMFCToolBarSlider::OnShow(BOOL bShow)
 		else
 			slider.ShowWindow(SW_HIDE);
 	}
-
 }
 
 

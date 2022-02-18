@@ -46,9 +46,6 @@ protected: // create from serialization only
 public:
 	CSolarSystemDoc* GetDocument() const;
 
-// Operations
-public:
-
 private:
 	HGLRC m_hRC;     // Rendering Context
 	HDC m_hDC;       // Device Context
@@ -119,7 +116,6 @@ private:
 public:
 	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-protected:
 
 // Implementation
 public:
@@ -130,9 +126,7 @@ public:
 #endif
 
 protected:
-
 // Generated message map functions
-protected:
 	DECLARE_MESSAGE_MAP()
 
 private:

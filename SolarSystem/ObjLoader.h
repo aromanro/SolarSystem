@@ -33,7 +33,6 @@ public:
 	{
 		for (auto& obj : triangles)
 			obj->Translate(t);
-
 	}
 
 	void RotateAround(const Vector3D<double>& v, double angle)

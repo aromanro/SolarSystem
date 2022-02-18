@@ -18,18 +18,18 @@ namespace OpenGL {
 
 		void DetachShaders();
 
-		virtual void Bind() override; // it's actually a link
-		virtual GLuint getType() const override;
+		void Bind() override; // it's actually a link
+		GLuint getType() const override;
 
 		void Use();
 		void UnUse();
 
-		virtual void UnBind() override; // same as UnUse
+		void UnBind() override; // same as UnUse
 
 		void Attach(const Shader& shader);
 
-		virtual bool getStatus() const override;
-		virtual const char* getStatusMessage() override;
+		bool getStatus() const override;
+		const char* getStatusMessage() override;
 	};
 
 }

@@ -15,7 +15,7 @@ namespace OpenGL {
 		Cube();
 		virtual ~Cube();
 
-		virtual void Draw() override;
+		void Draw() override;
 	};
 
 

@@ -20,7 +20,6 @@ namespace OpenGL {
 
 	SpaceshipProgram::~SpaceshipProgram()
 	{
-
 	}
 
 	void SpaceshipProgram::SetupLights(BodyPropList& BodyProperties)

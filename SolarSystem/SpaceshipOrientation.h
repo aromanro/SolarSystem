@@ -6,7 +6,6 @@
 class SpaceshipOrientation
 {
 public:
-
 	double rotationX = 0;
 	double rotationY = 0;
 	double rotationZ = 0;
