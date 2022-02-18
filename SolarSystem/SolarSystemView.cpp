@@ -1008,84 +1008,112 @@ bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
 		shift = ((::GetKeyState(VK_SHIFT) & 0x8000) != 0 ? true : false);
 
 		// pMSG->wParam contains the key code
-		switch (pMsg->wParam)
-		{
-		case VK_UP:
-			if (ctrl) movement = OpenGL::Camera::Movements::pitchUp;
-			else if (shift) movement = OpenGL::Camera::Movements::moveUp;
-			else movement = OpenGL::Camera::Movements::moveForward;
-
-			if (ctrl || shift) spaceshipOrientation.RotateUp();
-
-			handled = true;
-			break;
-		case VK_DOWN:
-			if (ctrl) movement = OpenGL::Camera::Movements::pitchDown;
-			else if (shift) movement = OpenGL::Camera::Movements::moveDown;
-			else movement = OpenGL::Camera::Movements::moveBackward;
-
-			if (ctrl || shift) spaceshipOrientation.RotateDown();
-
-			handled = true;
-			break;
-		case VK_LEFT:
-			if (ctrl) movement = OpenGL::Camera::Movements::yawLeft;
-			else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
-			else movement = OpenGL::Camera::Movements::moveLeft;
-
-			if (!shift) spaceshipOrientation.RotateLeft();
-
-			handled = true;
-			break;
-		case VK_RIGHT:
-			if (ctrl) movement = OpenGL::Camera::Movements::yawRight;
-			else if (shift) movement = OpenGL::Camera::Movements::rollRight;
-			else movement = OpenGL::Camera::Movements::moveRight;
-
-			if (!shift) spaceshipOrientation.RotateRight();
-
-			handled = true;
-			break;
-		case VK_ADD:
-		case VK_OEM_PLUS:
-		{
-			CSolarSystemDoc *doc = GetDocument();
-			if (doc->nrsteps < MAX_NRSTEPS)
-			{
-				++doc->nrsteps;
-				CMFCToolBarSlider::SetPos(ID_SLIDER, static_cast<int>(doc->nrsteps));
-			}
-		}
-		handled = true;
-		break;
-		case VK_SUBTRACT:
-		case VK_OEM_MINUS:
-		{
-			CSolarSystemDoc *doc = GetDocument();
-			if (doc->nrsteps > 1)
-			{
-				--doc->nrsteps;
-				CMFCToolBarSlider::SetPos(ID_SLIDER, static_cast<int>(doc->nrsteps));
-			}
-		}
-		handled = true;
-		break;
-		case VK_SPACE:
-		{
-			CMainFrame *frame = dynamic_cast<CMainFrame*>(theApp.m_pMainWnd);
-			frame->OnSimulateRun();
-		}
-		handled = true;
-		break;
-		default:
-			movement = OpenGL::Camera::Movements::noMove;
-		}
+		handled = HandleKeyPress(pMsg->wParam, ctrl, shift);
 
 		Invalidate(0);
 	}
 	else if (pMsg->message == WM_KEYUP) keyDown = false;
 
 	return handled;
+}
+
+
+
+
+bool CSolarSystemView::HandleKeyPress(WPARAM wParam, bool ctrl, bool shift)
+{
+	bool handled = false;
+
+	switch (wParam)
+	{
+	case VK_UP:
+		HandleUp(ctrl, shift);
+		handled = true;
+		break;
+	case VK_DOWN:
+		HandleDown(ctrl, shift);
+		handled = true;
+		break;
+	case VK_LEFT:
+		HandleLeft(ctrl, shift);
+		handled = true;
+		break;
+	case VK_RIGHT:
+		HandleRight(ctrl, shift);
+		handled = true;
+		break;
+	case VK_ADD:
+	case VK_OEM_PLUS:
+	{
+		CSolarSystemDoc* doc = GetDocument();
+		if (doc->nrsteps < MAX_NRSTEPS)
+		{
+			++doc->nrsteps;
+			CMFCToolBarSlider::SetPos(ID_SLIDER, (int)doc->nrsteps);
+		}
+	}
+	handled = true;
+	break;
+	case VK_SUBTRACT:
+	case VK_OEM_MINUS:
+	{
+		CSolarSystemDoc* doc = GetDocument();
+		if (doc->nrsteps > 1)
+		{
+			--doc->nrsteps;
+			CMFCToolBarSlider::SetPos(ID_SLIDER, (int)doc->nrsteps);
+		}
+	}
+	handled = true;
+	break;
+	case VK_SPACE:
+	{
+		CMainFrame* frame = dynamic_cast<CMainFrame*>(theApp.m_pMainWnd);
+		frame->OnSimulateRun();
+	}
+	handled = true;
+	break;
+	default:
+		movement = OpenGL::Camera::Movements::noMove;
+	}
+
+	return handled;
+}
+
+void CSolarSystemView::HandleUp(bool ctrl, bool shift)
+{
+	if (ctrl) movement = OpenGL::Camera::Movements::pitchUp;
+	else if (shift) movement = OpenGL::Camera::Movements::moveUp;
+	else movement = OpenGL::Camera::Movements::moveForward;
+
+	if (ctrl || shift) spaceshipOrientation.RotateUp();
+}
+
+void CSolarSystemView::HandleDown(bool ctrl, bool shift)
+{
+	if (ctrl) movement = OpenGL::Camera::Movements::pitchDown;
+	else if (shift) movement = OpenGL::Camera::Movements::moveDown;
+	else movement = OpenGL::Camera::Movements::moveBackward;
+	
+	if (ctrl || shift) spaceshipOrientation.RotateDown();
+}
+
+void CSolarSystemView::HandleLeft(bool ctrl, bool shift)
+{
+	if (ctrl) movement = OpenGL::Camera::Movements::yawLeft;
+	else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
+	else movement = OpenGL::Camera::Movements::moveLeft;
+
+	if (!shift) spaceshipOrientation.RotateLeft();
+}
+
+void CSolarSystemView::HandleRight(bool ctrl, bool shift)
+{
+	if (ctrl) movement = OpenGL::Camera::Movements::yawRight;
+	else if (shift) movement = OpenGL::Camera::Movements::rollRight;
+	else movement = OpenGL::Camera::Movements::moveRight;
+
+	if (!shift) spaceshipOrientation.RotateRight();
 }
 
 

@@ -175,6 +175,13 @@ public:
 	void DisableAntialias();
 	void DisplayBilboard();
 	void SetBillboardText(const char* text);
+
+protected:
+	bool HandleKeyPress(WPARAM wParam, bool ctrl, bool shift);
+	void HandleUp(bool ctrl, bool shift);
+	void HandleDown(bool ctrl, bool shift);
+	void HandleLeft(bool ctrl, bool shift);
+	void HandleRight(bool ctrl, bool shift);
 };
 
 #ifndef _DEBUG  // debug version in SolarSystemView.cpp
