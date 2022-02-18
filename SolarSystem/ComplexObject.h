@@ -25,6 +25,9 @@ namespace OpenGL {
 		void SetValues(SpaceshipProgram& program);
 
 	protected:
+		void LoadAndGenerateMipmaps(const ObjLoader& loader, int startIndex);
+		int SetVerticesData(const ObjLoader& loader, int startIndex, int triangleCount);
+
 		Material material;
 		int vertexCount = 0;
 

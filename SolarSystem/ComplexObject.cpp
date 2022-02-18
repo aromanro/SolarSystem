@@ -30,13 +30,22 @@ namespace OpenGL {
 			else break;
 		}
 
+		int endIndex = SetVerticesData(loader, startIndex, triangleCount);
+
+		LoadAndGenerateMipmaps(loader, startIndex);
+
+		return endIndex;
+	}
+
+	int ComplexObject::SetVerticesData(const ObjLoader& loader, int startIndex, int triangleCount)
+	{
 		const long long int STRIDE_SIZE = 8; // 3 for vertex, 3 for normal, maybe later 3 for tangent - the one with texture will add 2 for texture coordinate
+
 
 		vertexCount = static_cast<int>(3 * triangleCount); // 3 vertexes / triangle
 
 
 		GLfloat* vertices = new GLfloat[STRIDE_SIZE * vertexCount];
-
 
 		int baseIndex = 0;
 
@@ -87,7 +96,12 @@ namespace OpenGL {
 
 		delete[] vertices;
 
-		// TODO: load the material here: basically load the textures
+		return endIndex;
+	}
+
+
+	void ComplexObject::LoadAndGenerateMipmaps(const ObjLoader& loader, int startIndex)
+	{
 		material = loader.triangles[startIndex]->material;
 		if (!material.ambientTexture.empty())
 		{
@@ -134,8 +148,6 @@ namespace OpenGL {
 			if (bumpTexture)
 				bumpTexture->GenerateMipmaps();
 		}
-
-		return endIndex;
 	}
 
 	void ComplexObject::SetValues(SpaceshipProgram& program)
