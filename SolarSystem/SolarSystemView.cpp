@@ -681,32 +681,45 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		const double cameraZ = camera.eyePos.Z;
 		const glm::dvec3 cameraVector = glm::dvec3(cameraX, cameraY, cameraZ);
 
-
+		// the translation vector for the spaceship from the camera position, in the looking direction:
 		const Vector3D<double> forward = camera.getNormalizedForward();
 		glm::dvec3 pos(forward.X, forward.Y, forward.Z);
 		pos *= theApp.options.translate;
 
 		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(cameraX), static_cast<float>(cameraY), static_cast<float>(cameraZ));
 
+		// the camera matrix
 		glm::dmat4 precisionMat(camera.getMatrixDouble());				
+		// undo translation here, so we end up with the rotation only matrix, to have the same rotation as the camera:
 		precisionMat[3][0] = 0;
 		precisionMat[3][1] = 0;
 		precisionMat[3][2] = 0;
-
+		// now invert it to have a matrix to 'undo' the rotation:
+		precisionMat = glm::transpose(precisionMat);
+		
 		const double scale = theApp.options.scale;
 
+		// spaceship position is at the camera position, translated in front of it
 		const glm::dvec3 spaceshipPos = cameraVector + pos;
 
-
+		spaceshipOrientation.ComputeRotations();
+		
 		const glm::dmat4 modelMatHP =
-			glm::rotate(glm::rotate(glm::rotate(
-					glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * glm::transpose(precisionMat),
-				theApp.options.rotateZ * M_PI / 180., glm::dvec3(0, 0, 1)), theApp.options.rotateY * M_PI / 180., glm::dvec3(0, 1, 0)), theApp.options.rotateX * M_PI / 180., glm::dvec3(1, 0, 0));
+			glm::rotate( // around x 
+				glm::rotate( // around y
+					glm::rotate( // around z
+						glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * precisionMat,
+						(theApp.options.rotateZ + spaceshipOrientation.rotationZ) * M_PI / 180., // the angle to rotate around z
+						glm::dvec3(0, 0, 1)), // around z axis
+					(theApp.options.rotateY + spaceshipOrientation.rotationY) * M_PI / 180., // the angle to rotate around y axis
+					glm::dvec3(0, 1, 0)), // around y axis
+				(theApp.options.rotateX + spaceshipOrientation.rotationX) * M_PI / 180., // the angle to rotate around x axis
+				glm::dvec3(1, 0, 0) // around x axis
+			);
 
 
 		const glm::mat4 modelMat(modelMatHP);
 		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
-
 		
 		glUniformMatrix4fv(spaceshipProgram->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
 		glUniformMatrix3fv(spaceshipProgram->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
