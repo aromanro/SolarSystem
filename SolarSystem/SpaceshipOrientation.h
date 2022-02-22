@@ -10,8 +10,9 @@ class SpaceshipOrientation
 {
 public:
 	// degrees / second
-	double rotationSpeed = 5;
+	double rotationSpeed = 10;
 	double rotationAngleMax = 30;
+	double rotationAngleAccel = 10;
 	double delayBeforeUndoingRotation = 0.5;
 
 	// Z is perpendicular / screen
@@ -140,6 +141,7 @@ public:
 	void ComputeRotations();
 
 private:
+	double RotationAngle(double rotTime, double start, double position, double target) const;
 	void ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeHorizontalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeRollRotation(const std::chrono::system_clock::time_point& curTime);
