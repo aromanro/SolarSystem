@@ -51,7 +51,7 @@ void SpaceshipOrientation::RotateUpDown(double angle)
 	ComputeRotations();
 
 	startRotationX = rotationX;
-//	targetRotationX = (angle > 0 ? 1 : -1) * min(abs(angle), rotationAngleMax);
+	//targetRotationX = (angle > 0 ? 1 : -1) * min(abs(angle), rotationAngleMax);
 	targetRotationX = angle;
 	startRotationXtime = std::chrono::system_clock::now();
 }
@@ -124,7 +124,30 @@ void SpaceshipOrientation::ComputeRotations()
 double SpaceshipOrientation::RotationAngle(double rotTime, double start, double position, double target) const
 {
 	// this should do for now, it changed to accelerate/decellerate, modify TimeToRotate as well
-	return rotTime * rotationSpeed;
+	//return rotTime * rotationSpeed;
+	const double halfway = abs(target - start) / 2.;
+	const double angleAccel = min(rotationAngleAccel, halfway);
+	const double timeToAccelerate = 2. * angleAccel / rotationSpeed;
+	const double acceleration = rotationSpeed / timeToAccelerate;
+
+	double timeConstantVelocity = 0;
+	if (angleAccel < halfway)
+		timeConstantVelocity = 2. * (halfway - angleAccel) / rotationSpeed;
+
+	if (rotTime < timeToAccelerate)
+	{
+		return acceleration * rotTime * rotTime / 2.;
+	}
+	else if (rotTime > timeToAccelerate + timeConstantVelocity)
+	{
+		const double leftTime = rotTime - (timeToAccelerate + timeConstantVelocity);
+		double deccelerationAngle = leftTime * rotationSpeed - acceleration * leftTime * leftTime / 2.;
+		if (deccelerationAngle < 0) deccelerationAngle = 0;
+
+		return 0.1 + angleAccel + timeConstantVelocity * rotationSpeed + deccelerationAngle;
+	}
+	
+	return 0.1 + angleAccel + (rotTime - timeToAccelerate) * rotationSpeed;
 }
 
 void SpaceshipOrientation::ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime)

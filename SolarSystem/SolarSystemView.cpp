@@ -1317,6 +1317,7 @@ void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 	camera.ProgressiveRotate(towards, numticks);
 
 	// do something with the spaceship as well
+	spaceshipOrientation.ComputeRotations();
 
 	const double upComponent = towards * up;
 	const double leftComponent = towards * left;
@@ -1329,7 +1330,7 @@ void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 	Vector3D<double> cameraPlaneVector(upComponent, leftComponent, 0.);
 	cameraPlaneVector = cameraPlaneVector.Normalize();
 	const double rollAngle = asin(cameraPlaneVector.Y) / M_PI * 180.;
-	spaceshipOrientation.RollLeftRight(rollAngle);
+	spaceshipOrientation.RollLeftRight(rollAngle / 2.); // don't roll so hard
 
 	Vector3D<double> horizontalPlaneVector(frontComponent, leftComponent, 0.);
 	horizontalPlaneVector = horizontalPlaneVector.Normalize();

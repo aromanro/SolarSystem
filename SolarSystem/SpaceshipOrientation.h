@@ -2,7 +2,7 @@
 
 // this is for adjusting the spaceship rotation while rotating the camera or moving sideways
 // not implemented yet
-
+#include <algorithm>
 #include <ctime>
 #include <chrono>
 
@@ -10,9 +10,9 @@ class SpaceshipOrientation
 {
 public:
 	// degrees / second
-	double rotationSpeed = 10;
+	double rotationSpeed = 30;
 	double rotationAngleMax = 30;
-	double rotationAngleAccel = 10;
+	double rotationAngleAccel = 8;
 	double delayBeforeUndoingRotation = 0.5;
 
 	// Z is perpendicular / screen
@@ -41,7 +41,19 @@ public:
 	// seconds
 	double TimeToRotate(double startRotation, double targetRotation)
 	{
-		return abs(targetRotation - startRotation) / rotationSpeed;
+		//return abs(targetRotation - startRotation) / rotationSpeed;		
+		const double halfway = abs(targetRotation - startRotation) / 2.;
+		const double angleAccel = std::min<double>(rotationAngleAccel, halfway);
+		const double timeToAccelerate = 4 * angleAccel / rotationSpeed;
+
+		if (angleAccel < halfway)
+		{
+			const double timeConstantVelocity = 2 * (halfway - angleAccel) / rotationSpeed;
+
+			return timeToAccelerate + timeConstantVelocity;
+		}
+
+		return timeToAccelerate;
 	}
 
 
