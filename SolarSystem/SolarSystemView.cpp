@@ -1304,9 +1304,10 @@ Vector3D<double> CSolarSystemView::GetTowardsVector(CPoint& point, const Vector3
 void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	const Vector3D<double> forward = camera.getNormalizedForward();
-	const Vector3D<double> towards = GetTowardsVector(point, forward);
 	const Vector3D<double> up = camera.getNormalizedUp();
-	const Vector3D<double> right = forward % up;
+	const Vector3D<double> left = up % forward;
+
+	const Vector3D<double> towards = GetTowardsVector(point, forward);
 
 	const double frontComponent = towards * forward;
 	const double angle = acos(frontComponent);
@@ -1315,13 +1316,25 @@ void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 	camera.RotateTowards(angle - numticks * camera.GetRotateAngle(), towards);
 	camera.ProgressiveRotate(towards, numticks);
 
-	// TODO: do something with the spaceship as well!
+	// do something with the spaceship as well
 
 	const double upComponent = towards * up;
-	const double rightComponent = towards * right;
+	const double leftComponent = towards * left;
 
-	Vector3D<double> cameraPlaneVector(rightComponent, upComponent, 0.);
+	Vector3D<double> verticalPlaneVector(frontComponent, upComponent, 0.);
+	verticalPlaneVector = verticalPlaneVector.Normalize();
+	const double pitchAngle = asin(verticalPlaneVector.Y) / M_PI * 180.;
+	spaceshipOrientation.RotateUpDown(pitchAngle);
+
+	Vector3D<double> cameraPlaneVector(upComponent, leftComponent, 0.);
 	cameraPlaneVector = cameraPlaneVector.Normalize();
+	const double rollAngle = asin(cameraPlaneVector.Y) / M_PI * 180.;
+	spaceshipOrientation.RollLeftRight(rollAngle);
+
+	Vector3D<double> horizontalPlaneVector(frontComponent, leftComponent, 0.);
+	horizontalPlaneVector = horizontalPlaneVector.Normalize();
+	const double yawAngle = asin(horizontalPlaneVector.Y) / M_PI * 180.;
+	spaceshipOrientation.RotateLeftRight(yawAngle);
 
 	CView::OnLButtonDown(nFlags, point);
 }

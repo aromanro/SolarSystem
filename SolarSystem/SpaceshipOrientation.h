@@ -98,7 +98,7 @@ public:
 		return targetRotationY != rotationY;
 	}
 
-	// roll - not used yet, but might be in the future
+	// roll
 
 	void RollLeft();
 	void RollRight();
