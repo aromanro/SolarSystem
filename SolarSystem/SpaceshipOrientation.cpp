@@ -108,49 +108,64 @@ void SpaceshipOrientation::ComputeRotations()
 	{
 		const auto curTime = std::chrono::system_clock::now();
 
-		if (RotatingVertically())
-		{
-			const double rotTime = std::chrono::duration<double>(curTime - startRotationXtime).count();
-			if (RotatingUp())
-			{
-				rotationX = startRotationX + rotationSpeed * rotTime;
-				if (rotationX > targetRotationX) rotationX = targetRotationX;
-			}
-			else
-			{
-				rotationX = startRotationX - rotationSpeed * rotTime;
-				if (rotationX < targetRotationX) rotationX = targetRotationX;
-			}
-		}
+		ComputeVerticalRotation(curTime);
+		ComputeHorizontalRotation(curTime);
+		ComputeRollRotation(curTime);
+	}
+}
 
-		if (RotatingHorizontally())
-		{
-			const double rotTime = std::chrono::duration<double>(curTime - startRotationYtime).count();
-			if (RotatingLeft())
-			{
-				rotationY = startRotationY - rotationSpeed * rotTime;
-				if (rotationY < targetRotationY) rotationY = targetRotationY;
-			}
-			else
-			{
-				rotationY = startRotationY + rotationSpeed * rotTime;
-				if (rotationY > targetRotationY) rotationY = targetRotationY;
-			}
-		}
 
-		if (Rolling())
+void SpaceshipOrientation::ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime)
+{
+	if (RotatingVertically())
+	{
+		const double rotTime = std::chrono::duration<double>(curTime - startRotationXtime).count();
+		if (RotatingUp())
 		{
-			const double rotTime = std::chrono::duration<double>(curTime - startRotationZtime).count();
-			if (RollingLeft())
-			{
-				rotationZ = startRotationZ - rotationSpeed * rotTime;
-				if (rotationZ < targetRotationZ) rotationZ = targetRotationZ;
-			}
-			else
-			{
-				rotationZ = startRotationZ + rotationSpeed * rotTime;
-				if (rotationZ > targetRotationZ) rotationZ = targetRotationZ;
-			}
+			rotationX = startRotationX + rotationSpeed * rotTime;
+			if (rotationX > targetRotationX) rotationX = targetRotationX;
+		}
+		else
+		{
+			rotationX = startRotationX - rotationSpeed * rotTime;
+			if (rotationX < targetRotationX) rotationX = targetRotationX;
 		}
 	}
 }
+
+void SpaceshipOrientation::ComputeHorizontalRotation(const std::chrono::system_clock::time_point& curTime)
+{
+	if (RotatingHorizontally())
+	{
+		const double rotTime = std::chrono::duration<double>(curTime - startRotationYtime).count();
+		if (RotatingLeft())
+		{
+			rotationY = startRotationY - rotationSpeed * rotTime;
+			if (rotationY < targetRotationY) rotationY = targetRotationY;
+		}
+		else
+		{
+			rotationY = startRotationY + rotationSpeed * rotTime;
+			if (rotationY > targetRotationY) rotationY = targetRotationY;
+		}
+	}
+}
+
+void SpaceshipOrientation::ComputeRollRotation(const std::chrono::system_clock::time_point& curTime)
+{
+	if (Rolling())
+	{
+		const double rotTime = std::chrono::duration<double>(curTime - startRotationZtime).count();
+		if (RollingLeft())
+		{
+			rotationZ = startRotationZ - rotationSpeed * rotTime;
+			if (rotationZ < targetRotationZ) rotationZ = targetRotationZ;
+		}
+		else
+		{
+			rotationZ = startRotationZ + rotationSpeed * rotTime;
+			if (rotationZ > targetRotationZ) rotationZ = targetRotationZ;
+		}
+	}
+}
+

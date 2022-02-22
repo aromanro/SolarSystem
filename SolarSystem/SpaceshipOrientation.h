@@ -70,7 +70,7 @@ public:
 	}
 
 	// yaw
-	
+
 	void RotateLeft();
 	void RotateRight();
 
@@ -132,5 +132,10 @@ public:
 	}
 
 	void ComputeRotations();
+
+private:
+	void ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime);
+	void ComputeHorizontalRotation(const std::chrono::system_clock::time_point& curTime);
+	void ComputeRollRotation(const std::chrono::system_clock::time_point& curTime);
 };
 
