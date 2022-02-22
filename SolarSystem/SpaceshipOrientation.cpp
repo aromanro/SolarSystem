@@ -46,59 +46,63 @@ void SpaceshipOrientation::Tick()
 }
 
 
-void SpaceshipOrientation::RotateUp()
+void SpaceshipOrientation::RotateUpDown(double angle)
 {
 	ComputeRotations();
 
 	startRotationX = rotationX;
-	targetRotationX = rotationAngleMax;
+	targetRotationX = angle;
 	startRotationXtime = std::chrono::system_clock::now();
+}
+
+
+void SpaceshipOrientation::RotateUp()
+{
+	RotateUpDown(rotationAngleMax);
 }
 
 void SpaceshipOrientation::RotateDown()
 {
+	RotateUpDown(-rotationAngleMax);
+}
+
+void SpaceshipOrientation::RotateLeftRight(double angle)
+{
 	ComputeRotations();
 
-	startRotationX = rotationX;
-	targetRotationX = -rotationAngleMax;
-	startRotationXtime = std::chrono::system_clock::now();
+	startRotationY = rotationY;
+	targetRotationY = angle;
+	startRotationYtime = std::chrono::system_clock::now();
 }
 
 void SpaceshipOrientation::RotateLeft()
 {
-	ComputeRotations();
-
-	startRotationY = rotationY;
-	targetRotationY = rotationAngleMax;
-	startRotationYtime = std::chrono::system_clock::now();
+	RotateLeftRight(rotationAngleMax);
 }
 
 void SpaceshipOrientation::RotateRight()
 {
+	RotateLeftRight(-rotationAngleMax);
+}
+
+void SpaceshipOrientation::RollLeftRight(double angle)
+{
 	ComputeRotations();
 
-	startRotationY = rotationY;
-	targetRotationY = -rotationAngleMax;
-	startRotationYtime = std::chrono::system_clock::now();
+	startRotationZ = rotationZ;
+	targetRotationZ = angle;
+	startRotationZtime = std::chrono::system_clock::now();
 }
 
 
 void SpaceshipOrientation::RollLeft()
 {
-	ComputeRotations();
-
-	startRotationZ = rotationZ;
-	targetRotationZ = rotationAngleMax;
-	startRotationZtime = std::chrono::system_clock::now();
+	RollLeftRight(rotationAngleMax);
 }
 
 void SpaceshipOrientation::RollRight()
 {
-	ComputeRotations();
-
-	startRotationZ = rotationZ;
-	targetRotationZ = -rotationAngleMax;
-	startRotationZtime = std::chrono::system_clock::now();
+	RollLeftRight(-rotationAngleMax);
 }
 
 

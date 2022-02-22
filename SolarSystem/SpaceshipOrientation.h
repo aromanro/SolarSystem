@@ -49,6 +49,8 @@ public:
 	void RotateUp();
 	void RotateDown();
 
+	void RotateUpDown(double angle);
+
 	bool RotatingUp() const
 	{
 		return targetRotationX > rotationX;
@@ -74,6 +76,8 @@ public:
 	void RotateLeft();
 	void RotateRight();
 
+	void RotateLeftRight(double angle);
+
 	bool RotatingLeft() const
 	{
 		return targetRotationY < rotationY;
@@ -98,6 +102,8 @@ public:
 
 	void RollLeft();
 	void RollRight();
+
+	void RollLeftRight(double angle);
 
 	bool RollingLeft() const
 	{

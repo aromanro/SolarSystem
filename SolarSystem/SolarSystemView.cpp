@@ -1303,16 +1303,25 @@ Vector3D<double> CSolarSystemView::GetTowardsVector(CPoint& point, const Vector3
 
 void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	Vector3D<double> forward = (camera.lookAt - camera.eyePos).Normalize();
-	Vector3D<double> towards = GetTowardsVector(point, forward);
+	const Vector3D<double> forward = camera.getNormalizedForward();
+	const Vector3D<double> towards = GetTowardsVector(point, forward);
+	const Vector3D<double> up = camera.getNormalizedUp();
+	const Vector3D<double> right = forward % up;
 
-	double angle = acos(towards * forward);
-	int numticks = static_cast<int>(angle / camera.GetRotateAngle());
+	const double frontComponent = towards * forward;
+	const double angle = acos(frontComponent);
+	const int numticks = static_cast<int>(angle / camera.GetRotateAngle());
 
 	camera.RotateTowards(angle - numticks * camera.GetRotateAngle(), towards);
 	camera.ProgressiveRotate(towards, numticks);
 
 	// TODO: do something with the spaceship as well!
+
+	const double upComponent = towards * up;
+	const double rightComponent = towards * right;
+
+	Vector3D<double> cameraPlaneVector(rightComponent, upComponent, 0.);
+	cameraPlaneVector = cameraPlaneVector.Normalize();
 
 	CView::OnLButtonDown(nFlags, point);
 }
