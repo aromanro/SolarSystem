@@ -1117,7 +1117,8 @@ void CSolarSystemView::HandleLeft(bool ctrl, bool shift)
 	else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
 	else movement = OpenGL::Camera::Movements::moveLeft;
 
-	if (!shift) spaceshipOrientation.RotateLeft();
+	if (shift) spaceshipOrientation.RollLeft();
+	else spaceshipOrientation.RotateLeft();
 }
 
 void CSolarSystemView::HandleRight(bool ctrl, bool shift)
@@ -1126,7 +1127,8 @@ void CSolarSystemView::HandleRight(bool ctrl, bool shift)
 	else if (shift) movement = OpenGL::Camera::Movements::rollRight;
 	else movement = OpenGL::Camera::Movements::moveRight;
 
-	if (!shift) spaceshipOrientation.RotateRight();
+	if (shift) spaceshipOrientation.RollRight(); 
+	else spaceshipOrientation.RotateRight();
 }
 
 

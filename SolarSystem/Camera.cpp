@@ -165,6 +165,7 @@ namespace OpenGL {
 	{
 		return movement == Movements::moveLeft ||
 			movement == Movements::moveRight ||
+			movement == Movements::moveUp ||
 			movement == Movements::moveDown ||
 			movement == Movements::moveForward ||
 			movement == Movements::moveBackward;
@@ -183,11 +184,11 @@ namespace OpenGL {
 		case Movements::yawLeft:
 			YawLeft(rotateAngle);
 			break;
-		case Movements::rollLeft:
-			RollLeft(rotateAngle);
-			break;
 		case Movements::yawRight:
 			YawRight(rotateAngle);
+			break;
+		case Movements::rollLeft:
+			RollLeft(rotateAngle);
 			break;
 		case Movements::rollRight:
 			RollRight(rotateAngle);

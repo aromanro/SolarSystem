@@ -36,16 +36,18 @@ public:
 
 	void Tick();
 
-	void RotateUp();
-	void RotateDown();
-	void RotateLeft();
-	void RotateRight();
 
 	// seconds
 	double TimeToRotate(double startRotation, double targetRotation)
 	{
 		return abs(targetRotation - startRotation) / rotationSpeed;
 	}
+
+
+	// pitch
+
+	void RotateUp();
+	void RotateDown();
 
 	bool RotatingUp() const
 	{
@@ -56,6 +58,21 @@ public:
 	{
 		return targetRotationX < rotationX;
 	}
+
+	bool RotatedVertically() const
+	{
+		return rotationX != 0;
+	}
+
+	bool RotatingVertically() const
+	{
+		return targetRotationX != rotationX;
+	}
+
+	// yaw
+	
+	void RotateLeft();
+	void RotateRight();
 
 	bool RotatingLeft() const
 	{
@@ -77,24 +94,41 @@ public:
 		return targetRotationY != rotationY;
 	}
 
-	bool RotatedVertically() const
+	// roll - not used yet, but might be in the future
+
+	void RollLeft();
+	void RollRight();
+
+	bool RollingLeft() const
 	{
-		return rotationX != 0;
+		return targetRotationZ < rotationZ;
 	}
 
-	bool RotatingVertically() const
+	bool RollingRight() const
 	{
-		return targetRotationX != rotationX;
+		return targetRotationZ > rotationZ;
 	}
+
+	bool Rolled() const
+	{
+		return rotationZ != 0;
+	}
+
+	bool Rolling() const
+	{
+		return targetRotationZ != rotationZ;
+	}
+
+	// general
 
 	bool Rotating() const
 	{
-		return targetRotationX != rotationX || targetRotationY != rotationY;
+		return targetRotationX != rotationX || targetRotationY != rotationY || targetRotationZ != rotationZ;
 	}
 
 	bool Rotated() const
 	{
-		return rotationX != 0 || rotationY != 0;
+		return rotationX != 0 || rotationY != 0 || rotationZ != 0;
 	}
 
 	void ComputeRotations();
