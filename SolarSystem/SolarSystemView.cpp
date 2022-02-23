@@ -708,14 +708,25 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 			glm::rotate( // around x 
 				glm::rotate( // around y
 					glm::rotate( // around z
-						glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * precisionMat,
-						(theApp.options.rotateZ + spaceshipOrientation.rotationZ) * M_PI / 180., // the angle to rotate around z
+						//*****************************************************************************************************
+						glm::rotate( // around x 
+							glm::rotate( // around y
+								glm::rotate( // around z
+									glm::scale(glm::translate(glm::dmat4(1.), spaceshipPos), glm::dvec3(scale, scale, scale)) * precisionMat,
+									spaceshipOrientation.rotationZ * M_PI / 180., // the angle to rotate around z
+									glm::dvec3(0, 0, 1)), // around z axis
+								spaceshipOrientation.rotationY * M_PI / 180., // the angle to rotate around y axis
+								glm::dvec3(0, 1, 0)), // around y axis
+							spaceshipOrientation.rotationX * M_PI / 180., // the angle to rotate around x axis
+							glm::dvec3(1, 0, 0)), // around x axis
+						//*****************************************************************************************************
+						theApp.options.rotateZ * M_PI / 180., // the angle to rotate around z
 						glm::dvec3(0, 0, 1)), // around z axis
-					(theApp.options.rotateY + spaceshipOrientation.rotationY) * M_PI / 180., // the angle to rotate around y axis
+					theApp.options.rotateY * M_PI / 180., // the angle to rotate around y axis
 					glm::dvec3(0, 1, 0)), // around y axis
-				(theApp.options.rotateX + spaceshipOrientation.rotationX) * M_PI / 180., // the angle to rotate around x axis
-				glm::dvec3(1, 0, 0) // around x axis
-			);
+				theApp.options.rotateX * M_PI / 180., // the angle to rotate around x axis
+				glm::dvec3(1, 0, 0)); // around x axis
+			
 
 
 		const glm::mat4 modelMat(modelMatHP);
