@@ -672,6 +672,9 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		spaceshipProgram->Use();
 
+		// unfortunately it looks like not all obj files are nice
+		glDisable(GL_CULL_FACE);
+
 		SpaceshipUniforms params(doc->m_SolarSystem, m_BodiesPosition, *spaceshipProgram, spaceshipProgram->nrlights);
 
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
@@ -727,8 +730,6 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 				theApp.options.rotateX * M_PI / 180., // the angle to rotate around x axis
 				glm::dvec3(1, 0, 0)); // around x axis
 			
-
-
 		const glm::mat4 modelMat(modelMatHP);
 		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
 		
@@ -751,6 +752,8 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		spaceship->Draw(*spaceshipProgram);
 
 		spaceshipProgram->UnUse();
+
+		glEnable(GL_CULL_FACE);
 	}
 }
 

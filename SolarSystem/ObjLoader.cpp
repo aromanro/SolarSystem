@@ -326,31 +326,31 @@ bool ObjLoader::Load(const std::string& name, bool center)
 		// also it's worth looking into "Optimal convex decompositions" by Bernard Chazelle and David Dobkin - a concave polygon can be split into convex ones
 
 		const size_t indexvertex1 = std::get<0>(polygon[startPoint]);
-		const size_t indextex1 = std::get<1>(polygon[startPoint]);
-		const size_t indexnormal1 = std::get<2>(polygon[startPoint]);
+		const long long int indextex1 = std::get<1>(polygon[startPoint]);
+		const long long int indexnormal1 = std::get<2>(polygon[startPoint]);
 
 		const size_t indexvertex2 = std::get<0>(polygon[(startPoint + 1ULL) % polygon.size()]);
-		const size_t indextex2 = std::get<1>(polygon[(startPoint + 1ULL) % polygon.size()]);
-		const size_t indexnormal2 = std::get<2>(polygon[(startPoint + 1ULL) % polygon.size()]);
+		const long long int indextex2 = std::get<1>(polygon[(startPoint + 1ULL) % polygon.size()]);
+		const long long int indexnormal2 = std::get<2>(polygon[(startPoint + 1ULL) % polygon.size()]);
 
 		const size_t indexvertex3 = std::get<0>(polygon[(startPoint + 2ULL) % polygon.size()]);
-		const size_t indextex3 = std::get<1>(polygon[(startPoint + 2ULL) % polygon.size()]);
-		const size_t indexnormal3 = std::get<2>(polygon[(startPoint + 2ULL) % polygon.size()]);
+		const long long int indextex3 = std::get<1>(polygon[(startPoint + 2ULL) % polygon.size()]);
+		const long long int indexnormal3 = std::get<2>(polygon[(startPoint + 2ULL) % polygon.size()]);
 
 		if (indexvertex1 >= vertices.size()) break;
 		if (indexvertex2 >= vertices.size()) break;
 		if (indexvertex3 >= vertices.size()) break;
 
-		if (indexnormal1 >= normals.size()) break;
-		if (indexnormal2 >= normals.size()) break;
-		if (indexnormal3 >= normals.size()) break;
+		if (indexnormal1 >= static_cast<long long int>(normals.size()) || indexnormal1 < 0) break;
+		if (indexnormal2 >= static_cast<long long int>(normals.size()) || indexnormal2 < 0) break;
+		if (indexnormal3 >= static_cast<long long int>(normals.size()) || indexnormal3 < 0) break;
 
 		const Vector3D<double> firstPoint = vertices[indexvertex1];
-		const size_t firstIndexTex = indextex1;
+		const long long int firstIndexTex = indextex1;
 		const Vector3D<double> firstNormal = normals[indexnormal1];
 
 		Vector3D<double> lastPoint(vertices[indexvertex3]);
-		size_t lastIndexTex = indextex3;
+		long long int lastIndexTex = indextex3;
 		Vector3D<double> lastNormal(normals[indexnormal3]);
 
 		std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal , *material);
@@ -401,11 +401,11 @@ bool ObjLoader::Load(const std::string& name, bool center)
 			if (nextIndexVertex >= vertices.size())
 				break;
 
-			const size_t nextIndexNormal = std::get<2>(polygon[ind]);
-			if (nextIndexNormal >= normals.size())
+			const long long int nextIndexNormal = std::get<2>(polygon[ind]);
+			if (nextIndexNormal >= static_cast<long long int>(normals.size()) || nextIndexNormal < 0)
 				break;
 
-			const size_t nextIndexTex = std::get<1>(polygon[ind]);
+			const long long int nextIndexTex = std::get<1>(polygon[ind]);
 
 			const Vector3D<double>& nextPoint = vertices[nextIndexVertex];
 			const Vector3D<double>& nextNormal = normals[nextIndexNormal];
@@ -554,31 +554,31 @@ bool ObjLoader::IsConcave(const Polygon& polygon, const std::vector<Vector3D<dou
 bool ObjLoader::AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const Material& material, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles)
 {
 	const size_t indexvertex1 = std::get<0>(polygon[ind1]);
-	const size_t indextex1 = std::get<1>(polygon[ind1]);
-	const size_t indexnormal1 = std::get<2>(polygon[ind1]);
+	const long long int  indextex1 = std::get<1>(polygon[ind1]);
+	const long long int indexnormal1 = std::get<2>(polygon[ind1]);
 
 	const size_t indexvertex2 = std::get<0>(polygon[ind2]);
-	const size_t indextex2 = std::get<1>(polygon[ind2]);
-	const size_t indexnormal2 = std::get<2>(polygon[ind2]);
+	const long long int  indextex2 = std::get<1>(polygon[ind2]);
+	const long long int indexnormal2 = std::get<2>(polygon[ind2]);
 
 	const size_t indexvertex3 = std::get<0>(polygon[ind3]);
-	const size_t indextex3 = std::get<1>(polygon[ind3]);
-	const size_t indexnormal3 = std::get<2>(polygon[ind3]);
+	const long long int  indextex3 = std::get<1>(polygon[ind3]);
+	const long long int indexnormal3 = std::get<2>(polygon[ind3]);
 
 	if (indexvertex1 < 0 || indexvertex1 >= vertices.size()) return false;
 	if (indexvertex2 < 0 || indexvertex2 >= vertices.size()) return false;
 	if (indexvertex3 < 0 || indexvertex3 >= vertices.size()) return false;
 
-	if (indexnormal1 < 0 || indexnormal1 >= normals.size()) return false;
-	if (indexnormal2 < 0 || indexnormal2 >= normals.size()) return false;
-	if (indexnormal3 < 0 || indexnormal3 >= normals.size()) return false;
+	if (indexnormal1 < 0 || indexnormal1 >= static_cast<long long int>(normals.size())) return false;
+	if (indexnormal2 < 0 || indexnormal2 >= static_cast<long long int>(normals.size())) return false;
+	if (indexnormal3 < 0 || indexnormal3 >= static_cast<long long int>(normals.size())) return false;
 
 	const Vector3D<double> firstPoint = vertices[indexvertex1];
-	const size_t firstIndexTex = indextex1;
+	const long long int firstIndexTex = indextex1;
 	const Vector3D<double> firstNormal = normals[indexnormal1];
 
 	Vector3D<double> lastPoint(vertices[indexvertex3]);
-	size_t lastIndexTex = indextex3;
+	long long int lastIndexTex = indextex3;
 	Vector3D<double> lastNormal(normals[indexnormal3]);
 
 	std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, material);
@@ -876,6 +876,22 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 				{
 					if (!mat.IsEmpty())
 					{
+						// correct some things
+						if (mat.ambientColor.TotalAbsorbant())
+						{
+							mat.ambientColor = mat.diffuseColor;
+							if (mat.ambientTexture.empty())
+								mat.ambientTexture = mat.diffuseTexture;
+						}
+
+						if (mat.diffuseColor.TotalAbsorbant())
+						{
+							mat.diffuseColor = mat.ambientColor;
+
+							if (mat.diffuseTexture.empty())
+								mat.diffuseTexture = mat.ambientTexture;
+						}
+
 						// save the old filled one
 						materials[mat.name] = mat;
 					}
@@ -916,7 +932,7 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 			mat.diffuseTexture = mat.ambientTexture;
 	}
 
-	if (!mat.IsEmpty() && materials.find(mat.name) != materials.end())
+	if (!mat.IsEmpty() && materials.find(mat.name) == materials.end())
 		materials[mat.name] = mat;
 
 	return true;

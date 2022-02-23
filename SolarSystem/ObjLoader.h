@@ -12,7 +12,7 @@
 class ObjLoader
 {
 public:
-	typedef std::vector<std::tuple<size_t, size_t, size_t>> Polygon;
+	typedef std::vector<std::tuple<size_t, long long int, long long int>> Polygon;
 
 	ObjLoader();
 	~ObjLoader();

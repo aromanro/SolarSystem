@@ -128,6 +128,8 @@ void BodyProperties::ResizeToEven(CImage& skin)
 
 		skin.StretchBlt(newImage.GetDC(), 0, 0, iNewWidth, iNewHeight, 0, 0, skin.GetWidth(), skin.GetHeight(), SRCCOPY);
 
+		// need to call it twice to actually release it, because of a pesky counter inside
+		newImage.ReleaseDC();
 		newImage.ReleaseDC();
 
 		skin.Destroy();
