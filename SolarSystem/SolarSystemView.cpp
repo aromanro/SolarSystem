@@ -428,7 +428,7 @@ void CSolarSystemView::Setup()
 	inited = true;
 }
 
-void CSolarSystemView::MoonHack(const BodyList::iterator& bit, const BodyPropList::iterator& pit, const BodyPositionList::iterator& it, glm::dvec3& pos)
+void CSolarSystemView::MoonHack(const BodyList::iterator& bit, const BodyPropList::iterator& pit, glm::dvec3& pos)
 {
 	CSolarSystemDoc *doc = GetDocument();
 
@@ -481,7 +481,7 @@ void CSolarSystemView::RenderScene()
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, pos);
 
 		// ****************************************************************************************************************************
 
@@ -628,7 +628,7 @@ void CSolarSystemView::RenderShadowScene()
 		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
 		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
 
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, it, pos);
+		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, pos);
 
 		// ****************************************************************************************************************************
 		modelMatHP = glm::translate(modelMatHP, pos);
@@ -1032,7 +1032,7 @@ bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
 		shift = ((::GetKeyState(VK_SHIFT) & 0x8000) != 0 ? true : false);
 
 		// pMSG->wParam contains the key code
-		handled = HandleKeyPress(pMsg->wParam, ctrl, shift);
+		handled = HandleKeyPress(pMsg->wParam);
 
 		Invalidate(0);
 	}
@@ -1044,26 +1044,26 @@ bool CSolarSystemView::KeyPressHandler(MSG* pMsg)
 
 
 
-bool CSolarSystemView::HandleKeyPress(WPARAM wParam, bool ctrl, bool shift)
+bool CSolarSystemView::HandleKeyPress(WPARAM wParam)
 {
 	bool handled = false;
 
 	switch (wParam)
 	{
 	case VK_UP:
-		HandleUp(ctrl, shift);
+		HandleUp();
 		handled = true;
 		break;
 	case VK_DOWN:
-		HandleDown(ctrl, shift);
+		HandleDown();
 		handled = true;
 		break;
 	case VK_LEFT:
-		HandleLeft(ctrl, shift);
+		HandleLeft();
 		handled = true;
 		break;
 	case VK_RIGHT:
-		HandleRight(ctrl, shift);
+		HandleRight();
 		handled = true;
 		break;
 	case VK_ADD:
@@ -1104,7 +1104,7 @@ bool CSolarSystemView::HandleKeyPress(WPARAM wParam, bool ctrl, bool shift)
 	return handled;
 }
 
-void CSolarSystemView::HandleUp(bool ctrl, bool shift)
+void CSolarSystemView::HandleUp()
 {
 	if (ctrl) movement = OpenGL::Camera::Movements::pitchUp;
 	else if (shift) movement = OpenGL::Camera::Movements::moveUp;
@@ -1113,7 +1113,7 @@ void CSolarSystemView::HandleUp(bool ctrl, bool shift)
 	if (ctrl || shift) spaceshipOrientation.RotateUp();
 }
 
-void CSolarSystemView::HandleDown(bool ctrl, bool shift)
+void CSolarSystemView::HandleDown()
 {
 	if (ctrl) movement = OpenGL::Camera::Movements::pitchDown;
 	else if (shift) movement = OpenGL::Camera::Movements::moveDown;
@@ -1122,7 +1122,7 @@ void CSolarSystemView::HandleDown(bool ctrl, bool shift)
 	if (ctrl || shift) spaceshipOrientation.RotateDown();
 }
 
-void CSolarSystemView::HandleLeft(bool ctrl, bool shift)
+void CSolarSystemView::HandleLeft()
 {
 	if (ctrl) movement = OpenGL::Camera::Movements::yawLeft;
 	else if (shift) movement = OpenGL::Camera::Movements::rollLeft;
@@ -1132,7 +1132,7 @@ void CSolarSystemView::HandleLeft(bool ctrl, bool shift)
 	else spaceshipOrientation.RotateLeft();
 }
 
-void CSolarSystemView::HandleRight(bool ctrl, bool shift)
+void CSolarSystemView::HandleRight()
 {
 	if (ctrl) movement = OpenGL::Camera::Movements::yawRight;
 	else if (shift) movement = OpenGL::Camera::Movements::rollRight;

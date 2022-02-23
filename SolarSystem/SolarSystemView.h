@@ -138,7 +138,7 @@ private:
 
 	void Resize(GLsizei h, GLsizei w);
 	
-	void MoonHack(const BodyList::iterator& bit, const BodyPropList::iterator& pit, const BodyPositionList::iterator& it, glm::dvec3& pos);
+	void MoonHack(const BodyList::iterator& bit, const BodyPropList::iterator& pit, glm::dvec3& pos);
 
 	Vector3D<double> GetTowardsVector(CPoint& point, const Vector3D<double>& forward);
 
@@ -177,11 +177,11 @@ public:
 	void SetBillboardText(const char* text);
 
 protected:
-	bool HandleKeyPress(WPARAM wParam, bool ctrl, bool shift);
-	void HandleUp(bool ctrl, bool shift);
-	void HandleDown(bool ctrl, bool shift);
-	void HandleLeft(bool ctrl, bool shift);
-	void HandleRight(bool ctrl, bool shift);
+	bool HandleKeyPress(WPARAM wParam);
+	void HandleUp();
+	void HandleDown();
+	void HandleLeft();
+	void HandleRight();
 
 	void OnRedrawSceneTimer(CSolarSystemDoc* doc);
 	void OnUpdateBillboardTimer(CSolarSystemDoc* doc);
