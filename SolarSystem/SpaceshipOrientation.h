@@ -153,7 +153,7 @@ public:
 	void ComputeRotations();
 
 private:
-	double RotationAngle(double rotTime, double start, double position, double target) const;
+	double RotationAngle(double rotTime, double start, double target) const;
 	void ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeHorizontalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeRollRotation(const std::chrono::system_clock::time_point& curTime);

@@ -121,7 +121,7 @@ void SpaceshipOrientation::ComputeRotations()
 	}
 }
 
-double SpaceshipOrientation::RotationAngle(double rotTime, double start, double position, double target) const
+double SpaceshipOrientation::RotationAngle(double rotTime, double start, double target) const
 {
 	// this should do for now, it changed to accelerate/decellerate, modify TimeToRotate as well
 	//return rotTime * rotationSpeed;
@@ -157,12 +157,12 @@ void SpaceshipOrientation::ComputeVerticalRotation(const std::chrono::system_clo
 		const double rotTime = std::chrono::duration<double>(curTime - startRotationXtime).count();
 		if (RotatingUp())
 		{
-			rotationX = startRotationX + RotationAngle(rotTime, startRotationX, rotationX, targetRotationX);
+			rotationX = startRotationX + RotationAngle(rotTime, startRotationX, targetRotationX);
 			if (rotationX > targetRotationX) rotationX = targetRotationX;
 		}
 		else
 		{
-			rotationX = startRotationX - RotationAngle(rotTime, startRotationX, rotationX, targetRotationX);
+			rotationX = startRotationX - RotationAngle(rotTime, startRotationX, targetRotationX);
 			if (rotationX < targetRotationX) rotationX = targetRotationX;
 		}
 	}
@@ -175,12 +175,12 @@ void SpaceshipOrientation::ComputeHorizontalRotation(const std::chrono::system_c
 		const double rotTime = std::chrono::duration<double>(curTime - startRotationYtime).count();
 		if (RotatingLeft())
 		{
-			rotationY = startRotationY - RotationAngle(rotTime, startRotationY, rotationY, targetRotationY);
+			rotationY = startRotationY - RotationAngle(rotTime, startRotationY, targetRotationY);
 			if (rotationY < targetRotationY) rotationY = targetRotationY;
 		}
 		else
 		{
-			rotationY = startRotationY + RotationAngle(rotTime, startRotationY, rotationY, targetRotationY);
+			rotationY = startRotationY + RotationAngle(rotTime, startRotationY, targetRotationY);
 			if (rotationY > targetRotationY) rotationY = targetRotationY;
 		}
 	}
@@ -193,12 +193,12 @@ void SpaceshipOrientation::ComputeRollRotation(const std::chrono::system_clock::
 		const double rotTime = std::chrono::duration<double>(curTime - startRotationZtime).count();
 		if (RollingLeft())
 		{
-			rotationZ = startRotationZ - RotationAngle(rotTime, startRotationZ, rotationZ, targetRotationZ);
+			rotationZ = startRotationZ - RotationAngle(rotTime, startRotationZ, targetRotationZ);
 			if (rotationZ < targetRotationZ) rotationZ = targetRotationZ;
 		}
 		else
 		{
-			rotationZ = startRotationZ + RotationAngle(rotTime, startRotationZ, rotationZ, targetRotationZ);
+			rotationZ = startRotationZ + RotationAngle(rotTime, startRotationZ, targetRotationZ);
 			if (rotationZ > targetRotationZ) rotationZ = targetRotationZ;
 		}
 	}
