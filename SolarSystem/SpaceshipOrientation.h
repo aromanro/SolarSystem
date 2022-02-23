@@ -11,7 +11,7 @@ class SpaceshipOrientation
 public:
 	// degrees / second
 	double rotationSpeed = 45;
-	double rotationAngleMax = 30;
+	double rotationAngleMax = 45;
 	double rotationAngleAccel = 10;
 	double delayBeforeUndoingRotation = 0.5;
 

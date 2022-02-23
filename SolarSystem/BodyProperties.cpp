@@ -2,6 +2,8 @@
 #include "BodyProperties.h"
 #include "MemoryBitmap.h"
 
+#include <filesystem>
+
 #include <glm.hpp>
 
 #ifdef _DEBUG
@@ -289,14 +291,32 @@ std::shared_ptr<CImage> BodyProperties::Load(const CString& name)
 			return texturesMap.at(name);
 
 		CImage* skin = new CImage();
-		skin->Load(name);
-		if (skin->IsNull())
+		
+		if (FAILED(skin->Load(name)) || skin->IsNull())
 		{
 			delete skin;
 			return {};
 		}
 
+		/*
+		bool save = false;
+		if (skin->GetWidth() % 2 || skin->GetHeight() % 2)
+			save = true;
+		*/
+
 		ResizeToEven(*skin);
+
+		/*
+		if (save)
+		{
+			std::wstring s((LPCTSTR)name);
+			std::filesystem::path dirName(s);
+
+			std::string str = std::string("c:\\temp\\Img\\") + dirName.filename().string();
+
+			skin->Save(CString(str.c_str()));
+		}
+		*/
 
 		std::shared_ptr<CImage> sp(skin);
 		texturesMap.emplace(name, sp);
