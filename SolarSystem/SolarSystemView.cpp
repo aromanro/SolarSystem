@@ -673,7 +673,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		spaceshipProgram->Use();
 
 		// unfortunately it looks like not all obj files are nice
-		glDisable(GL_CULL_FACE);
+		//glDisable(GL_CULL_FACE);
 
 		SpaceshipUniforms params(doc->m_SolarSystem, m_BodiesPosition, *spaceshipProgram, spaceshipProgram->nrlights);
 
@@ -753,7 +753,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		spaceshipProgram->UnUse();
 
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 	}
 }
 
@@ -1113,7 +1113,7 @@ void CSolarSystemView::HandleUp()
 	else if (shift) movement = OpenGL::Camera::Movements::moveUp;
 	else movement = OpenGL::Camera::Movements::moveForward;
 
-	if (ctrl || shift) spaceshipOrientation.RotateUp();
+	spaceshipOrientation.RotateUp();
 }
 
 void CSolarSystemView::HandleDown()
@@ -1122,7 +1122,7 @@ void CSolarSystemView::HandleDown()
 	else if (shift) movement = OpenGL::Camera::Movements::moveDown;
 	else movement = OpenGL::Camera::Movements::moveBackward;
 	
-	if (ctrl || shift) spaceshipOrientation.RotateDown();
+	spaceshipOrientation.RotateDown();
 }
 
 void CSolarSystemView::HandleLeft()

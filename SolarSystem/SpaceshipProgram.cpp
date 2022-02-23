@@ -215,11 +215,8 @@ namespace OpenGL {
 				if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 				else diffuse = vec4(diffuseColor, 1.0f);
 
-				// abs is added as a workaround for now for some odd obj files that have normals on some portions turned towards interior
-				// see also CSolarSystemView::RenderSpaceship where glDisable(GL_CULL_FACE) is used
-				float diff = abs(dot(normal, lightDir));
-				//float proj = dot(normal, lightDir);
-				//float diff = max(proj, 0.0);
+				float proj = dot(normal, lightDir);
+				float diff = max(proj, 0.0);
 
 				vec3 color = diff * diffuse.xyz;
 				if (illumination < 2) return color;
@@ -227,8 +224,7 @@ namespace OpenGL {
 				// Specular shading
 				vec3 halfwayDir = normalize(lightDir + viewDir);
 				
-				float val = abs(dot(normal, halfwayDir));
-				//float val = max(dot(normal, halfwayDir), 0.0);
+				float val = max(dot(normal, halfwayDir), 0.0);
 
 				float e = exponent;
 				if (1 == useExponentTexture)
