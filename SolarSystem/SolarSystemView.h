@@ -182,6 +182,9 @@ protected:
 	void HandleDown(bool ctrl, bool shift);
 	void HandleLeft(bool ctrl, bool shift);
 	void HandleRight(bool ctrl, bool shift);
+
+	void OnRedrawSceneTimer(CSolarSystemDoc* doc);
+	void OnUpdateBillboardTimer(CSolarSystemDoc* doc);
 };
 
 #ifndef _DEBUG  // debug version in SolarSystemView.cpp

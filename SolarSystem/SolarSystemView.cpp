@@ -1141,95 +1141,11 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (1 == nIDEvent)
 			{
-				bool firstTime = false;
-				if (m_NewBodiesPosition.empty())
-				{
-					firstTime = true;
-					// first time called
-					frameTime = std::chrono::system_clock::now();
-
-					if (doc->RetrieveData())
-					{
-						m_OldBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);					
-						m_NewBodiesPosition = m_OldBodiesPosition;
-					}
-				}
-
-				if (!firstTime)
-				{
-					auto curTime = std::chrono::system_clock::now();
-					long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
-
-					int count = 0; // this counter is here just to ensure it won't stay in this while for too much time (just in case)
-					while (msDifference >= msFrame / 2 && ++count < 10)
-					{
-						if (doc->stopped) break;
-
-						if (doc->RetrieveData())
-						{
-							msDifference -= msFrame;
-							frameTime += std::chrono::milliseconds(msFrame);
-
-							m_OldBodiesPosition.swap(m_NewBodiesPosition);
-							m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
-						}
-						else
-							std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-						curTime = std::chrono::system_clock::now();
-						msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
-					}
-				}
-			
-				camera.Tick();
-				if (keyDown) camera.Move(movement);	
-
-				spaceshipOrientation.Tick();
+				OnRedrawSceneTimer(doc);
 			}
 			else
 			{
-				const unsigned long long int seconds = static_cast<unsigned long long int>(doc->m_SolarSystem.m_simulationTime);
-				unsigned long long int hours = seconds / 3600;
-				unsigned long long int days = hours / 24;
-				const unsigned long long int years = days / 365;
-				days %= 365;
-				hours %= 24;
-
-				std::string str;
-				if (years)
-				{
-					str = std::to_string(years);
-					if (1 == years)
-						str += " year";
-					else
-						str += " years";
-				}
-
-				if (days)
-				{
-					if (str.size())
-						str += " ";
-
-					str += std::to_string(days);
-					if (1 == days)
-						str += " day";
-					else
-						str += " days";
-				}
-
-				if (hours)
-				{
-					if (str.size())
-						str += " ";
-
-					str += std::to_string(hours);
-					if (1 == hours)
-						str += " hour";
-					else
-						str += " hours";
-				}
-
-				SetBillboardText(str.c_str());
+				OnUpdateBillboardTimer(doc);
 			}
 
 			RedrawWindow(0, 0, RDW_INTERNALPAINT | RDW_NOERASE | RDW_NOFRAME | RDW_UPDATENOW);
@@ -1238,6 +1154,101 @@ void CSolarSystemView::OnTimer(UINT_PTR nIDEvent)
 
 	CView::OnTimer(nIDEvent);
 }
+
+void CSolarSystemView::OnRedrawSceneTimer(CSolarSystemDoc* doc)
+{
+	bool firstTime = false;
+	if (m_NewBodiesPosition.empty())
+	{
+		firstTime = true;
+		// first time called
+		frameTime = std::chrono::system_clock::now();
+
+		if (doc->RetrieveData())
+		{
+			m_OldBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
+			m_NewBodiesPosition = m_OldBodiesPosition;
+		}
+	}
+
+	if (!firstTime)
+	{
+		auto curTime = std::chrono::system_clock::now();
+		long long int msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+
+		int count = 0; // this counter is here just to ensure it won't stay in this while for too much time (just in case)
+		while (msDifference >= msFrame / 2 && ++count < 10)
+		{
+			if (doc->stopped) break;
+
+			if (doc->RetrieveData())
+			{
+				msDifference -= msFrame;
+				frameTime += std::chrono::milliseconds(msFrame);
+
+				m_OldBodiesPosition.swap(m_NewBodiesPosition);
+				m_NewBodiesPosition.swap(doc->m_SolarSystem.m_BodiesPosition);
+			}
+			else
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+			curTime = std::chrono::system_clock::now();
+			msDifference = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - frameTime).count();
+		}
+	}
+
+	camera.Tick();
+	if (keyDown) camera.Move(movement);
+
+	spaceshipOrientation.Tick();
+}
+
+void CSolarSystemView::OnUpdateBillboardTimer(CSolarSystemDoc* doc)
+{
+	const unsigned long long int seconds = static_cast<unsigned long long int>(doc->m_SolarSystem.m_simulationTime);
+	unsigned long long int hours = seconds / 3600;
+	unsigned long long int days = hours / 24;
+	const unsigned long long int years = days / 365;
+	days %= 365;
+	hours %= 24;
+
+	std::string str;
+	if (years)
+	{
+		str = std::to_string(years);
+		if (1 == years)
+			str += " year";
+		else
+			str += " years";
+	}
+
+	if (days)
+	{
+		if (str.size())
+			str += " ";
+
+		str += std::to_string(days);
+		if (1 == days)
+			str += " day";
+		else
+			str += " days";
+	}
+
+	if (hours)
+	{
+		if (str.size())
+			str += " ";
+
+		str += std::to_string(hours);
+		if (1 == hours)
+			str += " hour";
+		else
+			str += " hours";
+	}
+
+	SetBillboardText(str.c_str());
+}
+
 
 
 BOOL CSolarSystemView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
