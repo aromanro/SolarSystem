@@ -123,6 +123,29 @@ void SpaceshipOrientation::ComputeRotations()
 
 double SpaceshipOrientation::RotationAngle(double rotTime, double start, double target) const
 {
+	const double halfway = abs(target - start) / 2.;
+
+	if (halfway > rotationAngleAccel) return RotationAngleLarge(rotTime, start, target);
+
+	const double acceleration = rotationSpeed * rotationSpeed / (2. * rotationAngleAccel);
+	const double accelTime = sqrt(2. * halfway / acceleration);
+
+	if (rotTime < accelTime)
+	{
+		return 0.1 + acceleration * rotTime * rotTime / 2.;
+	}
+
+	const double leftTime = rotTime - accelTime;
+	double deccelerationAngle = acceleration * leftTime * (accelTime - leftTime / 2.);
+	if (deccelerationAngle < 0) deccelerationAngle = 0;
+
+	return 0.1 + halfway + deccelerationAngle;
+}
+
+// this could be used directly, but for small angles the spaceship rotates too fast, accelerating to max
+// so it's used now only for large angles (halfway > rotationAngleAccel) where the max can be achieved and sustained for a period of time
+double SpaceshipOrientation::RotationAngleLarge(double rotTime, double start, double target) const
+{
 	// this should do for now, it changed to accelerate/decellerate, modify TimeToRotate as well
 	//return rotTime * rotationSpeed;
 	const double halfway = abs(target - start) / 2.;
@@ -141,7 +164,7 @@ double SpaceshipOrientation::RotationAngle(double rotTime, double start, double 
 	else if (rotTime > timeToAccelerate + timeConstantVelocity)
 	{
 		const double leftTime = rotTime - (timeToAccelerate + timeConstantVelocity);
-		double deccelerationAngle = leftTime * rotationSpeed - acceleration * leftTime * leftTime / 2.;
+		double deccelerationAngle = leftTime * (rotationSpeed - acceleration * leftTime / 2.);
 		if (deccelerationAngle < 0) deccelerationAngle = 0;
 
 		return 0.1 + angleAccel + timeConstantVelocity * rotationSpeed + deccelerationAngle;

@@ -10,9 +10,9 @@ class SpaceshipOrientation
 {
 public:
 	// degrees / second
-	double rotationSpeed = 30;
+	double rotationSpeed = 45;
 	double rotationAngleMax = 30;
-	double rotationAngleAccel = 8;
+	double rotationAngleAccel = 10;
 	double delayBeforeUndoingRotation = 0.5;
 
 	// Z is perpendicular / screen
@@ -39,23 +39,17 @@ public:
 
 
 	// seconds
+
 	double TimeToRotate(double startRotation, double targetRotation)
 	{
-		//return abs(targetRotation - startRotation) / rotationSpeed;		
 		const double halfway = abs(targetRotation - startRotation) / 2.;
-		const double angleAccel = std::min<double>(rotationAngleAccel, halfway);
-		const double timeToAccelerate = 4 * angleAccel / rotationSpeed;
 
-		if (angleAccel < halfway)
-		{
-			const double timeConstantVelocity = 2 * (halfway - angleAccel) / rotationSpeed;
+		if (halfway > rotationAngleAccel) return TimeToRotateLarge(startRotation, targetRotation);
 
-			return timeToAccelerate + timeConstantVelocity;
-		}
+		const double acceleration = rotationSpeed * rotationSpeed / (2. * rotationAngleAccel);
 
-		return timeToAccelerate;
+		return 2. * sqrt(2. * halfway / acceleration);
 	}
-
 
 	// pitch
 
@@ -154,6 +148,27 @@ public:
 
 private:
 	double RotationAngle(double rotTime, double start, double target) const;
+	double RotationAngleLarge(double rotTime, double start, double target) const;
+
+	// this could be used directly, but for small angles the spaceship rotates too fast, accelerating to max
+	// so it's used now only for large angles (halfway > rotationAngleAccel) where the max can be achieved and sustained for a period of time
+	double TimeToRotateLarge(double startRotation, double targetRotation)
+	{
+		//return abs(targetRotation - startRotation) / rotationSpeed;		
+		const double halfway = abs(targetRotation - startRotation) / 2.;
+		const double angleAccel = std::min<double>(rotationAngleAccel, halfway);
+		const double timeToAccelerate = 4 * angleAccel / rotationSpeed;
+
+		if (angleAccel < halfway)
+		{
+			const double timeConstantVelocity = 2 * (halfway - angleAccel) / rotationSpeed;
+
+			return timeToAccelerate + timeConstantVelocity;
+		}
+
+		return timeToAccelerate;
+	}
+
 	void ComputeVerticalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeHorizontalRotation(const std::chrono::system_clock::time_point& curTime);
 	void ComputeRollRotation(const std::chrono::system_clock::time_point& curTime);
