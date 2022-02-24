@@ -212,8 +212,6 @@ namespace OpenGL {
 				// Diffuse shading
 				vec4 diffuse;
 
-				if (dot(viewDir, normal) < 0) normal = -normal;
-
 				if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 				else diffuse = vec4(diffuseColor, 1.0f);
 
@@ -260,6 +258,8 @@ namespace OpenGL {
 					vec3 viewVec = viewPos - FragPos;
 					vec3 viewDir = normalize(viewVec);
 					vec3 normal = normalize(Normal);
+
+					if (dot(viewDir, normal) < 0) normal = -normal;
 
 					vec3 light = vec3(0.0f);
 

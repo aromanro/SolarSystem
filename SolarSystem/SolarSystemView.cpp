@@ -362,6 +362,8 @@ void CSolarSystemView::Setup()
 
 		glMatrixMode(GL_MODELVIEW);
 
+		glEnable(GL_MULTISAMPLE);
+
 		CRect rect;
 		GetClientRect(rect);
 		Height = rect.Height();
