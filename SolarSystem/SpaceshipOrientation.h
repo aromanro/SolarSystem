@@ -12,6 +12,7 @@ public:
 	// degrees / second
 	double rotationSpeed = 45;
 	double rotationAngleMax = 45;
+	double rotationAngleZMax = 30;
 	double rotationAngleAccel = 10;
 	double delayBeforeUndoingRotation = 0.5;
 

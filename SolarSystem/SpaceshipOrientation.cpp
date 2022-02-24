@@ -92,7 +92,7 @@ void SpaceshipOrientation::RollLeftRight(double angle)
 	ComputeRotations();
 
 	startRotationZ = rotationZ;
-	targetRotationZ = (angle > 0 ? 1 : -1) * min(abs(angle), rotationAngleMax);
+	targetRotationZ = (angle > 0 ? 1 : -1) * min(abs(angle), rotationAngleZMax);
 	//targetRotationZ = angle;
 	startRotationZtime = std::chrono::system_clock::now();
 }
@@ -100,12 +100,12 @@ void SpaceshipOrientation::RollLeftRight(double angle)
 
 void SpaceshipOrientation::RollLeft()
 {
-	RollLeftRight(rotationAngleMax);
+	RollLeftRight(rotationAngleZMax);
 }
 
 void SpaceshipOrientation::RollRight()
 {
-	RollLeftRight(-rotationAngleMax);
+	RollLeftRight(-rotationAngleZMax);
 }
 
 
