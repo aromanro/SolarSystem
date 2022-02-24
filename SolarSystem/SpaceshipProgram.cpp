@@ -120,8 +120,6 @@ namespace OpenGL {
 		OpenGL::VertexShader vertexShader;
 
 		vertexShader.setSource(GLSL(
-			precision highp float;
-
 			layout(location = 0) in vec3 position;
 			layout(location = 1) in vec3 normal;
 			layout(location = 2) in vec2 texCoord;
@@ -168,8 +166,6 @@ namespace OpenGL {
 		CString shaderSrc;
 		shaderSrc.Format(CString(GLSL(
 			\n#define NRLIGHTS % d\n
-
-			precision highp float;
 
 			struct Light {
 				vec3 lightDir;

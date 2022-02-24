@@ -121,8 +121,6 @@ bool SolarSystemGLProgram::SetupVertexShader()
 	OpenGL::VertexShader vertexShader;
 
 	vertexShader.setSource(GLSL(
-		precision highp float;
-
 		layout(location = 0) in vec3 position;
 		layout(location = 1) in vec3 normal;
 		layout(location = 2) in vec2 texCoord;
@@ -136,7 +134,6 @@ bool SolarSystemGLProgram::SetupVertexShader()
 		out vec3 FragPos;
 		out vec3 Normal;
 		out vec3 Tangent;
-		//out vec3 Bitangent;
 
 		void main()
 		{
@@ -170,8 +167,6 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 	shaderSrc.Format(CString(GLSL(
 		\n#define NRLIGHTS %d\n
 
-		precision highp float;
-
 		struct Light {
 			vec3 lightDir;
 			float atten;
@@ -198,7 +193,6 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		in vec3 FragPos;
 		in vec3 Normal;
 		in vec3 Tangent;
-		//in vec3 Bitangent;
 
 		out vec4 outputColor;
 
