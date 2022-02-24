@@ -126,6 +126,10 @@ http://www.tomdalling.com/blog/category/modern-opengl/
 
 ### SCREENSHOTS
 
+Now it can display a spaceship loaded from an obj file:
+
+![Screenshot](Screenshots/Spaceship.png)
+
 A view from 'above':
 
 ![Screenshot](Screenshots/SolarSystem.png)
