@@ -298,6 +298,8 @@
     <ClCompile Include="SolarSystemDoc.cpp" />
     <ClCompile Include="SolarSystemGLProgram.cpp" />
     <ClCompile Include="SolarSystemView.cpp" />
+    <ClCompile Include="SolarSystemViewRender.cpp" />
+    <ClCompile Include="SolarSystemViewSetup.cpp" />
     <ClCompile Include="SpaceshipOrientation.cpp" />
     <ClCompile Include="SpaceshipProgram.cpp" />
     <ClCompile Include="SpaceshipPropertyPage.cpp" />
