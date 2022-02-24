@@ -231,16 +231,6 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 		Polygon polygon = polygonpair.first;
 		const std::string& matName = polygonpair.second;
 
-		// TODO: Implement materials!
-
-		/*
-		std::shared_ptr<Materials::Material> material;
-		if (materialsMap.find(matName) != materialsMap.end())
-			material = materialsMap[matName];
-		else
-			material = WhiteMaterial;
-		*/
-
 		ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
 
 
@@ -286,45 +276,7 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 		long long int lastIndexTex = indextex3;
 		Vector3D<double> lastNormal(normals[indexnormal3]);
 
-		std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material);
-
-		if (firstIndexTex >= 0)
-		{
-			triangle->U1 = textureCoords[firstIndexTex].first;
-			triangle->V1 = textureCoords[firstIndexTex].second;
-		}
-		else
-		{
-			triangle->U1 = -1;
-			triangle->V1 = -1;
-		}
-
-		if (indextex2 >= 0)
-		{
-			triangle->U2 = textureCoords[indextex2].first;
-			triangle->V2 = textureCoords[indextex2].second;
-		}
-		else
-		{
-			triangle->U2 = -1;
-			triangle->V2 = -1;
-		}
-
-
-		if (lastIndexTex >= 0)
-		{
-			triangle->U3 = textureCoords[lastIndexTex].first;
-			triangle->V3 = textureCoords[lastIndexTex].second;
-		}
-		else
-		{
-			triangle->U3 = -1;
-			triangle->V3 = -1;
-		}
-
-		triangle->SetUseInterpolation();
-
-		triangles.emplace_back(triangle);
+		AddTriangle(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material, textureCoords, firstIndexTex, indextex2, lastIndexTex);
 
 		for (int i = 3; i < polygon.size(); ++i)
 		{
@@ -343,46 +295,7 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 			const Vector3D<double>& nextPoint = vertices[nextIndexVertex];
 			const Vector3D<double>& nextNormal = normals[nextIndexNormal];
 
-			triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal, *material);
-
-
-			if (firstIndexTex >= 0)
-			{
-				triangle->U1 = textureCoords[firstIndexTex].first;
-				triangle->V1 = textureCoords[firstIndexTex].second;
-			}
-			else
-			{
-				triangle->U1 = -1;
-				triangle->V1 = -1;
-			}
-
-			if (lastIndexTex >= 0)
-			{
-				triangle->U2 = textureCoords[lastIndexTex].first;
-				triangle->V2 = textureCoords[lastIndexTex].second;
-			}
-			else
-			{
-				triangle->U2 = -1;
-				triangle->V2 = -1;
-			}
-
-
-			if (nextIndexTex >= 0)
-			{
-				triangle->U3 = textureCoords[nextIndexTex].first;
-				triangle->V3 = textureCoords[nextIndexTex].second;
-			}
-			else
-			{
-				triangle->U3 = -1;
-				triangle->V3 = -1;
-			}
-
-			triangle->SetUseInterpolation();
-
-			triangles.emplace_back(triangle);
+			AddTriangle(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal, *material, textureCoords, firstIndexTex, lastIndexTex, nextIndexTex);
 
 			lastPoint = nextPoint;
 			lastIndexTex = nextIndexTex;
@@ -390,6 +303,49 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 		}
 	}
 }
+
+void ObjLoader::AddTriangle(const Vector3D<double>& firstPoint, const Vector3D<double>& secondPoint, const Vector3D<double>& lastPoint, const Vector3D<double>& firstNormal, const Vector3D<double>& secondNormal, const Vector3D<double>& lastNormal, ObjMaterial& material, const std::vector<std::pair<double, double>>& textureCoords, long long int firstIndexTex, long long int indextex2, long long int lastIndexTex)
+{
+	std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, secondPoint, lastPoint, firstNormal, secondNormal, lastNormal, material);
+
+	if (firstIndexTex >= 0)
+	{
+		triangle->U1 = textureCoords[firstIndexTex].first;
+		triangle->V1 = textureCoords[firstIndexTex].second;
+	}
+	else
+	{
+		triangle->U1 = -1;
+		triangle->V1 = -1;
+	}
+
+	if (indextex2 >= 0)
+	{
+		triangle->U2 = textureCoords[indextex2].first;
+		triangle->V2 = textureCoords[indextex2].second;
+	}
+	else
+	{
+		triangle->U2 = -1;
+		triangle->V2 = -1;
+	}
+
+
+	if (lastIndexTex >= 0)
+	{
+		triangle->U3 = textureCoords[lastIndexTex].first;
+		triangle->V3 = textureCoords[lastIndexTex].second;
+	}
+	else
+	{
+		triangle->U3 = -1;
+		triangle->V3 = -1;
+	}
+
+	triangle->SetUseInterpolation();
+	triangles.emplace_back(triangle);
+}
+
 
 
 bool ObjLoader::IsConcaveVertex(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int cp, double& sine)
