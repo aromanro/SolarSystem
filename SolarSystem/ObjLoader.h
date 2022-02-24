@@ -26,8 +26,6 @@ public:
 	static bool IsConcaveVertex(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int pointIndex, double& sine);
 	static bool IsConcave(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int& pointIndex);
 
-	static bool AddTriangle(int ind1, int ind2, int ind3, const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const Material& material, std::vector<std::shared_ptr<OpenGL::Triangle>>& triangles);
-
 	// TODO: add rotate, scale, translate...
 	void Translate(const Vector3D<double>& t)
 	{
