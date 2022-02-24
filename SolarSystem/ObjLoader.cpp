@@ -212,80 +212,13 @@ bool ObjLoader::Load(const std::string& name, bool center)
 
 	// from here start building the object from the info loaded from the .obj file
 
+	SetTriangles(textureCoords, normals, vertices, polygons);
 
-	// first, create the materials
+	return true;
+}
 
-	/*
-	const auto WhiteMaterial = std::make_shared<Materials::Lambertian>(std::dynamic_pointer_cast<Textures::Texture>(std::make_shared<Textures::ColorTexture>(Color(0.73, 0.73, 0.73))));
-
-	std::map<std::string, std::shared_ptr<Materials::Material>> materialsMap;
-
-	bool addSlash = false;
-	if (!dir.empty() && dir.at(dir.size() - 1) != '\\' && dir.at(dir.size() - 1) != '/')
-		addSlash = true;
-
-
-	for (const auto& mat : materials)
-	{
-		if (mat.second.diffuseTexture.empty())
-		{
-			auto tex = std::dynamic_pointer_cast<Textures::Texture>(std::make_shared<Textures::ColorTexture>((mat.second.IsTransparent() && mat.second.diffuseColor.VeryAbsorbing()) ? mat.second.specularColor : mat.second.diffuseColor));
-
-			if (mat.second.IsTransparent()) materialsMap[mat.first] = std::make_shared<Materials::Dielectric>(mat.second.refractionCoeff <= 1. ? 1.5 : mat.second.refractionCoeff, tex);
-			else
-			{
-				if (mat.second.IsSpecular())
-				{
-					std::shared_ptr<Textures::Texture> specTexture;
-
-					if (mat.second.specularTexture.empty())
-						specTexture = std::dynamic_pointer_cast<Textures::Texture>(std::make_shared<Textures::ColorTexture>(mat.second.specularColor));
-					else
-					{
-						bool addSlashNeed = addSlash && mat.second.specularTexture.at(0) != '\\' && mat.second.specularTexture.at(0) != '/';
-						const std::string tname = dir + (addSlashNeed ? "\\" : "") + mat.second.specularTexture;
-						specTexture = std::make_shared<Textures::ImageTexture>(tname);
-					}
-
-					const double exponent = mat.second.exponent / 10.;
-					materialsMap[mat.first] = std::make_shared<Materials::AnisotropicPhong>(exponent, exponent, tex, specTexture);
-				}
-				else materialsMap[mat.first] = std::make_shared<Materials::Lambertian>(tex);
-			}
-		}
-		else
-		{
-			bool addSlashNeed = addSlash && mat.second.diffuseTexture.at(0) != '\\' && mat.second.diffuseTexture.at(0) != '/';
-			const std::string tname = dir + (addSlashNeed ? "\\" : "") + mat.second.diffuseTexture;
-			auto imTex = std::make_shared<Textures::ImageTexture>(tname);
-
-			auto tex = std::dynamic_pointer_cast<Textures::Texture>(imTex);
-
-			if (mat.second.IsTransparent()) materialsMap[mat.first] = std::make_shared<Materials::Dielectric>(mat.second.refractionCoeff <= 1. ? 1.5 : mat.second.refractionCoeff, tex);
-			else
-			{
-				if (mat.second.IsSpecular())
-				{
-					std::shared_ptr<Textures::Texture> specTexture;
-
-					if (mat.second.specularTexture.empty())
-						specTexture = std::dynamic_pointer_cast<Textures::Texture>(std::make_shared<Textures::ColorTexture>(mat.second.specularColor));
-					else
-					{
-						addSlashNeed = addSlash && mat.second.specularTexture.at(0) != '\\' && mat.second.specularTexture.at(0) != '/';
-						const std::string tname = dir + (addSlashNeed ? "\\" : "") + mat.second.specularTexture;
-						specTexture = std::make_shared<Textures::ImageTexture>(tname);
-					}
-
-					const double exponent = mat.second.exponent / 10.;
-					materialsMap[mat.first] = std::make_shared<Materials::AnisotropicPhong>(exponent, exponent, tex, specTexture);
-				}
-				else materialsMap[mat.first] = std::make_shared<Materials::Lambertian>(tex);
-			}
-		}
-	}
-	*/
-
+void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textureCoords, const std::vector<Vector3D<double>>& normals, const std::vector<Vector3D<double>>& vertices, const std::vector<std::pair<Polygon, std::string>>& polygons)
+{
 	ObjMaterial whiteMaterial; // it's gray, but whatever
 
 	// now build the object out of polygons, by splitting them to triangles
@@ -353,7 +286,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 		long long int lastIndexTex = indextex3;
 		Vector3D<double> lastNormal(normals[indexnormal3]);
 
-		std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal , *material);
+		std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material);
 
 		if (firstIndexTex >= 0)
 		{
@@ -456,10 +389,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 			lastNormal = nextNormal;
 		}
 	}
-
-	return true;
 }
-
 
 
 bool ObjLoader::IsConcaveVertex(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int cp, double& sine)

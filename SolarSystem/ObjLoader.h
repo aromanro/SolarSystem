@@ -50,5 +50,8 @@ public:
 
 	std::map<std::string, ObjMaterial> materials;
 	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
+
+protected:
+	void SetTriangles(const std::vector<std::pair<double, double>>& textureCoords, const std::vector<Vector3D<double>>& normals, const std::vector<Vector3D<double>>& vertices, const std::vector<std::pair<Polygon, std::string>>& polygons);
 };
 
