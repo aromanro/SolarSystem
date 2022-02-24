@@ -48,7 +48,7 @@ public:
 
 	std::string dir;
 
-	std::map<std::string, Material> materials;
+	std::map<std::string, ObjMaterial> materials;
 	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
 };
 

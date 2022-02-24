@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Material.h"
 
-Material::Material()
+ObjMaterial::ObjMaterial()
 {
 	Clear();
 }

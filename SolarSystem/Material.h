@@ -3,10 +3,10 @@
 #include <string>
 #include "Color.h"
 
-class Material
+class ObjMaterial
 {
 public:
-	Material();
+	ObjMaterial();
 
 	std::string name;
 
@@ -85,6 +85,24 @@ public:
 
 		dissolve = 1;
 		refractionCoeff = 0;
+	}
+
+	void FixColors()
+	{
+		if (ambientColor.TotalAbsorbant())
+		{
+			ambientColor = diffuseColor;
+			if (ambientTexture.empty())
+				ambientTexture = diffuseTexture;
+		}
+
+		if (diffuseColor.TotalAbsorbant())
+		{
+			diffuseColor = ambientColor;
+
+			if (diffuseTexture.empty())
+				diffuseTexture = ambientTexture;
+		}
 	}
 
 	bool IsEmpty() const { return name.empty(); }

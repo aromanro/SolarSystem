@@ -28,7 +28,7 @@ namespace OpenGL {
 		void LoadAndGenerateMipmaps(const ObjLoader& loader, int startIndex);
 		int SetVerticesData(const ObjLoader& loader, int startIndex, int triangleCount);
 
-		Material material;
+		ObjMaterial material;
 		int vertexCount = 0;
 
 		std::shared_ptr<Texture> ambientTexture;

@@ -286,7 +286,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 	}
 	*/
 
-	Material whiteMaterial; // it's gray, but whatever
+	ObjMaterial whiteMaterial; // it's gray, but whatever
 
 	// now build the object out of polygons, by splitting them to triangles
 	// splits it 'triangle-fan' style
@@ -308,7 +308,7 @@ bool ObjLoader::Load(const std::string& name, bool center)
 			material = WhiteMaterial;
 		*/
 
-		Material* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
+		ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
 
 
 		int startPoint = 0;
@@ -563,7 +563,7 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 
 	if (!infile) return false;
 
-	Material mat;
+	ObjMaterial mat;
 
 	std::string line;
 	while (std::getline(infile, line))
@@ -731,7 +731,7 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 					int i;
 					std::istringstream sstream(line);
 					sstream >> i;
-					mat.illumination = Material::Illumination(i);
+					mat.illumination = ObjMaterial::Illumination(i);
 				}
 			}
 			break;
@@ -801,21 +801,7 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 				{
 					if (!mat.IsEmpty())
 					{
-						// correct some things
-						if (mat.ambientColor.TotalAbsorbant())
-						{
-							mat.ambientColor = mat.diffuseColor;
-							if (mat.ambientTexture.empty())
-								mat.ambientTexture = mat.diffuseTexture;
-						}
-
-						if (mat.diffuseColor.TotalAbsorbant())
-						{
-							mat.diffuseColor = mat.ambientColor;
-
-							if (mat.diffuseTexture.empty())
-								mat.diffuseTexture = mat.ambientTexture;
-						}
+						mat.FixColors();
 
 						// save the old filled one
 						materials[mat.name] = mat;
@@ -841,24 +827,11 @@ bool ObjLoader::LoadMaterial(const std::string& name, const std::string& dirPath
 		}
 	}
 
-	// correct some things
-	if (mat.ambientColor.TotalAbsorbant())
-	{
-		mat.ambientColor = mat.diffuseColor;
-		if (mat.ambientTexture.empty())
-			mat.ambientTexture = mat.diffuseTexture;
-	}
-
-	if (mat.diffuseColor.TotalAbsorbant())
-	{
-		mat.diffuseColor = mat.ambientColor;
-
-		if (mat.diffuseTexture.empty())
-			mat.diffuseTexture = mat.ambientTexture;
-	}
-
 	if (!mat.IsEmpty() && materials.find(mat.name) == materials.end())
+	{
+		mat.FixColors();
 		materials[mat.name] = mat;
+	}		
 
 	return true;
 }
