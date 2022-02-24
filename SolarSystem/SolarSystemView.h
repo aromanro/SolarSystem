@@ -131,6 +131,8 @@ protected:
 
 private:
 	void RenderScene();
+	void RenderPlanet(BodyPositionList::iterator& it, BodyPropList::iterator& pit, BodyList::iterator& bit);
+
 	void RenderShadowScene();
 	void RenderSky();
 

@@ -476,109 +476,7 @@ void CSolarSystemView::RenderScene()
 	auto bit = doc->m_SolarSystem.m_Bodies.begin();
 	auto pit = doc->m_SolarSystem.m_BodyProperties.begin();		
 	for (auto it = m_BodiesPosition.begin(); it != m_BodiesPosition.end(); ++it, ++pit, ++bit)
-	{
-		glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
-
-
-		// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
-		// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
-
-		if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, pos);
-
-		// ****************************************************************************************************************************
-
-		const double scale = bit->m_Radius * pit->scale / AGLU;
-		const glm::dmat4 modelMatHP = glm::rotate(glm::rotate(glm::scale(glm::translate(glm::dmat4(1), pos), glm::dvec3(scale, scale, scale)), pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0)), it->rotation, glm::dvec3(0, 0, 1));
-
-		const glm::mat4 modelMat(modelMatHP);
-		const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
-
-		glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
-		glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
-		glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);
-		
-		if (!pit->isSun)
-		{
-			for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
-			{
-				glm::dvec3 lightDir = program->lights[i].lightPos - pos;
-
-				// linear instead of quadratic and using a coefficient that provides enough light even for Pluto
-				const float atten = static_cast<float>(1. / (1. + lightCoeff * glm::length(lightDir)));
-
-				lightDir = glm::normalize(lightDir);
-				glUniform3f(program->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
-				glUniform1f(program->lights[i].attenPos, atten);
-			}
-		}
-
-		if (theApp.options.drawTextures)
-		{
-			if (pit->texture)
-			{
-				pit->texture->Bind();
-				glUniform1i(program->useTextLocation, 1);
-			}
-			else
-			{
-				glUniform1i(program->useTextLocation, 0);
-				glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
-			}
-
-			if (pit->transparentTexture)
-			{
-				pit->transparentTexture->Bind(1);
-				glUniform1i(program->useTransparentTextLocation, 1);
-
-				if (pit->transparentTextureAlpha)
-					glUniform1i(program->alphaInTransparentTexture, 1);
-				else
-					glUniform1i(program->alphaInTransparentTexture, 0);
-			}
-			else
-			{
-				glUniform1i(program->useTransparentTextLocation, 0);
-				glUniform1i(program->alphaInTransparentTexture, 0);
-			}
-
-			if (pit->shadowTexture)
-			{
-				pit->shadowTexture->Bind(2);
-				glUniform1i(program->useShadowTextLocation, 1);
-			}
-			else
-				glUniform1i(program->useShadowTextLocation, 0);
-
-
-			if (pit->specularTexture)
-			{
-				pit->specularTexture->Bind(3);
-				glUniform1i(program->useSpecularTextLocation, 1);
-			}
-			else
-				glUniform1i(program->useSpecularTextLocation, 0);
-
-			if (pit->normalTexture)
-			{
-				pit->normalTexture->Bind(4);
-				glUniform1i(program->useNormalTextLocation, 1);
-			}
-			else
-				glUniform1i(program->useNormalTextLocation, 0);
-		}
-		else
-		{
-			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
-			glUniform1i(program->useTextLocation, 0);
-			glUniform1i(program->useTransparentTextLocation, 0);
-			glUniform1i(program->alphaInTransparentTexture, 0);
-			glUniform1i(program->useShadowTextLocation, 0);
-			glUniform1i(program->useSpecularTextLocation, 0);
-			glUniform1i(program->useNormalTextLocation, 0);
-		}
-
-		sphere->Draw();
-	}
+		RenderPlanet(it, pit, bit);
 
 	if (spaceship && spaceshipProgram)
 	{
@@ -596,6 +494,112 @@ void CSolarSystemView::RenderScene()
 	if (theApp.options.showBillboard)
 		DisplayBilboard();
 }
+
+void CSolarSystemView::RenderPlanet(BodyPositionList::iterator& it, BodyPropList::iterator& pit, BodyList::iterator& bit)
+{
+	glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
+
+
+	// THIS IS A HACK TO NICELY DISPLAY THE SOLAR SYSTEM 
+	// if the moon is inside the planet because of the scaling, the distance from the planet to it is scaled up, too
+
+	if (pit->isMoon && pit->scaleDistance != 1.) MoonHack(bit, pit, pos);
+
+	// ****************************************************************************************************************************
+
+	const double scale = bit->m_Radius * pit->scale / AGLU;
+	const glm::dmat4 modelMatHP = glm::rotate(glm::rotate(glm::scale(glm::translate(glm::dmat4(1), pos), glm::dvec3(scale, scale, scale)), pit->tilt * M_PI / 180., glm::dvec3(0, 1, 0)), it->rotation, glm::dvec3(0, 0, 1));
+
+	const glm::mat4 modelMat(modelMatHP);
+	const glm::mat3 transpInvModelMat(glm::transpose(glm::inverse(modelMatHP)));
+
+	glUniformMatrix4fv(program->modelMatLocation, 1, GL_FALSE, value_ptr(modelMat));
+	glUniformMatrix3fv(program->transpInvModelMatLocation, 1, GL_FALSE, value_ptr(transpInvModelMat));
+	glUniform1i(program->isSunLocation, pit->isSun ? 1 : 0);
+
+	if (!pit->isSun)
+	{
+		for (unsigned int i = 0; i < (program->nrlights == 0 ? 1 : program->nrlights); ++i)
+		{
+			glm::dvec3 lightDir = program->lights[i].lightPos - pos;
+
+			// linear instead of quadratic and using a coefficient that provides enough light even for Pluto
+			const float atten = static_cast<float>(1. / (1. + lightCoeff * glm::length(lightDir)));
+
+			lightDir = glm::normalize(lightDir);
+			glUniform3f(program->lights[i].lightDirPos, static_cast<float>(lightDir.x), static_cast<float>(lightDir.y), static_cast<float>(lightDir.z));
+			glUniform1f(program->lights[i].attenPos, atten);
+		}
+	}
+
+	if (theApp.options.drawTextures)
+	{
+		if (pit->texture)
+		{
+			pit->texture->Bind();
+			glUniform1i(program->useTextLocation, 1);
+		}
+		else
+		{
+			glUniform1i(program->useTextLocation, 0);
+			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
+		}
+
+		if (pit->transparentTexture)
+		{
+			pit->transparentTexture->Bind(1);
+			glUniform1i(program->useTransparentTextLocation, 1);
+
+			if (pit->transparentTextureAlpha)
+				glUniform1i(program->alphaInTransparentTexture, 1);
+			else
+				glUniform1i(program->alphaInTransparentTexture, 0);
+		}
+		else
+		{
+			glUniform1i(program->useTransparentTextLocation, 0);
+			glUniform1i(program->alphaInTransparentTexture, 0);
+		}
+
+		if (pit->shadowTexture)
+		{
+			pit->shadowTexture->Bind(2);
+			glUniform1i(program->useShadowTextLocation, 1);
+		}
+		else
+			glUniform1i(program->useShadowTextLocation, 0);
+
+
+		if (pit->specularTexture)
+		{
+			pit->specularTexture->Bind(3);
+			glUniform1i(program->useSpecularTextLocation, 1);
+		}
+		else
+			glUniform1i(program->useSpecularTextLocation, 0);
+
+		if (pit->normalTexture)
+		{
+			pit->normalTexture->Bind(4);
+			glUniform1i(program->useNormalTextLocation, 1);
+		}
+		else
+			glUniform1i(program->useNormalTextLocation, 0);
+	}
+	else
+	{
+		glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
+		glUniform1i(program->useTextLocation, 0);
+		glUniform1i(program->useTransparentTextLocation, 0);
+		glUniform1i(program->alphaInTransparentTexture, 0);
+		glUniform1i(program->useShadowTextLocation, 0);
+		glUniform1i(program->useSpecularTextLocation, 0);
+		glUniform1i(program->useNormalTextLocation, 0);
+	}
+
+	sphere->Draw();
+}
+
 
 void CSolarSystemView::RenderShadowScene()
 {
