@@ -495,7 +495,7 @@ void CSolarSystemView::RenderScene()
 		DisplayBilboard();
 }
 
-void CSolarSystemView::RenderPlanet(BodyPositionList::iterator& it, BodyPropList::iterator& pit, BodyList::iterator& bit)
+void CSolarSystemView::RenderPlanet(const BodyPositionList::iterator& it, const BodyPropList::iterator& pit, const BodyList::iterator& bit)
 {
 	glm::dvec3 pos(it->m_Position.X / AGLU, it->m_Position.Y / AGLU, it->m_Position.Z / AGLU);
 
@@ -532,6 +532,13 @@ void CSolarSystemView::RenderPlanet(BodyPositionList::iterator& it, BodyPropList
 		}
 	}
 
+	SetTextures(pit);
+
+	sphere->Draw();
+}
+
+void CSolarSystemView::SetTextures(const BodyPropList::iterator& pit)
+{
 	if (theApp.options.drawTextures)
 	{
 		if (pit->texture)
@@ -587,17 +594,7 @@ void CSolarSystemView::RenderPlanet(BodyPositionList::iterator& it, BodyPropList
 			glUniform1i(program->useNormalTextLocation, 0);
 	}
 	else
-	{
-		glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
-		glUniform1i(program->useTextLocation, 0);
-		glUniform1i(program->useTransparentTextLocation, 0);
-		glUniform1i(program->alphaInTransparentTexture, 0);
-		glUniform1i(program->useShadowTextLocation, 0);
-		glUniform1i(program->useSpecularTextLocation, 0);
-		glUniform1i(program->useNormalTextLocation, 0);
-	}
-
-	sphere->Draw();
+		program->UnsetTextures(pit->color);
 }
 
 
