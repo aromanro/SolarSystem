@@ -231,78 +231,86 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 		Polygon polygon = polygonpair.first;
 		const std::string& matName = polygonpair.second;
 
-		ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
-
-
-		int startPoint = 0;
-
-		// if there is only one reflex interior angle, this works, if not, it's a matter of luck
-
-		IsConcave(polygon, vertices, startPoint);
-
-
-		// from here splitting begins
-		// if the polygon is convex, from the first point
-		// if it's concave, from a point picked above
-
-		// a more general method would be 'ear clipping', but definitively I won't have patience for that, it's boring
-		// also it's worth looking into "Optimal convex decompositions" by Bernard Chazelle and David Dobkin - a concave polygon can be split into convex ones
-
-		const size_t indexvertex1 = std::get<0>(polygon[startPoint]);
-		const long long int indextex1 = std::get<1>(polygon[startPoint]);
-		const long long int indexnormal1 = std::get<2>(polygon[startPoint]);
-
-		const size_t indexvertex2 = std::get<0>(polygon[(startPoint + 1ULL) % polygon.size()]);
-		const long long int indextex2 = std::get<1>(polygon[(startPoint + 1ULL) % polygon.size()]);
-		const long long int indexnormal2 = std::get<2>(polygon[(startPoint + 1ULL) % polygon.size()]);
-
-		const size_t indexvertex3 = std::get<0>(polygon[(startPoint + 2ULL) % polygon.size()]);
-		const long long int indextex3 = std::get<1>(polygon[(startPoint + 2ULL) % polygon.size()]);
-		const long long int indexnormal3 = std::get<2>(polygon[(startPoint + 2ULL) % polygon.size()]);
-
-		if (indexvertex1 >= vertices.size()) break;
-		if (indexvertex2 >= vertices.size()) break;
-		if (indexvertex3 >= vertices.size()) break;
-
-		if (indexnormal1 >= static_cast<long long int>(normals.size()) || indexnormal1 < 0) break;
-		if (indexnormal2 >= static_cast<long long int>(normals.size()) || indexnormal2 < 0) break;
-		if (indexnormal3 >= static_cast<long long int>(normals.size()) || indexnormal3 < 0) break;
-
-		const Vector3D<double> firstPoint = vertices[indexvertex1];
-		const long long int firstIndexTex = indextex1;
-		const Vector3D<double> firstNormal = normals[indexnormal1];
-
-		Vector3D<double> lastPoint(vertices[indexvertex3]);
-		long long int lastIndexTex = indextex3;
-		Vector3D<double> lastNormal(normals[indexnormal3]);
-
-		AddTriangle(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material, textureCoords, firstIndexTex, indextex2, lastIndexTex);
-
-		for (int i = 3; i < polygon.size(); ++i)
-		{
-			const size_t ind = (static_cast<size_t>(startPoint) + i) % polygon.size();
-
-			const size_t nextIndexVertex = std::get<0>(polygon[ind]);
-			if (nextIndexVertex >= vertices.size())
-				break;
-
-			const long long int nextIndexNormal = std::get<2>(polygon[ind]);
-			if (nextIndexNormal >= static_cast<long long int>(normals.size()) || nextIndexNormal < 0)
-				break;
-
-			const long long int nextIndexTex = std::get<1>(polygon[ind]);
-
-			const Vector3D<double>& nextPoint = vertices[nextIndexVertex];
-			const Vector3D<double>& nextNormal = normals[nextIndexNormal];
-
-			AddTriangle(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal, *material, textureCoords, firstIndexTex, lastIndexTex, nextIndexTex);
-
-			lastPoint = nextPoint;
-			lastIndexTex = nextIndexTex;
-			lastNormal = nextNormal;
-		}
+		if (!SplitPolygon(polygon, vertices, normals, textureCoords, matName, whiteMaterial)) break;
 	}
 }
+
+bool ObjLoader::SplitPolygon(Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const std::string& matName, ObjMaterial& whiteMaterial)
+{
+	ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
+
+
+	int startPoint = 0;
+
+	// if there is only one reflex interior angle, this works, if not, it's a matter of luck
+
+	IsConcave(polygon, vertices, startPoint);
+
+
+	// from here splitting begins
+	// if the polygon is convex, from the first point
+	// if it's concave, from a point picked above
+
+	// a more general method would be 'ear clipping', but definitively I won't have patience for that, it's boring
+	// also it's worth looking into "Optimal convex decompositions" by Bernard Chazelle and David Dobkin - a concave polygon can be split into convex ones
+
+	const size_t indexvertex1 = std::get<0>(polygon[startPoint]);
+	const long long int indextex1 = std::get<1>(polygon[startPoint]);
+	const long long int indexnormal1 = std::get<2>(polygon[startPoint]);
+
+	const size_t indexvertex2 = std::get<0>(polygon[(startPoint + 1ULL) % polygon.size()]);
+	const long long int indextex2 = std::get<1>(polygon[(startPoint + 1ULL) % polygon.size()]);
+	const long long int indexnormal2 = std::get<2>(polygon[(startPoint + 1ULL) % polygon.size()]);
+
+	const size_t indexvertex3 = std::get<0>(polygon[(startPoint + 2ULL) % polygon.size()]);
+	const long long int indextex3 = std::get<1>(polygon[(startPoint + 2ULL) % polygon.size()]);
+	const long long int indexnormal3 = std::get<2>(polygon[(startPoint + 2ULL) % polygon.size()]);
+
+	if (indexvertex1 >= vertices.size()) return false;
+	if (indexvertex2 >= vertices.size()) return false;
+	if (indexvertex3 >= vertices.size()) return false;
+
+	if (indexnormal1 >= static_cast<long long int>(normals.size()) || indexnormal1 < 0) return false;
+	if (indexnormal2 >= static_cast<long long int>(normals.size()) || indexnormal2 < 0) return false;
+	if (indexnormal3 >= static_cast<long long int>(normals.size()) || indexnormal3 < 0) return false;
+
+	const Vector3D<double> firstPoint = vertices[indexvertex1];
+	const long long int firstIndexTex = indextex1;
+	const Vector3D<double> firstNormal = normals[indexnormal1];
+
+	Vector3D<double> lastPoint(vertices[indexvertex3]);
+	long long int lastIndexTex = indextex3;
+	Vector3D<double> lastNormal(normals[indexnormal3]);
+
+	AddTriangle(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material, textureCoords, firstIndexTex, indextex2, lastIndexTex);
+
+	for (int i = 3; i < polygon.size(); ++i)
+	{
+		const size_t ind = (static_cast<size_t>(startPoint) + i) % polygon.size();
+
+		const size_t nextIndexVertex = std::get<0>(polygon[ind]);
+		if (nextIndexVertex >= vertices.size())
+			break;
+
+		const long long int nextIndexNormal = std::get<2>(polygon[ind]);
+		if (nextIndexNormal >= static_cast<long long int>(normals.size()) || nextIndexNormal < 0)
+			break;
+
+		const long long int nextIndexTex = std::get<1>(polygon[ind]);
+
+		const Vector3D<double>& nextPoint = vertices[nextIndexVertex];
+		const Vector3D<double>& nextNormal = normals[nextIndexNormal];
+
+		AddTriangle(firstPoint, lastPoint, nextPoint, firstNormal, lastNormal, nextNormal, *material, textureCoords, firstIndexTex, lastIndexTex, nextIndexTex);
+
+		lastPoint = nextPoint;
+		lastIndexTex = nextIndexTex;
+		lastNormal = nextNormal;
+	}
+
+	return true;
+}
+
 
 void ObjLoader::AddTriangle(const Vector3D<double>& firstPoint, const Vector3D<double>& secondPoint, const Vector3D<double>& lastPoint, const Vector3D<double>& firstNormal, const Vector3D<double>& secondNormal, const Vector3D<double>& lastNormal, ObjMaterial& material, const std::vector<std::pair<double, double>>& textureCoords, long long int firstIndexTex, long long int indextex2, long long int lastIndexTex)
 {
