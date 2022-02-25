@@ -316,7 +316,7 @@ std::shared_ptr<CImage> BodyProperties::Load(const CString& name)
 
 			skin->Save(CString(str.c_str()));
 		}
-		*/
+		*/		
 
 		std::shared_ptr<CImage> sp(skin);
 		texturesMap.emplace(name, sp);

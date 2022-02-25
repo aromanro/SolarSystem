@@ -211,6 +211,7 @@ namespace OpenGL {
 				if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 				else diffuse = vec4(diffuseColor, 1.0f);
 
+				
 				float proj = dot(normal, lightDir);
 				float diff = max(proj, 0.0);
 
@@ -255,15 +256,12 @@ namespace OpenGL {
 					vec3 viewDir = normalize(viewVec);
 					vec3 normal = normalize(Normal);
 
+					// this is done because some objs have some normals oriented towards the inside of the object
 					if (dot(viewDir, normal) < 0) normal = -normal;
 
 					vec3 light = vec3(0.0f);
-
 					for (int i = 0; i < NRLIGHTS; ++i)
-					{
 						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal);
-					}
-
 					light = clamp(light, 0, 1);				
 
 					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);

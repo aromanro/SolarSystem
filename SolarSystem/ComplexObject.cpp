@@ -88,10 +88,18 @@ namespace OpenGL {
 
 		setData(vertices, vertexCount * sizeof(GLfloat) * STRIDE_SIZE);
 		// Link vertex attributes
+
+		// vertices
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, STRIDE_SIZE * sizeof(GLfloat), (GLvoid*)0);
+		// normals
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, STRIDE_SIZE * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+		
+		// texture coordinates
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, STRIDE_SIZE * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		delete[] vertices;
@@ -110,6 +118,13 @@ namespace OpenGL {
 			ambientTexture = BodyProperties::LoadTexture(fileName);
 			if (ambientTexture)
 				ambientTexture->GenerateMipmaps();
+			/*
+			else {
+				CString str = L"Ambient texture problem: ";
+				str += path.c_str();
+				AfxMessageBox(str);
+			}
+			*/
 		}
 
 		if (!material.diffuseTexture.empty())
@@ -119,6 +134,13 @@ namespace OpenGL {
 			diffuseTexture = BodyProperties::LoadTexture(fileName, 1);
 			if (diffuseTexture)
 				diffuseTexture->GenerateMipmaps();
+			/*
+			else {
+				CString str = L"Diffuse texture problem: ";
+				str += path.c_str();
+				AfxMessageBox(str);
+			}
+			*/
 		}
 
 		if (!material.specularTexture.empty())
@@ -128,6 +150,13 @@ namespace OpenGL {
 			specularTexture = BodyProperties::LoadTexture(fileName, 2);
 			if (specularTexture)
 				specularTexture->GenerateMipmaps();
+			/*
+			else {
+				CString str = L"Specular texture problem: ";
+				str += path.c_str();
+				AfxMessageBox(str);
+			}
+			*/
 		}
 
 		if (!material.exponentTexture.empty())
@@ -138,8 +167,16 @@ namespace OpenGL {
 			exponentTexture = BodyProperties::LoadTexture(fileName, 3/*, 8*/);
 			if (exponentTexture)
 				exponentTexture->GenerateMipmaps();
+			/*
+			else {
+				CString str = L"Exponent texture problem: ";
+				str += path.c_str();
+				AfxMessageBox(str);
+			}
+			*/
 		}
 
+		
 		if (!material.bumpTexture.empty())
 		{
 			const std::string path = loader.dir + material.bumpTexture;
@@ -147,6 +184,13 @@ namespace OpenGL {
 			bumpTexture = BodyProperties::LoadNormalTexture(fileName, 2, 4);
 			if (bumpTexture)
 				bumpTexture->GenerateMipmaps();
+			/*
+			else {
+				CString str = L"Bump texture problem: ";
+				str += path.c_str();
+				AfxMessageBox(str);
+			}
+			*/
 		}
 	}
 

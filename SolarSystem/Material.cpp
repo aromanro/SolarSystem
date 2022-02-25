@@ -36,6 +36,7 @@ void ObjMaterial::LoadLine(std::string& line)
 		LoadMap(line);
 		break;
 	case 'b':
+	case 'B':
 		LoadBumpLine(line);
 		break;
 	}
@@ -106,7 +107,7 @@ void ObjMaterial::LoadDissolveLine(std::string& line)
 void ObjMaterial::LoadBumpLine(std::string& line)
 {
 	std::string what = line.substr(0, 4);
-	if (what == "bump") // bump, see above map_bump, it's the same thing
+	if (what == "bump" || what == "Bump") // bump, see above map_bump, it's the same thing
 	{
 		line = line.substr(5);
 		bumpTexture = line;
@@ -221,16 +222,20 @@ void ObjMaterial::LoadMap(std::string& line)
 		FixLine(line);
 		exponentTexture = line;
 	}
-	else if (what == "map_d") // material dissolve is multiplied by the texture value
+	else if (what == "map_d " || what == "map_d\t") // material dissolve is multiplied by the texture value
 	{
 		line = line.substr(6);
 		FixLine(line);
 		dissolveTexture = line;
 	}
-	else if (what == "map_bump") // bump mapping, this probably should be implemented
+	else
 	{
-		line = line.substr(9);
-		FixLine(line);
-		bumpTexture = line;
+		what = line.substr(0, 8);
+		if (what == "map_bump" || what == "map_Bump") // bump mapping, this probably should be implemented
+		{
+			line = line.substr(9);
+			FixLine(line);
+			bumpTexture = line;
+		}
 	}
 }
