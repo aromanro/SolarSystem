@@ -103,6 +103,12 @@ public:
 			if (diffuseTexture.empty())
 				diffuseTexture = ambientTexture;
 		}
+
+		if (specularColor.TotalAbsorbant())
+		{
+			// setting it to 1,1,1 makes the obj I tested way too 'shiny'
+			specularColor = diffuseColor;
+		}
 	}
 
 	bool IsEmpty() const { return name.empty(); }

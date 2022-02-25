@@ -123,7 +123,7 @@ namespace OpenGL {
 			layout(location = 0) in vec3 position;
 			layout(location = 1) in vec3 normal;
 			layout(location = 2) in vec2 texCoord;
-			//layout(location = 3) in vec3 tangent;
+			layout(location = 3) in vec3 tangent;
 
 			uniform mat4 transformMat;
 			uniform mat4 modelMat;
@@ -132,7 +132,7 @@ namespace OpenGL {
 			out vec2 TexCoord;
 			out vec3 FragPos;
 			out vec3 Normal;
-			//out vec3 Tangent;
+			out vec3 Tangent;
 			//out vec3 Bitangent;
 
 			void main()
@@ -142,7 +142,7 @@ namespace OpenGL {
 				FragPos = vec3(modelMat * vec4(position, 1.0f));
 
 				Normal = normalize(transpInvModelMat * normal);
-				//Tangent = normalize(transpInvModelMat * tangent);
+				Tangent = normalize(transpInvModelMat * tangent);
 			}
 		));
 
@@ -199,47 +199,69 @@ namespace OpenGL {
 		    in vec2 TexCoord;
 			in vec3 FragPos;
 			in vec3 Normal;
+			in vec3 Tangent;
 
 			out vec4 outputColor;
 
 
-			vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal)
+			vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in int flipped)
 			{
 				// Diffuse shading
 				vec4 diffuse;
+				vec3 color;
+				float val;
 
 				if (useDiffuseTexture == 1) diffuse = texture(diffuseTexture, TexCoord) * vec4(diffuseColor, 1.0f);
 				else diffuse = vec4(diffuseColor, 1.0f);
-
 				
-				float proj = dot(normal, lightDir);
-				float diff = max(proj, 0.0);
+				vec3 halfwayDir = normalize(lightDir + viewDir);
+				if (1 == useBumpTexture) // don't use normal mapping if on the shadow side
+				{
+					// re-orhogonalize
+					vec3 tangent = normalize(Tangent - dot(Tangent, normal) * normal);
+					if (1 == flipped) tangent = -tangent;
+					vec3 bitangent = normalize(cross(normal, tangent));
 
-				vec3 color = diff * diffuse.xyz;
-				if (illumination < 2) return color;
+					mat3 TBN = mat3(tangent, bitangent, normal);
+
+					vec3 normalMapped = texture(bumpTexture, TexCoord).rgb * 2. - 1.;
+					normalMapped = normalize(TBN * normalMapped);
+
+					float diffMapped = max(dot(normalMapped, lightDir), 0.0);
+					color = diffMapped * diffuse.xyz;
+					if (illumination < 2) return color;
+
+					val = max(dot(normalMapped, halfwayDir), 0.0);
+				}
+				else
+				{
+					float proj = dot(normal, lightDir);
+					float diff = max(proj, 0.0);
+
+					color = diff * diffuse.xyz;
+					if (illumination < 2) return color;
+
+					val = max(dot(normal, halfwayDir), 0.0);
+				}
 
 				// Specular shading
-				vec3 halfwayDir = normalize(lightDir + viewDir);
-				
-				float val = max(dot(normal, halfwayDir), 0.0);
-
+				// I mixed a bit the specular color with the diffuse color (typically the specular color is white), it looks nicer to me
 				float e = exponent;
 				if (1 == useExponentTexture)
 					e *= texture(exponentTexture, TexCoord).x;
 
-				float spec = pow(val, e);				
+				float spec = pow(val, e);
 				if (1 == useSpecularTexture)
 				{
 					float specProc = texture(specularTexture, TexCoord)[0];
 					float oneMinusProc = 1. - specProc;
-					color = oneMinusProc * color + specProc * spec * specularColor;
+					color = oneMinusProc * color + specProc * spec * (0.7 * specularColor + 0.3 * diffuse.xyz);
 				}
 				else
-				{				
-					// no need to multiply them with weight factors, they seem to be already weighted in the obj file
-					color = color + spec * specularColor;
+				{
+					color = 0.7 * color  + 0.3 * spec * (0.7 * specularColor + 0.3 * diffuse.xyz);
 				}
-					
+
 				return color;
 			}
 
@@ -257,14 +279,19 @@ namespace OpenGL {
 					vec3 normal = normalize(Normal);
 
 					// this is done because some objs have some normals oriented towards the inside of the object
-					if (dot(viewDir, normal) < 0) normal = -normal;
+					int flipped = 0;
+					if (dot(viewDir, normal) < 0)
+					{
+						normal = -normal;
+						flipped = 1;
+					}
 
 					vec3 light = vec3(0.0f);
 					for (int i = 0; i < NRLIGHTS; ++i)
-						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal);
+						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, flipped);
 					light = clamp(light, 0, 1);				
 
-					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);
+					outputColor = 0.3 * ambient + 0.7 * vec4(light, 1.0f);
 				}
 				else
 				{
