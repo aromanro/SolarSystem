@@ -204,7 +204,7 @@ namespace OpenGL {
 			out vec4 outputColor;
 
 
-			vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal, in int flipped)
+			vec3 CalcLight(in vec3 lightDir, in vec3 viewDir, in vec3 normal)
 			{
 				// Diffuse shading
 				vec4 diffuse;
@@ -219,7 +219,6 @@ namespace OpenGL {
 				{
 					// re-orhogonalize
 					vec3 tangent = normalize(Tangent - dot(Tangent, normal) * normal);
-					if (1 == flipped) tangent = -tangent;
 					vec3 bitangent = normalize(cross(normal, tangent));
 
 					mat3 TBN = mat3(tangent, bitangent, normal);
@@ -279,16 +278,12 @@ namespace OpenGL {
 					vec3 normal = normalize(Normal);
 
 					// this is done because some objs have some normals oriented towards the inside of the object
-					int flipped = 0;
 					if (dot(viewDir, normal) < 0)
-					{
 						normal = -normal;
-						flipped = 1;
-					}
 
 					vec3 light = vec3(0.0f);
 					for (int i = 0; i < NRLIGHTS; ++i)
-						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal, flipped);
+						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal);
 					light = clamp(light, 0, 1);				
 
 					outputColor = 0.3 * ambient + 0.7 * vec4(light, 1.0f);
