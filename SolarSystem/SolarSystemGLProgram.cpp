@@ -449,9 +449,12 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				light = clamp(light, 0, 1);
 			}
 
+			// TODO: implement better gamma correction than the existing one
+			//float gamma = 2.2;
+			//light = pow(light, vec3(1.0 / gamma));
 
 			// also allow alpha blending, useful if I'll add a billboard
-			//outputColor = vec4(light, UseAlphaBlend == 1 ? theColor[3] : 1); // use this if you want to show the whole billboard, but transparent
+			//outputColor = vec4(light, UseAlphaBlend == 1 ? theColor[3] : 1); // use this if you want to show the whole billboard, but transparent						
 			
 			// use this if you only want to show the alpha blended text (no visible billboard, just the transparent text)
 			int transparent = (color[0] == 0 && color[1] == 0 && color[2] == 0) ? 1 : 0;

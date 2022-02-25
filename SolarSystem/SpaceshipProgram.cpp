@@ -254,11 +254,11 @@ namespace OpenGL {
 				{
 					float specProc = texture(specularTexture, TexCoord)[0];
 					float oneMinusProc = 1. - specProc;
-					color = oneMinusProc * color + specProc * spec * (0.7 * specularColor + 0.3 * diffuse.xyz);
+					color = oneMinusProc * color + specProc * spec * (0.8 * specularColor + 0.2 * diffuse.xyz);
 				}
 				else
 				{
-					color = 0.7 * color  + 0.3 * spec * (0.7 * specularColor + 0.3 * diffuse.xyz);
+					color = 0.7 * color  + 0.3 * spec * (0.8 * specularColor + 0.2 * diffuse.xyz);
 				}
 
 				return color;
@@ -286,7 +286,7 @@ namespace OpenGL {
 						light += Lights[i].atten * CalcLight(normalize(Lights[i].lightDir), viewDir, normal);
 					light = clamp(light, 0, 1);				
 
-					outputColor = 0.3 * ambient + 0.7 * vec4(light, 1.0f);
+					outputColor = 0.2 * ambient + 0.8 * vec4(light, 1.0f);
 				}
 				else
 				{
@@ -297,6 +297,10 @@ namespace OpenGL {
 
 					outputColor = diffuse;
 				}
+
+				// TODO: implement better gamma correction than the existing one
+				//float gamma = 2.2;
+				//outputColor.xyz = pow(outputColor.xyz, vec3(1.0 / gamma));
 			}
 		)), nrlights == 0 ? 1 : nrlights);
 
