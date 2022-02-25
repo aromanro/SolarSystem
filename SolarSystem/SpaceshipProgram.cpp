@@ -277,7 +277,7 @@ namespace OpenGL {
 					vec3 viewDir = normalize(viewVec);
 					vec3 normal = normalize(Normal);
 
-					// this is done because some objs have some normals oriented towards the inside of the object
+					// this is done because some objs have some normals oriented towards the inside of the object (also the order of vertices in polygons is reverted, I don't know what happens with the U,V coordinates)
 					if (dot(viewDir, normal) < 0)
 						normal = -normal;
 
