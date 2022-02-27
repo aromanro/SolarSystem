@@ -11,6 +11,7 @@
 Options::Options()
 	: gammaCorrection(false), showSkyBox(true), drawShadows(true), drawTextures(true),
 	translationSpeed(100), rotationSpeed(100), scrollSpeed(100), showBillboard(false),
+	gammaCorrectionCoeff(1.),
 	translate(0.2), scale(0.01), rotateX(0), rotateY(0), rotateZ(0)
 {
 }
@@ -42,6 +43,8 @@ bool Options::Load()
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"showBillboard", 0));
 	showBillboard = (res != 0 ? true : false);
 
+	gammaCorrectionCoeff = GetDouble(L"gammaCorrectionCoeff", 1.);
+
 	spaceshipObjFile = theApp.GetProfileString(L"options", L"spaceship");
 
 	translate = GetDouble(L"translate", 0.2);
@@ -66,6 +69,8 @@ bool Options::Save()
 	theApp.WriteProfileInt(L"options", L"scrollSpeed", (int)scrollSpeed);
 
 	theApp.WriteProfileInt(L"options", L"showBillboard", showBillboard ? 1 : 0);
+
+	theApp.WriteProfileBinary(L"options", L"gammaCorrectionCoeff", (LPBYTE)&gammaCorrectionCoeff, sizeof(double));
 
 	theApp.WriteProfileString(L"options", L"spaceship", spaceshipObjFile);
 

@@ -14,6 +14,8 @@ public:
 
 	bool showBillboard;
 
+	double gammaCorrectionCoeff;
+
 	// spaceship related
 	CString spaceshipObjFile;
 
