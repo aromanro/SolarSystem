@@ -13,7 +13,7 @@
 SolarSystemGLProgram::SolarSystemGLProgram()
 	: nrlights(0), matLocation(0), modelMatLocation(0), transpInvModelMatLocation(0), 
 	colorLocation(0), useTextLocation(0), useTransparentTextLocation(0), useShadowTextLocation(0), useSpecularTextLocation(0), useNormalTextLocation(0), alphaInTransparentTexture(0), isSunLocation(0), useAlphaBlend(0), viewPosLocation(0), farPlaneLoc(0),
-	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), specularTextureLoc(0), normalTextureLoc(0), depthMapLoc(0)
+	lightPosLoc(0), calcShadowsLoc(0), textureLoc(0), transparentTextureLoc(0), shadowTextureLoc(0), specularTextureLoc(0), normalTextureLoc(0), depthMapLoc(0), gammaLoc(0)
 {
 }
 
@@ -92,6 +92,8 @@ void SolarSystemGLProgram::getUniformsLocations()
 	normalTextureLoc = glGetUniformLocation(getID(), "normalTexture");
 
 	depthMapLoc = glGetUniformLocation(getID(), "depthMap");
+
+	gammaLoc = glGetUniformLocation(getID(), "gamma");
 }
 
 bool SolarSystemGLProgram::SetupShaders(unsigned int nrLights)
@@ -188,6 +190,8 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 		uniform vec3 viewPos;
 		uniform float farPlane;
 		uniform vec3 lightPos;
+
+		uniform float gamma;
 
 		in vec2 TexCoord;
 		in vec3 FragPos;
@@ -449,9 +453,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 				light = clamp(light, 0, 1);
 			}
 
-			// TODO: implement better gamma correction than the existing one
-			//float gamma = 2.2;
-			//light = pow(light, vec3(1.0 / gamma));
+			light = pow(light, vec3(1.0 / gamma));
 
 			// also allow alpha blending, useful if I'll add a billboard
 			//outputColor = vec4(light, UseAlphaBlend == 1 ? theColor[3] : 1); // use this if you want to show the whole billboard, but transparent						

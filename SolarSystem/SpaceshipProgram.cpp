@@ -113,6 +113,8 @@ namespace OpenGL {
 		bumpTextureLocation = glGetUniformLocation(getID(), "bumpTexture"); // map_bump or bump
 
 		viewPosLocation = glGetUniformLocation(getID(), "viewPos");
+
+		gammaLoc = glGetUniformLocation(getID(), "gamma");
 	}
 
 	bool SpaceshipProgram::SetupVertexShader()
@@ -195,6 +197,9 @@ namespace OpenGL {
 			uniform sampler2D bumpTexture; // map_bump or bump
 			
 			uniform vec3 viewPos;
+
+			uniform float gamma;
+
 
 		    in vec2 TexCoord;
 			in vec3 FragPos;
@@ -298,9 +303,7 @@ namespace OpenGL {
 					outputColor = diffuse;
 				}
 
-				// TODO: implement better gamma correction than the existing one
-				//float gamma = 2.2;
-				//outputColor.xyz = pow(outputColor.xyz, vec3(1.0 / gamma));
+				outputColor.xyz = pow(outputColor.xyz, vec3(1.0 / gamma));
 			}
 		)), nrlights == 0 ? 1 : nrlights);
 

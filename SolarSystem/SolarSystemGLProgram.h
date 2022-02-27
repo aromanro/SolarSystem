@@ -54,6 +54,8 @@ public:
 	GLint normalTextureLoc;
 	GLint depthMapLoc;
 
+	GLint gammaLoc;
+
 	// pass the color to be used instead of textures
 	void UnsetTextures(COLORREF color)
 	{
