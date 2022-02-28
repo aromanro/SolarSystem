@@ -23,10 +23,10 @@ protected:
 public:
 	virtual BOOL OnApply();
 	void ApplyValues();
-	afx_msg void OnBnClickedCheck1();
 	afx_msg void OnBnClickedCheck2();
 	afx_msg void OnBnClickedCheck3();
 	afx_msg void OnBnClickedCheck4();
+
 	int m_Gamma;
 	int m_SkyBox;
 	int m_Shadows;
@@ -36,4 +36,11 @@ private:
 	bool ShouldApply();
 public:
 	afx_msg void OnBnClickedCheck5();
+	afx_msg void OnBnClickedRadio1();
+	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedRadio3();
+	afx_msg void OnEnChangeEdit1();
+	CEdit m_GammaEdit;
+	double m_GammaCoeff;
+	virtual BOOL OnInitDialog();
 };

@@ -75,7 +75,7 @@ void CSolarSystemView::RenderScene()
 	Uniforms params(doc->m_SolarSystem, m_BodiesPosition, *program, program->nrlights);
 
 	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
-	glUniform1f(program->gammaLoc, (float)theApp.options.gammaCorrectionCoeff);
+	glUniform1f(program->gammaLoc, (float)(theApp.options.gammaCorrection == 2 ? theApp.options.gammaCorrectionCoeff : 1.));
 	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 
 	glUniform1i(program->useAlphaBlend, 0);
@@ -300,7 +300,7 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 		pos *= theApp.options.translate;
 
 		glUniform3f(spaceshipProgram->viewPosLocation, static_cast<float>(cameraX), static_cast<float>(cameraY), static_cast<float>(cameraZ));
-		glUniform1f(spaceshipProgram->gammaLoc, (float)theApp.options.gammaCorrectionCoeff);
+		glUniform1f(spaceshipProgram->gammaLoc, (float)(theApp.options.gammaCorrection == 2 ? theApp.options.gammaCorrectionCoeff : 1.));
 
 
 		// the camera matrix

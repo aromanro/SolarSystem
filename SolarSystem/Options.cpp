@@ -9,7 +9,7 @@
 #endif
 
 Options::Options()
-	: gammaCorrection(false), showSkyBox(true), drawShadows(true), drawTextures(true),
+	: gammaCorrection(0), showSkyBox(true), drawShadows(true), drawTextures(true),
 	translationSpeed(100), rotationSpeed(100), scrollSpeed(100), showBillboard(false),
 	gammaCorrectionCoeff(1.),
 	translate(0.2), scale(0.01), rotateX(0), rotateY(0), rotateZ(0)
@@ -24,10 +24,9 @@ Options::~Options()
 
 bool Options::Load()
 {
-	int res = static_cast<int>(theApp.GetProfileInt(L"options", L"gamma", 0));
-	gammaCorrection = (res != 0 ? true : false);
+	gammaCorrection = static_cast<int>(theApp.GetProfileInt(L"options", L"gamma", 0));
 
-	res = static_cast<int>(theApp.GetProfileInt(L"options", L"skyBox", 1));
+	int res = static_cast<int>(theApp.GetProfileInt(L"options", L"skyBox", 1));
 	showSkyBox = (res != 0 ? true : false);
 
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"shadows", 1));
@@ -59,7 +58,7 @@ bool Options::Load()
 
 bool Options::Save()
 {
-	theApp.WriteProfileInt(L"options", L"gamma", gammaCorrection ? 1 : 0);
+	theApp.WriteProfileInt(L"options", L"gamma", gammaCorrection);
 	theApp.WriteProfileInt(L"options", L"skyBox", showSkyBox ? 1 : 0);
 	theApp.WriteProfileInt(L"options", L"shadows", drawShadows ? 1 : 0);
 	theApp.WriteProfileInt(L"options", L"textures", drawTextures ? 1 : 0);

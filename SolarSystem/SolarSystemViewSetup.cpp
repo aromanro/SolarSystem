@@ -289,7 +289,7 @@ void CSolarSystemView::Setup()
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		if (theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
+		if (1 == theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -309,7 +309,7 @@ void CSolarSystemView::Setup()
 	else {
 		wglMakeCurrent(m_hDC, m_hRC);
 
-		if (theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
+		if (1 == theApp.options.gammaCorrection) glEnable(GL_FRAMEBUFFER_SRGB);
 		else glDisable(GL_FRAMEBUFFER_SRGB);
 	}
 

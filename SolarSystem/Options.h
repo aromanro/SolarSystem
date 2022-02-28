@@ -3,7 +3,7 @@
 class Options
 {
 public:
-	bool gammaCorrection;
+	int gammaCorrection;
 	bool showSkyBox;
 	bool drawShadows;
 	bool drawTextures;
