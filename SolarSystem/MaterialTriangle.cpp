@@ -10,5 +10,9 @@ namespace OpenGL {
 	{
 	}
 
+	MaterialTriangle::MaterialTriangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const ObjMaterial& mat)
+		: Triangle(a, b, c), material(mat)
+	{
+	}
 }
 
