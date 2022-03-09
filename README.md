@@ -1,5 +1,5 @@
 # SolarSystem
-A solar system simulator with velocity Verlet, using OpenGL for displaying.
+A solar system simulator with Verlet, using OpenGL for displaying.
 
 [![CodeFactor](https://www.codefactor.io/repository/github/aromanro/solarsystem/badge)](https://www.codefactor.io/repository/github/aromanro/solarsystem)
 
