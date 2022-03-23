@@ -65,7 +65,7 @@ namespace OpenGL {
 			const double f = 1. / (dU1 * dV2 - dU2 * dV1);
 
 			Vector3D<double> tangent(f * (dV2 * edge1.X - dV1 * edge2.X), f * (dV2 * edge1.Y - dV1 * edge2.Y), f * (dV2 * edge1.Z - dV1 * edge2.Z));
-			// this is tangent to the triangle, but not necessarily orhtogonal to the vertex normal (because it might not be orthogonal to the triangle plane), so orthogonalize it:
+			// this is tangent to the triangle, but not necessarily orthogonal to the vertex normal (because it might not be orthogonal to the triangle plane), so orthogonalize it:
 			tangent = tangent.Normalize();
 			// just subtract out the component along the normal, for each vertex, then normalize it again
 
@@ -108,7 +108,7 @@ namespace OpenGL {
 			vertices[baseIndex + 28] = static_cast<GLfloat>(triangle->U3);
 			vertices[baseIndex + 29] = static_cast<GLfloat>(triangle->V3);
 
-			vtangent = tangent - (tangent * triangle->normal2) * triangle->normal2;
+			vtangent = tangent - (tangent * triangle->normal3) * triangle->normal3;
 			vtangent = vtangent.Normalize();
 			vertices[baseIndex + 30] = static_cast<GLfloat>(vtangent.X);
 			vertices[baseIndex + 31] = static_cast<GLfloat>(vtangent.Y);
