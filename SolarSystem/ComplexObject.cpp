@@ -56,6 +56,7 @@ namespace OpenGL {
 
 			const Vector3D<double> edge1 = triangle->B - triangle->A;
 			const Vector3D<double> edge2 = triangle->C - triangle->A;
+
 			const double dU1 = triangle->U2 - triangle->U1;
 			const double dV1 = triangle->V2 - triangle->V1;
 			const double dU2 = triangle->U3 - triangle->U1;
@@ -66,7 +67,7 @@ namespace OpenGL {
 			Vector3D<double> tangent(f * (dV2 * edge1.X - dV1 * edge2.X), f * (dV2 * edge1.Y - dV1 * edge2.Y), f * (dV2 * edge1.Z - dV1 * edge2.Z));
 			// this is tangent to the triangle, but not necessarily orhtogonal to the vertex normal (because it might not be orthogonal to the triangle plane), so orthogonalize it:
 			tangent = tangent.Normalize();
-			// just subtract out the component along the normal, for eacy vertex, then normalize it again
+			// just subtract out the component along the normal, for each vertex, then normalize it again
 
 			vertices[baseIndex] = static_cast<GLfloat>(triangle->A.X);
 			vertices[baseIndex + 1] = static_cast<GLfloat>(triangle->A.Y);
@@ -78,7 +79,7 @@ namespace OpenGL {
 			vertices[baseIndex + 7] = static_cast<GLfloat>(triangle->V1);
 
 			Vector3D<double> vtangent = tangent - (tangent * triangle->normal1) * triangle->normal1;
-			vtangent = tangent.Normalize();
+			vtangent = vtangent.Normalize();
 			vertices[baseIndex + 8] = static_cast<GLfloat>(vtangent.X);
 			vertices[baseIndex + 9] = static_cast<GLfloat>(vtangent.Y);
 			vertices[baseIndex + 10] = static_cast<GLfloat>(vtangent.Z);
@@ -93,7 +94,7 @@ namespace OpenGL {
 			vertices[baseIndex + 18] = static_cast<GLfloat>(triangle->V2);
 
 			vtangent = tangent - (tangent * triangle->normal2) * triangle->normal2;
-			vtangent = tangent.Normalize();
+			vtangent = vtangent.Normalize();
 			vertices[baseIndex + 19] = static_cast<GLfloat>(vtangent.X);
 			vertices[baseIndex + 20] = static_cast<GLfloat>(vtangent.Y);
 			vertices[baseIndex + 21] = static_cast<GLfloat>(vtangent.Z);
@@ -108,7 +109,7 @@ namespace OpenGL {
 			vertices[baseIndex + 29] = static_cast<GLfloat>(triangle->V3);
 
 			vtangent = tangent - (tangent * triangle->normal2) * triangle->normal2;
-			vtangent = tangent.Normalize();
+			vtangent = vtangent.Normalize();
 			vertices[baseIndex + 30] = static_cast<GLfloat>(vtangent.X);
 			vertices[baseIndex + 31] = static_cast<GLfloat>(vtangent.Y);
 			vertices[baseIndex + 32] = static_cast<GLfloat>(vtangent.Z);
