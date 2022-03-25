@@ -533,11 +533,9 @@ void CSolarSystemView::OnUpdateBillboardTimer(CSolarSystemDoc* doc)
 	std::string str;
 	if (years)
 	{
-		str = std::to_string(years);
-		if (1 == years)
-			str += " year";
-		else
-			str += " years";
+		str = std::to_string(years) + " year";
+		if (1 != years)
+			str += "s";
 	}
 
 	if (days)
@@ -545,11 +543,9 @@ void CSolarSystemView::OnUpdateBillboardTimer(CSolarSystemDoc* doc)
 		if (str.size())
 			str += " ";
 
-		str += std::to_string(days);
-		if (1 == days)
-			str += " day";
-		else
-			str += " days";
+		str += std::to_string(days) + " day";
+		if (1 != days)
+			str += "s";
 	}
 
 	if (hours)
@@ -557,11 +553,9 @@ void CSolarSystemView::OnUpdateBillboardTimer(CSolarSystemDoc* doc)
 		if (str.size())
 			str += " ";
 
-		str += std::to_string(hours);
-		if (1 == hours)
-			str += " hour";
-		else
-			str += " hours";
+		str += std::to_string(hours) + " hour";
+		if (1 != hours)
+			str += "s";
 	}
 
 	SetBillboardText(str.c_str());
