@@ -60,7 +60,7 @@ namespace MolecularDynamics {
 		bool HasNewData() const { return newData; }
 
 	protected:
-		void Initialize(const BodyList& Bodies, BodyPositionList& BodiesPosition);
+		void Initialize(BodyPositionList& BodiesPosition);
 
 		inline Vector3D<double> CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& Bodies);
 

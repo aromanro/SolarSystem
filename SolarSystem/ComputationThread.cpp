@@ -105,7 +105,7 @@ namespace MolecularDynamics {
 	}
 
 
-	void ComputationThread::Initialize(const BodyList& BodyList, BodyPositionList& BodiesPosition)
+	void ComputationThread::Initialize(BodyPositionList& BodiesPosition)
 	{
 #ifdef USE_VERLET
 		const double timestep = m_timestep;
@@ -136,7 +136,7 @@ namespace MolecularDynamics {
 		const double timestep2 = timestep * timestep;
 
 		BodyPositionList BodiesPosition(m_BodiesPositions.front().first);
-		Initialize(m_BodyList, BodiesPosition);
+		Initialize(BodiesPosition);
 
 
 		do
