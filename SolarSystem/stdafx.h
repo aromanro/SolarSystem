@@ -51,8 +51,8 @@
 #endif
 
 
-//it works with msxml6, too, just change 4 into 6 and that's it
-#import <msxml4.dll> named_guids rename_namespace(_T("MSXML"))
+//it works with msxml4, too, just change 6 into 4 and that's it
+#import <msxml6.dll> named_guids rename_namespace(_T("MSXML"))
 #include <msxml2.h>
 #include <Windows.h>
 #include <afxdlgs.h>
