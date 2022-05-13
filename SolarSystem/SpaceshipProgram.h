@@ -60,7 +60,7 @@ namespace OpenGL {
 
         GLint viewPosLocation = 0;
 
-        GLint gammaLoc;
+        GLint gammaLoc = 0;
 
     protected:
         void getUniformsLocations();

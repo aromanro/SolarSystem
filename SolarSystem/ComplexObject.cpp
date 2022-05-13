@@ -39,7 +39,7 @@ namespace OpenGL {
 
 	int ComplexObject::SetVerticesData(const ObjLoader& loader, int startIndex, int triangleCount)
 	{
-		const long long int STRIDE_SIZE = 11; // 3 for vertex, 3 for normal, 2 for texture corrdintates, 3 for tangent 
+		const long long int STRIDE_SIZE = 11; // 3 for vertex, 3 for normal, 2 for texture coordintates, 3 for tangent 
 
 
 		vertexCount = static_cast<int>(3 * triangleCount); // 3 vertexes / triangle
