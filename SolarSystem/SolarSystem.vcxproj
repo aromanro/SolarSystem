@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\LIBs\glfw-3.2.1\include;C:\LIBs\glm\glm;C:\LIBs\glew-2.0.0\include;$(VC_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath)include;$(FrameworkSDKDir)include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\ucrt;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\LIBs\glew-2.0.0\lib\Release\x32;C:\LIBs\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\LIBs\lib;C:\LIBs\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -84,7 +84,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\LIBs\glfw-3.2.1\include;C:\LIBs\glm\glm;C:\LIBs\glew-2.0.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\LIBs\glew-2.0.0\lib\Release\x64;$(VCInstallDir)PlatformSDK\lib\amd64;$(VSInstallDir)SDK\v2.0\lib\amd64;C:\LIBs\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(VCInstallDir)PlatformSDK\lib\amd64;$(VSInstallDir)SDK\v2.0\lib\amd64;C:\LIBs\lib;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
@@ -92,7 +92,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\LIBs\glfw-3.2.1\include;C:\LIBs\glm\glm;C:\LIBs\glew-2.0.0\include;$(VC_IncludePath);$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath)include;$(FrameworkSDKDir)include;C:\Program Files %28x86%29\Windows Kits\10\Include\10.0.10240.0\ucrt;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\LIBs\glew-2.0.0\lib\Release\x32;C:\LIBs\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\LIBs\lib;C:\LIBs\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
