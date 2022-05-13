@@ -23,8 +23,8 @@ namespace OpenGL {
 		operator GLuint() const { return getID(); }
 
 	private: 
-		OpenGLObject(const OpenGLObject&);
-		OpenGLObject& operator=(const OpenGLObject&);
+		OpenGLObject(const OpenGLObject&) = delete;
+		OpenGLObject& operator=(const OpenGLObject&) = delete;
 	};
 
 
