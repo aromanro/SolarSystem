@@ -13,6 +13,8 @@
 #include <gl\gl.h>      // OpenGL Libraries
 #include <gl\glu.h>     // GLU OpenGL Libraries
 
+#include <GLFW/glfw3.h> // glfw
+
 #include "SkyBoxCubeMapProgram.h"
 #include "SkySphereProgram.h"
 
@@ -299,6 +301,7 @@ void CSolarSystemView::Setup()
 
 		glMatrixMode(GL_MODELVIEW);
 
+		glfwWindowHint(GLFW_SAMPLES, 4);
 		glEnable(GL_MULTISAMPLE);
 
 		CRect rect;
