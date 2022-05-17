@@ -233,6 +233,7 @@
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OptionsPropertySheet.h" />
+    <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="SkyBase.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="OptionsPropertySheet.cpp" />
+    <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="SkyBase.cpp" />

@@ -17,8 +17,25 @@ namespace OpenGL {
 		void UnBind() override;
 		GLuint getType() const override;
 
-		void setData(const void *data, int width, int height, int nr = 0, int nrBytes = 3);
+		virtual void setData(const void *data, int width, int height, int nr = 0, int nrBytes = 3);
 		void GenerateMipmaps();
 	};
 
+	class PixelBuffer;
+
+	class TextureWithPixelBuffer : public Texture
+	{
+	protected:
+		PixelBuffer* pixelBuffer;
+
+		int m_width;
+		int m_height;
+		int m_nrBytes;
+	public:
+		TextureWithPixelBuffer();
+		~TextureWithPixelBuffer();
+
+		void setData(const void* data, int width, int height, int nr = 0, int nrBytes = 3) override;
+		void Draw();
+	};
 }
