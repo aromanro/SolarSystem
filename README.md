@@ -1,6 +1,7 @@
 # SolarSystem
 A solar system simulator with Verlet, using OpenGL for displaying.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/21a6276f0ffc410bace1aab0ba955c43)](https://app.codacy.com/gh/aromanro/SolarSystem?utm_source=github.com&utm_medium=referral&utm_content=aromanro/SolarSystem&utm_campaign=Badge_Grade_Settings)
 [![CodeFactor](https://www.codefactor.io/repository/github/aromanro/solarsystem/badge)](https://www.codefactor.io/repository/github/aromanro/solarsystem)
 
 A detailed description of the project is on the computational physics blog: https://compphys.go.ro/newtonian-gravity/
