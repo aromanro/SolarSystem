@@ -27,20 +27,20 @@ bool Options::Load()
 	gammaCorrection = static_cast<int>(theApp.GetProfileInt(L"options", L"gamma", 0));
 
 	int res = static_cast<int>(theApp.GetProfileInt(L"options", L"skyBox", 1));
-	showSkyBox = (res != 0 ? true : false);
+	showSkyBox = (res != 0);
 
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"shadows", 1));
-	drawShadows = (res != 0 ? true : false);
+	drawShadows = (res != 0);
 
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"textures", 1));
-	drawTextures = (res != 0 ? true : false);
+	drawTextures = (res != 0);
 
 	translationSpeed = theApp.GetProfileInt(L"options", L"translationSpeed", 100);
 	rotationSpeed = theApp.GetProfileInt(L"options", L"rotationSpeed", 100);
 	scrollSpeed = theApp.GetProfileInt(L"options", L"scrollSpeed", 100);
 
 	res = static_cast<int>(theApp.GetProfileInt(L"options", L"showBillboard", 0));
-	showBillboard = (res != 0 ? true : false);
+	showBillboard = (res != 0);
 
 	gammaCorrectionCoeff = GetDouble(L"gammaCorrectionCoeff", 1.);
 

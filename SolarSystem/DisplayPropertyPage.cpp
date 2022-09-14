@@ -127,10 +127,10 @@ bool DisplayPropertyPage::ShouldApply()
 {
 	return theApp.options.gammaCorrection != m_Gamma || 
 		theApp.options.gammaCorrectionCoeff != m_GammaCoeff ||
-		theApp.options.drawShadows != (1 == m_Shadows ? true : false) ||
-		theApp.options.drawTextures != (1 == m_Textures ? true : false) ||
-		theApp.options.showSkyBox != (1 == m_SkyBox ? true : false) ||
-		theApp.options.showBillboard != (1 == m_Billboard ? true : false);
+		theApp.options.drawShadows != (1 == m_Shadows) ||
+		theApp.options.drawTextures != (1 == m_Textures) ||
+		theApp.options.showSkyBox != (1 == m_SkyBox) ||
+		theApp.options.showBillboard != (1 == m_Billboard);
 }
 
 
