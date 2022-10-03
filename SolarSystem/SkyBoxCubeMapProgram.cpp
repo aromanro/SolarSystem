@@ -10,7 +10,7 @@
 #endif
 
 
-#define GLSL(src) "#version 330\n" #src
+#define GLSL(src) "#version 450 core\n" #src
 
 
 namespace OpenGL {

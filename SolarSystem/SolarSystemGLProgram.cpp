@@ -7,7 +7,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define GLSL(src) "#version 330\n" #src
+#define GLSL(src) "#version 450 core\n" #src
 
 
 SolarSystemGLProgram::SolarSystemGLProgram()
@@ -226,7 +226,7 @@ bool SolarSystemGLProgram::SetupFragmentShader()
 			float shadow = 0.0;
 			float closestDepth;
 
-			float bias = clamp(0.05 * tan(acos(cosAngle)), 0, 0.05);
+			float bias = clamp(0.05 * tan(acos(cosAngle)), 0.0, 0.05);
 
 			int samples = 16;
 
