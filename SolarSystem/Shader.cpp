@@ -70,14 +70,24 @@ namespace OpenGL {
 		return GL_VERTEX_SHADER; 
 	}
 
-	FragmentShader::FragmentShader()
-		: Shader(GL_FRAGMENT_SHADER)
+	TessellationControlShader::TessellationControlShader()
+		: Shader(GL_TESS_CONTROL_SHADER)
 	{
 	}
 
-	GLuint FragmentShader::getType() const 
-	{ 
-		return GL_FRAGMENT_SHADER; 
+	GLuint TessellationControlShader::getType() const
+	{
+		return GL_TESS_CONTROL_SHADER;
+	}
+
+	TessellationEvaluationShader::TessellationEvaluationShader()
+		: Shader(GL_TESS_EVALUATION_SHADER)
+	{
+	}
+
+	GLuint TessellationEvaluationShader::getType() const
+	{
+		return GL_TESS_EVALUATION_SHADER;
 	}
 
 	GeometryShader::GeometryShader()
@@ -99,4 +109,15 @@ namespace OpenGL {
 	{
 		return GL_COMPUTE_SHADER;
 	}
+
+	FragmentShader::FragmentShader()
+		: Shader(GL_FRAGMENT_SHADER)
+	{
+	}
+
+	GLuint FragmentShader::getType() const 
+	{ 
+		return GL_FRAGMENT_SHADER; 
+	}
+
 }
