@@ -8,6 +8,7 @@
 #include <vector>
 #include <tuple>
 #include <map>
+#include <unordered_map>
 
 class ObjLoader
 {
@@ -48,7 +49,7 @@ public:
 
 	std::string dir;
 
-	std::map<std::string, ObjMaterial> materials;
+	std::unordered_map<std::string, ObjMaterial> materials;
 	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
 
 protected:

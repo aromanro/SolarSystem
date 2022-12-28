@@ -10,6 +10,7 @@
 #define new DEBUG_NEW
 #endif
 
+
 std::map<CString, std::shared_ptr<CImage>> BodyProperties::texturesMap = {};
 std::map<std::tuple<CString, int, int>, std::shared_ptr<OpenGL::Texture>> BodyProperties::glTexturesMap = {};
 
