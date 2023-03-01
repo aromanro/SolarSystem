@@ -22,26 +22,27 @@ namespace MolecularDynamics {
 	{
 	}
 
-
 	ComputationThread::~ComputationThread()
 	{
 		EndThread();
 	}
 
-
-
-	inline Vector3D<double> ComputationThread::CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& BodiesPosition)
+	inline Vector3D<double> ComputationThread::CalculateAcceleration(int pos, BodyPositionList& BodiesPosition)
 	{
 		static const double EPS2 = EPS * EPS;
 
 		Vector3D<double> acceleration(0., 0., 0.);
 
-		int i = 0;
-		for (auto cit = BodiesPosition.cbegin(); cit != BodiesPosition.cend(); ++cit, ++i)
+		for (int i = 0; i < pos; ++i)
 		{
-			if (cit == it) continue;
+			const Vector3D<double> r21 = BodiesPosition[i].m_Position - BodiesPosition[pos].m_Position;
+			const double length2 = r21 * r21;
 
-			const Vector3D<double> r21 = cit->m_Position - it->m_Position;
+			acceleration += r21 * m_BodyList[i].m_Mass / ((length2 + EPS2) * sqrt(length2));
+		}
+		for (int i = pos + 1; i < BodiesPosition.size(); ++i)
+		{
+			const Vector3D<double> r21 = BodiesPosition[pos].m_Position - BodiesPosition[i].m_Position;
 			const double length2 = r21 * r21;
 
 			acceleration += r21 * m_BodyList[i].m_Mass / ((length2 + EPS2) * sqrt(length2));
@@ -54,16 +55,14 @@ namespace MolecularDynamics {
 
 	inline void ComputationThread::VerletStep(BodyPositionList& BodiesPosition, double /*timestep*/, double timestep2)
 	{
-		int i = 0;
-		for (auto it = BodiesPosition.cbegin(); it != BodiesPosition.cend(); ++it, ++i)
-			accelerations[i] = CalculateAcceleration(it, BodiesPosition);
+		for (int i = 0; i < BodiesPosition.size(); ++i)
+			accelerations[i] = CalculateAcceleration(i, BodiesPosition);
 
-		i = 0;
-		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it, ++i)
+		for (int i = 0; i < BodiesPosition.size(); ++i)
 		{
-			const Vector3D<double> nextPosition = 2. * it->m_Position - it->m_PrevPosition + accelerations[i] * timestep2;
-			it->m_PrevPosition = it->m_Position;
-			it->m_Position = nextPosition;
+			const Vector3D<double> nextPosition = 2. * BodiesPosition[i].m_Position - BodiesPosition[i].m_PrevPosition + accelerations[i] * timestep2;
+			BodiesPosition[i].m_PrevPosition = BodiesPosition[i].m_Position;
+			BodiesPosition[i].m_Position = nextPosition;
 		}
 	}
 
@@ -72,15 +71,15 @@ namespace MolecularDynamics {
 
 	inline void ComputationThread::VelocityVerletStep(BodyPositionList& BodiesPosition, double timestep, double timestep2)
 	{
-		for (auto& body : BodiesPosition)
-			body.m_Position += body.m_Velocity * timestep + 0.5 * body.m_Acceleration * timestep2;
+		for (int i = 0; i < BodiesPosition.size(); ++i)
+			BodiesPosition[i].m_Position += BodiesPosition[i].m_Velocity * timestep + 0.5 * BodiesPosition[i].m_Acceleration * timestep2;
 
-		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it)
+		for (int i = 0; i < BodiesPosition.size(); ++i)
 		{
-			it->m_PrevAcceleration = it->m_Acceleration;
-			it->m_Acceleration = CalculateAcceleration(it, BodiesPosition);
+			BodiesPosition[i].m_PrevAcceleration = BodiesPosition[i].m_Acceleration;
+			BodiesPosition[i].m_Acceleration = CalculateAcceleration(i, BodiesPosition);
 
-			it->m_Velocity += (it->m_Acceleration + it->m_PrevAcceleration) * timestep * 0.5;
+			BodiesPosition[i].m_Velocity += (BodiesPosition[i].m_Acceleration + BodiesPosition[i].m_PrevAcceleration) * timestep * 0.5;
 		}
 	}
 
@@ -91,16 +90,13 @@ namespace MolecularDynamics {
 	{
 		static const double maxLimit = 100 * TWO_M_PI;
 
-		int i = 0;
-		for (auto& body : BodiesPosition)
+		for (int i = 0; i < BodiesPosition.size(); ++i)
 		{
 			const double angular_speed = TWO_M_PI / m_BodyList[i].rotationPeriod;
-			body.rotation += angular_speed * timestep;
+			BodiesPosition[i].rotation += angular_speed * timestep;
 
-			if (body.rotation >= maxLimit) body.rotation -= maxLimit;
-			else if (body.rotation < 0) body.rotation += maxLimit;
-
-			++i;
+			if (BodiesPosition[i].rotation >= maxLimit) BodiesPosition[i].rotation -= maxLimit;
+			else if (BodiesPosition[i].rotation < 0) BodiesPosition[i].rotation += maxLimit;
 		}
 	}
 
@@ -112,19 +108,17 @@ namespace MolecularDynamics {
 		const double timestep2 = timestep * timestep;
 
 		accelerations.resize(BodiesPosition.size());
-		int i = 0;
-		for (auto it = BodiesPosition.cbegin(); it != BodiesPosition.cend(); ++it, ++i)
-			accelerations[i] = CalculateAcceleration(it, BodiesPosition);
+		for (int i = 0; i < BodiesPosition.size(); ++i)
+			accelerations[i] = CalculateAcceleration(i, BodiesPosition);
 
-		i = 0;
-		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it, ++i)
+		for (int i = 0; i < BodiesPosition.size(); ++i)
 		{
-			it->m_PrevPosition = it->m_Position;
-			it->m_Position += it->m_Velocity * timestep + 0.5 * accelerations[i] * timestep2;
+			BodiesPosition[i].m_PrevPosition = BodiesPosition[i].m_Position;
+			BodiesPosition[i].m_Position += BodiesPosition[i].m_Velocity * timestep + 0.5 * accelerations[i] * timestep2;
 		}
 #else // VelocityVerlet
-		for (auto it = BodiesPosition.begin(); it != BodiesPosition.end(); ++it)
-			it->m_Acceleration = CalculateAcceleration(it, BodiesPosition);
+		for (int i = 0; i < BodiesPosition.size(); ++i)
+			BodiesPosition[i].m_Acceleration = CalculateAcceleration(i, BodiesPosition);
 #endif	
 	}
 

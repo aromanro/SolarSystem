@@ -62,12 +62,12 @@ namespace MolecularDynamics {
 	protected:
 		void Initialize(BodyPositionList& BodiesPosition);
 
-		inline Vector3D<double> CalculateAcceleration(BodyPositionList::const_iterator& it, BodyPositionList& Bodies);
+		inline Vector3D<double> CalculateAcceleration(int pos, BodyPositionList& Bodies);
 
 #ifdef USE_VERLET
 		inline void VerletStep(BodyPositionList& Bodies, double period, double period2);
 #else
-		inline VelocityVerletStep(BodyPositionList& Bodies, double period, double period2);
+		inline void VelocityVerletStep(BodyPositionList& Bodies, double period, double period2);
 #endif
 		inline void CalculateRotations(BodyPositionList& Bodies, double period);
 		void Compute();
