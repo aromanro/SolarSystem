@@ -84,6 +84,8 @@ bool BodyProperties::LoadTexture()
 // the textures are clamped, they are fitted around a sphere, whence the wrap around for negative values or for the ones that overflow
 double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 {
+	static const double scale = 1. / 255.;
+
 	const int width = img.GetWidth();
 	const int height = img.GetHeight();
 
@@ -94,7 +96,7 @@ double BodyProperties::GetPixelValue(const CImage& img, int x, int y)
 	else if (y >= height) y -= height;
 
 	const unsigned char* paddr = static_cast<const unsigned char*>(img.GetPixelAddress(x, y));
-	if (paddr) return *paddr / 255.;
+	if (paddr) return *paddr * scale;
 
 	// this is very slow!
 	//COLORREF rgb = img.GetPixel(x, y);
@@ -222,6 +224,8 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 						}
 						else
 						{
+							static const double scale = 255. * 0.5;
+
 							// if it's a bump map, there is some work to do
 							MemoryBitmap memoryBitmap(skin->GetWidth(), skin->GetHeight());
 
@@ -251,9 +255,9 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 									v = glm::normalize(v);
 
 									// now convert to RGB
-									const double R = 255. * 0.5 * (1. + v.x);
-									const double G = 255. * 0.5 * (1. + v.y);
-									const double B = 255. * 0.5 * (1. + v.z);
+									const double R = scale * (1. + v.x);
+									const double G = scale * (1. + v.y);
+									const double B = scale * (1. + v.z);
 
 									memoryBitmap.SetPixel(x, y, RGB(static_cast<unsigned char>(R), static_cast<unsigned char>(G), static_cast<unsigned char>(B)));
 								}

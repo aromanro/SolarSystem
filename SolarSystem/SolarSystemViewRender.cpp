@@ -146,6 +146,8 @@ void CSolarSystemView::RenderPlanet(const BodyPositionList::iterator& it, const 
 
 void CSolarSystemView::SetTextures(const BodyPropList::iterator& pit)
 {
+	static const double scale = 1. / 255.;
+
 	if (theApp.options.drawTextures)
 	{
 		if (pit->texture)
@@ -156,7 +158,7 @@ void CSolarSystemView::SetTextures(const BodyPropList::iterator& pit)
 		else
 		{
 			glUniform1i(program->useTextLocation, 0);
-			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) / 255.), static_cast<float>(GetGValue(pit->color) / 255.), static_cast<float>(GetBValue(pit->color) / 255.), 1.);
+			glUniform4f(program->colorLocation, static_cast<float>(GetRValue(pit->color) * scale), static_cast<float>(GetGValue(pit->color) * scale), static_cast<float>(GetBValue(pit->color) * scale), 1.);
 		}
 
 		if (pit->transparentTexture)

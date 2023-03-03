@@ -59,7 +59,9 @@ public:
 	// pass the color to be used instead of textures
 	void UnsetTextures(COLORREF color)
 	{
-		glUniform4f(colorLocation, static_cast<float>(GetRValue(color) / 255.), static_cast<float>(GetGValue(color) / 255.), static_cast<float>(GetBValue(color) / 255.), 1.);
+		static const double scale = 1. / 255.;
+
+		glUniform4f(colorLocation, static_cast<float>(GetRValue(color) * scale), static_cast<float>(GetGValue(color) * scale), static_cast<float>(GetBValue(color) * scale), 1.);
 		glUniform1i(useTextLocation, 0);
 		glUniform1i(useTransparentTextLocation, 0);
 		glUniform1i(alphaInTransparentTexture, 0);
