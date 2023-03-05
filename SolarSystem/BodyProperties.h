@@ -12,7 +12,6 @@ public:
 	bool isMoon;
 	COLORREF color;
 
-
 	double tilt;
 
 	double scale;

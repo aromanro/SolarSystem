@@ -100,7 +100,7 @@ void MemoryBitmap::Draw(CDC* pDC)
 	::SetDIBits(pDC->GetSafeHdc(), bitmap, 0, m_height, data, &bmi, DIB_RGB_COLORS);
 	CDC dcMemory;
 	dcMemory.CreateCompatibleDC(pDC);
-	CBitmap * pOldBitmap = dcMemory.SelectObject(&bitmap);
+	CBitmap* pOldBitmap = dcMemory.SelectObject(&bitmap);
 	pDC->BitBlt(0, 0, m_width, m_height, &dcMemory, 0, 0, SRCCOPY);
 	dcMemory.SelectObject(pOldBitmap);
 }
@@ -123,7 +123,7 @@ void MemoryBitmap::Draw(CDC* pDC, CRect& rect, int origWidth, int origHeight)
 	::SetDIBits(pDC->GetSafeHdc(), bitmap, 0, m_height, data, &bmi, DIB_RGB_COLORS);
 	CDC dcMemory;
 	dcMemory.CreateCompatibleDC(pDC);
-	CBitmap * pOldBitmap = dcMemory.SelectObject(&bitmap);
+	CBitmap* pOldBitmap = dcMemory.SelectObject(&bitmap);
 	pDC->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dcMemory, origWidth ? (m_width - origWidth)/2 : 0, origHeight ? (m_height - origHeight)/2 : 0, origWidth ? origWidth : m_width, origHeight ? origHeight : m_height, SRCCOPY);
 	dcMemory.SelectObject(pOldBitmap);
 }
