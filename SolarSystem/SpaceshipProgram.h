@@ -14,7 +14,7 @@ namespace OpenGL {
     {
     public:
         SpaceshipProgram();
-        virtual ~SpaceshipProgram();
+        ~SpaceshipProgram() override;
 
         bool SetShaders(unsigned int nrLights);
 

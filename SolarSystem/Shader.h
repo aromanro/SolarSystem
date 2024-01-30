@@ -6,18 +6,21 @@
 namespace OpenGL {
 
 	class Executable : public OpenGLObject {
-	protected:
-		std::vector<char> ErrorMsg;
 	public:
 		virtual bool getStatus() const = 0;
 		virtual const char* getStatusMessage() = 0;
+
+		std::vector<char>& getErrorMsg() { return ErrorMsg; }
+
+	private:
+		std::vector<char> ErrorMsg;
 	};
 
 	class Shader : public Executable
 	{
 	public:
-		Shader(GLuint type = GL_VERTEX_SHADER);
-		virtual ~Shader();
+		explicit Shader(GLuint type = GL_VERTEX_SHADER);
+		~Shader() override;
 
 		bool getStatus() const override;
 		const char* getStatusMessage() override;

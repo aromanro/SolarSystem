@@ -10,13 +10,13 @@
 #include "MainFrm.h"
 #include "Constants.h"
 
-#include <GL\glew.h>
-#include <gl\gl.h>      // OpenGL Libraries
-#include <gl\glu.h>     // GLU OpenGL Libraries
+#include <GL/glew.h>
+#include <gl/gl.h>      // OpenGL Libraries
+#include <gl/glu.h>     // GLU OpenGL Libraries
 
 
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 
 #include "MatrixPush.h"

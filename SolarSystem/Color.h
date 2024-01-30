@@ -8,9 +8,6 @@ class Color
 public:
 	Color(double rr = 0, double gg = 0, double bb = 0);
 
-	double r;
-	double g;
-	double b;
 
 	// ease up some things to allow combining colors, attenuating/amplifying them and so on
 
@@ -44,7 +41,9 @@ public:
 
 	double Max() const
 	{
-		return r > g && r > b ? r : g > b ? g : b;
+		if (r > g && r > b) return r;
+
+		return g > b ? g : b;
 	}
 
 	bool TotalReflective() const
@@ -67,7 +66,11 @@ public:
 		return r > 1.01 || g > 1.01 || b > 1.01;
 	}
 
-protected:
+	double r;
+	double g;
+	double b;
+
+private:
 	static void ClampVal(double &val)
 	{
 		if (val < 0) val = 0;

@@ -11,9 +11,7 @@ namespace OpenGL {
 
 	public:
 		VertexBufferRenderable();
-		virtual ~VertexBufferRenderable();
-
-		virtual void Draw() = 0;
+		~VertexBufferRenderable() override;
 
 		void Bind() override;
 		void UnBind() override;

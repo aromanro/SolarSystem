@@ -5,9 +5,9 @@
 #include "Body.h"
 #include "BodyProperties.h"
 
-typedef std::vector<MolecularDynamics::BodyPosition> BodyPositionList;
-typedef std::vector<MolecularDynamics::Body> BodyList;
-typedef std::vector<BodyProperties> BodyPropList;
+using BodyPositionList = std::vector<MolecularDynamics::BodyPosition>;
+using BodyList = std::vector<MolecularDynamics::Body>;
+using BodyPropList = std::vector<BodyProperties>;
 
 
 class SolarSystemBodies

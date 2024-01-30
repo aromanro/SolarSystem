@@ -356,7 +356,7 @@ namespace OpenGL {
 
 		SkyBase::Bind();
 
-		transformMatLoc = glGetUniformLocation(*this, "transformMat");
+		transformMatLoc = glGetUniformLocation(getID(), "transformMat");
 
 		return true;
 	}

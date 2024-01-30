@@ -21,17 +21,7 @@ public:
 	MemoryBitmap& operator=(MemoryBitmap&& other) noexcept; // move assignment operator
 
 	~MemoryBitmap() noexcept;
-protected:
-	int m_width;
-	int m_height;
 
-	unsigned char* data;
-
-#if USE_DIRECT_TRANSFER == 0
-	std::vector<unsigned char> texdata;
-#endif
-
-public:
 	void SetSize(int width, int height);
 
 	inline void FillSquare(int Xpos, int Ypos, int size, COLORREF color)
@@ -86,5 +76,15 @@ public:
 	void SetIntoTexture(OpenGL::Texture& texture, int nr = 0);
 
 	void Save(const CString& name);
+
+private:
+	int m_width;
+	int m_height;
+
+	unsigned char* data;
+
+#if USE_DIRECT_TRANSFER == 0
+	std::vector<unsigned char> texdata;
+#endif
 };
 

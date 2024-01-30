@@ -33,7 +33,7 @@ public:
 	bool Load();
 	bool Save();
 
-protected:
+private:
 	static double GetDouble(LPCTSTR param, double defval);
 };
 

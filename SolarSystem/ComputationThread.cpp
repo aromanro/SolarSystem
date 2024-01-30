@@ -16,12 +16,6 @@ const int maxQueueSize = 5;
 
 namespace MolecularDynamics {
 
-
-	ComputationThread::ComputationThread()
-		: an_event(0), nrsteps(1), newData(false), m_timestep(60), simulationTime(0)
-	{
-	}
-
 	ComputationThread::~ComputationThread()
 	{
 		EndThread();

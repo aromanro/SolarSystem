@@ -14,7 +14,7 @@ namespace OpenGL {
 
 	public:
 		Program();
-		virtual ~Program();
+		~Program() override;
 
 		void DetachShaders();
 

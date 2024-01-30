@@ -198,7 +198,7 @@ void CSolarSystemDoc::ParseXmlDocument(MSXML::IXMLDOMDocumentPtr& pDocument)
 		{
 			pSolarSystem->reset();
 			MSXML::IXMLDOMNodePtr pRecordNode = pSolarSystem->nextNode();
-			m_Thread.m_timestep = static_cast<unsigned int>(GetXmlIntValue(pRecordNode, L"TimeStep", 60));
+			m_Thread.SetTimestep(static_cast<unsigned int>(GetXmlIntValue(pRecordNode, L"TimeStep", 60)));
 		}
 	}
 

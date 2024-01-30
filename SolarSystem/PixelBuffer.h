@@ -7,8 +7,8 @@ namespace OpenGL {
 	class PixelBuffer : public OpenGLObject
 	{
 	public:
-		PixelBuffer(unsigned int imageBufferSize);
-		virtual ~PixelBuffer();
+		explicit PixelBuffer(unsigned int imageBufferSize);
+		~PixelBuffer() override;
 
 		void Bind() override;
 		void UnBind() override;

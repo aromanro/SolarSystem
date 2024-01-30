@@ -58,7 +58,7 @@ namespace OpenGL {
 		: matLocation(0), shadowMatPos(0), lightPosLoc(0), farPlaneLoc(0)
 	{
 		depthMapFBO.Bind();
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap.getID(), 0);
 
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
@@ -68,10 +68,6 @@ namespace OpenGL {
 		depthMapFBO.UnBind();		
 	}
 
-
-	ShadowCubeMapProgram::~ShadowCubeMapProgram()
-	{
-	}
 
 	void ShadowCubeMapProgram::getUniformsLocations()
 	{

@@ -10,7 +10,7 @@ class SpaceshipPropertyPage :
 
 public:
 	SpaceshipPropertyPage();
-	virtual ~SpaceshipPropertyPage();
+	~SpaceshipPropertyPage() override;
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -18,11 +18,11 @@ public:
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL OnApply();
+	BOOL OnApply() override;
 	void ApplyValues();
 
 private:

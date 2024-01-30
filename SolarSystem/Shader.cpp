@@ -44,11 +44,11 @@ namespace OpenGL {
 
 		if (InfoLength > 0)
 		{
-			ErrorMsg.resize(static_cast<unsigned int>(InfoLength + 1ULL));
-			ErrorMsg[0] = 0;
-			glGetShaderInfoLog(ID, static_cast<GLsizei>(InfoLength), NULL, &ErrorMsg[0]);
+			getErrorMsg().resize(static_cast<unsigned int>(InfoLength + 1ULL));
+			getErrorMsg()[0] = 0;
+			glGetShaderInfoLog(ID, static_cast<GLsizei>(InfoLength), NULL, &getErrorMsg()[0]);
 
-			return &ErrorMsg[0];
+			return &getErrorMsg()[0];
 		}
 
 		return "";

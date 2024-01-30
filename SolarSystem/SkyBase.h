@@ -14,7 +14,7 @@ namespace OpenGL {
     {
     public:
         SkyBase();
-        virtual ~SkyBase();
+        ~SkyBase() override;
 
         virtual void Draw(const glm::mat4& mat) = 0;
 

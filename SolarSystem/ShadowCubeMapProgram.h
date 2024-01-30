@@ -6,15 +6,15 @@
 #include "OpenGLObject.h"
 
 
-#include <GL\glew.h>
-#include <gl\gl.h>      // OpenGL Libraries
-#include <gl\glu.h>     // GLU OpenGL Libraries
+#include <GL/glew.h>
+#include <gl/gl.h>      // OpenGL Libraries
+#include <gl/glu.h>     // GLU OpenGL Libraries
 
 
 #include <glm.hpp>
 
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 namespace OpenGL {
 
@@ -31,7 +31,6 @@ namespace OpenGL {
 
 	public:
 		ShadowCubeMapProgram();
-		virtual ~ShadowCubeMapProgram();
 
 		bool SetShaders();
 
@@ -41,7 +40,7 @@ namespace OpenGL {
 		{
 		public:
 			CubeMapTexture();
-			virtual ~CubeMapTexture();
+			~CubeMapTexture() override;
 
 
 			void Bind() override;

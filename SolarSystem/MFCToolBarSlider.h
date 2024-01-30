@@ -13,7 +13,7 @@ public:
 
 	CMFCToolBarSlider();
 	CMFCToolBarSlider(UINT uiId, int iImage = -1, DWORD dwStyle = 0, int iWidth = 0);
-	virtual ~CMFCToolBarSlider();
+	~CMFCToolBarSlider() override;
 
 	virtual void OnDraw(CDC* /*pDC*/, const CRect& /*rect*/, CMFCToolBarImages* /*pImages*/, BOOL /*bHorz*/ = TRUE, BOOL /*bCustomizeMode*/ = FALSE, BOOL /*bHighlight*/ = FALSE, BOOL /*bDrawBorder*/ = TRUE, BOOL /*bGrayDisabledButtons*/ = TRUE);
 

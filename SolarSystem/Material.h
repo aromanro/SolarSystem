@@ -115,7 +115,7 @@ public:
 
 	void LoadLine(std::string& line);
 
-protected:
+private:
 	void LoadColor(std::string& line);
 	void LoadColor(std::string& line, Color& color);
 	void LoadMap(std::string& line);

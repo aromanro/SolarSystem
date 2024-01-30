@@ -1,18 +1,16 @@
 #pragma once
 
-#include <GL\glew.h>
-#include <gl\gl.h>      // OpenGL Libraries
-#include <gl\glu.h>     // GLU OpenGL Libraries
+#include <GL/glew.h>
+#include <gl/gl.h>      // OpenGL Libraries
+#include <gl/glu.h>     // GLU OpenGL Libraries
 
 
 namespace OpenGL {
 
 	class OpenGLObject
 	{
-	protected:
-		GLuint ID;
 	public:
-		OpenGLObject();
+		OpenGLObject() = default;
 		virtual ~OpenGLObject();
 
 		virtual void Bind() = 0;
@@ -20,11 +18,13 @@ namespace OpenGL {
 		virtual GLuint getType() const = 0;
 
 		GLuint getID() const { return ID; }
-		operator GLuint() const { return getID(); }
-
+		
 	private: 
 		OpenGLObject(const OpenGLObject&) = delete;
 		OpenGLObject& operator=(const OpenGLObject&) = delete;
+
+	protected:
+		GLuint ID = 0;
 	};
 
 
@@ -32,7 +32,7 @@ namespace OpenGL {
 	{
 	public:
 		VertexArrayObject();
-		virtual ~VertexArrayObject();
+	    ~VertexArrayObject() override;
 
 		void Bind() override;
 		void UnBind() override;
@@ -43,7 +43,7 @@ namespace OpenGL {
 	class BufferObject : public OpenGLObject {
 	public:
 		BufferObject();
-		virtual ~BufferObject();
+		~BufferObject() override;
 
 		void Bind() override;
 		void UnBind() override;
@@ -75,7 +75,7 @@ namespace OpenGL {
 	{
 	public:
 		FrameBufferObject();
-		virtual ~FrameBufferObject();
+		~FrameBufferObject() override;
 
 		void Bind() override;
 		void UnBind() override;

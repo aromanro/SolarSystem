@@ -6,7 +6,7 @@
 
 #include "Vector3D.h"
 
-#include <gtc\matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 
 namespace OpenGL {
 
@@ -88,7 +88,6 @@ namespace OpenGL {
 		double GetRotateAngle() const { return rotateAngle; }
 		double GetTranslate() const { return translateDist; }
 
-	public:
 		void Tick();
 		void ProgressiveMove(Movements movement, int nrticks = 5, bool fromMouse = false);
 		void ProgressiveRotate(const Vector3D<double>& towards, int nrticks);

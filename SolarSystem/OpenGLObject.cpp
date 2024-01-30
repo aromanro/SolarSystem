@@ -8,12 +8,6 @@
 
 namespace OpenGL {
 
-	OpenGLObject::OpenGLObject()
-		: ID(0)
-	{
-	}
-
-
 	OpenGLObject::~OpenGLObject()
 	{
 	}

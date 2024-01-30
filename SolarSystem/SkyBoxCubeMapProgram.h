@@ -25,7 +25,7 @@ namespace OpenGL {
 		{
 		public:
 			CubeMapTexture();
-			virtual ~CubeMapTexture();
+			~CubeMapTexture() override;
 
 
 			void Bind() override;
@@ -47,7 +47,7 @@ namespace OpenGL {
 
 	public:
 		SkyBoxCubeMapProgram();
-		virtual ~SkyBoxCubeMapProgram();
+		~SkyBoxCubeMapProgram() override;
 
 		bool LoadTextures(const char* left = "Textures\\left.jpg", const char* right = "Textures\\right.jpg", const char* top = "Textures\\top.jpg", const char* bottom = "Textures\\bottom.jpg", const char* front = "Textures\\front.jpg", const char* back = "Textures\\back.jpg");
 

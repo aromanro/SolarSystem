@@ -8,7 +8,7 @@ namespace OpenGL {
 	{
 	public:
 		Texture();
-		virtual ~Texture();
+		~Texture() override;
 
 
 		void Bind() override;
@@ -33,7 +33,7 @@ namespace OpenGL {
 		int m_nrBytes;
 	public:
 		TextureWithPixelBuffer();
-		~TextureWithPixelBuffer();
+		~TextureWithPixelBuffer() override;
 
 		void setData(const void* data, int width, int height, int nr = 0, int nrBytes = 3) override;
 		void Draw();

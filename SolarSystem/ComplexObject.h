@@ -42,7 +42,7 @@ namespace OpenGL {
 	class ComplexObjectCompositeMaterials
 	{
 	public:
-		ComplexObjectCompositeMaterials(const ObjLoader& loader);
+		explicit ComplexObjectCompositeMaterials(const ObjLoader& loader);
 
 		void Draw(SpaceshipProgram& program);
 		void DrawInstanced(unsigned int count);

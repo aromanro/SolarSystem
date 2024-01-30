@@ -34,7 +34,7 @@ namespace OpenGL {
 
 	public:
 		SkySphereProgram();
-		virtual ~SkySphereProgram();
+		~SkySphereProgram() override;
 
 		bool LoadTexture(const char* name = "Textures\\skysphere.jpg");
 

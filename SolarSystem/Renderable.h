@@ -8,7 +8,7 @@ namespace OpenGL {
 	{
 	public:
 		Renderable();
-		virtual ~Renderable();
+	    ~Renderable() override;
 
 		virtual void Draw() = 0;
 	};
