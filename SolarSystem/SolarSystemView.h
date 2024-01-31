@@ -5,8 +5,8 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <gl/gl.h>      // OpenGL Libraries
-#include <gl/glu.h>     // GLU OpenGL Libraries
+#include <gl/GL.h>      // OpenGL Libraries
+#include <gl/GLU.h>     // GLU OpenGL Libraries
 
 #include <glm.hpp>
 

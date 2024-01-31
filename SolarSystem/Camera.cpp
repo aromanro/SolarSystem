@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
-#include <gl\gl.h>      // OpenGL Libraries
-#include <gl\glu.h>     // GLU OpenGL Libraries
+#include <gl/GL.h>      // OpenGL Libraries
+#include <gl/GLU.h>     // GLU OpenGL Libraries
 
 
-#include <gtc\type_ptr.hpp>
+#include <gtc/type_ptr.hpp>
 
 #include "Options.h"
 #include "SolarSystem.h"
