@@ -38,5 +38,4 @@ private:
 	afx_msg void OnEnChangeEdit1();
 	CEdit m_GammaEdit;
 	double m_GammaCoeff;
-
 };
