@@ -28,9 +28,6 @@ DisplayPropertyPage::DisplayPropertyPage()
 	m_Billboard = (theApp.options.showBillboard ? 1 : 0);
 }
 
-DisplayPropertyPage::~DisplayPropertyPage()
-{
-}
 
 void DisplayPropertyPage::DoDataExchange(CDataExchange* pDX)
 {

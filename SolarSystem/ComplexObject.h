@@ -15,8 +15,6 @@ namespace OpenGL {
 	class ComplexObject : public VertexBufferRenderable
 	{
 	public:
-		ComplexObject();
-
 		int Load(const ObjLoader& loader, int startIndex = 0);
 
 		void Draw() override;

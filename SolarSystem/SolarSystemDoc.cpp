@@ -70,7 +70,7 @@ CSolarSystemView* CSolarSystemDoc::GetMainView(void)
 			return dynamic_cast<CSolarSystemView*>(pView);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -130,9 +130,9 @@ void CSolarSystemDoc::SetSearchContent(const CString& value)
 	}
 	else
 	{
-		CMFCFilterChunkValueImpl *pChunk = NULL;
+		CMFCFilterChunkValueImpl *pChunk = nullptr;
 		ATLTRY(pChunk = new CMFCFilterChunkValueImpl);
-		if (pChunk != NULL)
+		if (pChunk != nullptr)
 		{
 			pChunk->SetTextValue(PKEY_Search_Contents, value, CHUNK_TEXT);
 			SetChunkValue(pChunk);
@@ -266,7 +266,7 @@ CString CSolarSystemDoc::GetXmlValue(MSXML::IXMLDOMNodePtr pNode, const bstr_t& 
 	CString result(def);
 
 	MSXML::IXMLDOMNodePtr node = pNode->attributes->getNamedItem(name);
-	if (node != NULL)
+	if (node != nullptr)
 		result = CString((BSTR)node->text);
 
 	return result;

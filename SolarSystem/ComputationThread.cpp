@@ -155,7 +155,7 @@ namespace MolecularDynamics {
 
 	bool ComputationThread::Wait()
 	{
-		std::unique_lock<std::mutex> lock(mtx);
+		std::unique_lock lock(mtx);
 		cv.wait(lock, [this] { return an_event > 0; });
 		if (an_event > 1) return true;
 		an_event = 0;
@@ -168,7 +168,7 @@ namespace MolecularDynamics {
 		if (Thread.joinable())
 		{
 			{
-				std::lock_guard<std::mutex> lock(mtx);
+				std::lock_guard lock(mtx);
 				an_event = 2;
 			}
 			cv.notify_one();
@@ -187,7 +187,7 @@ namespace MolecularDynamics {
 	void ComputationThread::SignalWantMore()
 	{
 		{
-			std::lock_guard<std::mutex> lock(mtx);
+			std::lock_guard lock(mtx);
 			an_event = 1;
 		}
 		cv.notify_one();
@@ -204,9 +204,9 @@ namespace MolecularDynamics {
 	{
 		bool result = false;
 		{
-			std::lock_guard<std::mutex> lock(m_DataSection);
+			std::lock_guard lock(m_DataSection);
 
-			m_BodiesPositions.push(std::make_pair(bodiesPosition, curSimulationTime));
+			m_BodiesPositions.emplace(bodiesPosition, curSimulationTime);
 			simulationTime = curSimulationTime;
 			
 			if (m_BodiesPositions.size() >= maxQueueSize) result = true;
@@ -222,17 +222,15 @@ namespace MolecularDynamics {
 	{
 		std::pair<BodyPositionList, double> result;
 
-		{
-			std::lock_guard<std::mutex> lock(m_DataSection);
+		std::lock_guard lock(m_DataSection);
 
-			result.first.swap(m_BodiesPositions.front().first);
-			result.second = m_BodiesPositions.front().second;
+		result.first.swap(m_BodiesPositions.front().first);
+		result.second = m_BodiesPositions.front().second;
 
-			m_BodiesPositions.pop();
+		m_BodiesPositions.pop();
 
-			if (m_BodiesPositions.empty()) 
-				newData = false;
-		}
+		if (m_BodiesPositions.empty()) 
+			newData = false;
 
 		return result;
 	}

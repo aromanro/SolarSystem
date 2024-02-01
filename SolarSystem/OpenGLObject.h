@@ -17,13 +17,13 @@ namespace OpenGL {
 		virtual void UnBind() = 0;
 		virtual GLuint getType() const = 0;
 
-		GLuint getID() const { return ID; }
+		GLuint& getID() { return ID; }
+		const GLuint& getID() const { return ID; }
 		
 	private: 
 		OpenGLObject(const OpenGLObject&) = delete;
 		OpenGLObject& operator=(const OpenGLObject&) = delete;
 
-	protected:
 		GLuint ID = 0;
 	};
 

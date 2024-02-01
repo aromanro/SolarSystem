@@ -8,14 +8,14 @@
 class BodyProperties
 {
 public:
-	bool isSun;
-	bool isMoon;
-	COLORREF color;
+	bool isSun = false;
+	bool isMoon = false;
+	COLORREF color = 0;
 
-	double tilt;
+	double tilt = 0.;
 
-	double scale;
-	double scaleDistance;
+	double scale = 1.;
+	double scaleDistance = 1.;
 	
 	CString imgFile;
 	CString transparentFile;
@@ -29,14 +29,11 @@ public:
 	std::shared_ptr<OpenGL::Texture> specularTexture;
 	std::shared_ptr<OpenGL::Texture> normalTexture;
 
-	bool transparentTextureAlpha;
+	bool transparentTextureAlpha = false;
 
-	double bumpParam;
+	double bumpParam = 2.;
 
-	int parentIndex; // just an index for the body where the moon belongs
-
-	BodyProperties();
-	~BodyProperties();
+	int parentIndex = -1; // just an index for the body where the moon belongs
 
 	bool LoadTexture();
 	void CleanTexture();
@@ -48,7 +45,7 @@ public:
 
 	static void ClearTexturesCache();
 
-protected:
+private:
 	static double GetPixelValue(const CImage& img, int x, int y);
 	static void ResizeToEven(CImage& skin);
 

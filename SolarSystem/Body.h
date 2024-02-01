@@ -9,17 +9,17 @@ namespace MolecularDynamics {
 	class Body
 	{
 	public:
-		double m_Mass;
-		double m_Radius;
-		double rotationPeriod;
+		virtual ~Body() = default;
 
-		Body();
+		double m_Mass = 0.;
+		double m_Radius = 0.;
+		double rotationPeriod = 24. * 3600;
 	};
 
 	class BodyPosition
 	{
 	public:
-		double rotation;
+		double rotation = 0;
 
 		Vector3D<double> m_Position;
 
@@ -35,8 +35,6 @@ namespace MolecularDynamics {
 		Vector3D<double> m_Acceleration;
 		Vector3D<double> m_PrevAcceleration;
 #endif
-
-		BodyPosition();
 	};
 
 }

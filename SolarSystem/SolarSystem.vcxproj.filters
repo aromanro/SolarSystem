@@ -176,9 +176,6 @@
     <ClCompile Include="SolarSystemView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Body.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SolarSystemBodies.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

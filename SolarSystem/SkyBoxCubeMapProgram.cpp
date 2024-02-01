@@ -16,7 +16,7 @@
 namespace OpenGL {
 
 	SkyBoxCubeMapProgram::SkyBoxCubeMapProgram()
-		: skyBox(NULL), cubeMapTextures(NULL)
+		: skyBox(nullptr), cubeMapTextures(nullptr)
 	{
 	}
 
@@ -37,8 +37,8 @@ namespace OpenGL {
 			delete skyBox;
 			delete cubeMapTextures;
 
-			skyBox = NULL;
-			cubeMapTextures = NULL;
+			skyBox = nullptr;
+			cubeMapTextures = nullptr;
 
 			return false;
 		}
@@ -134,19 +134,19 @@ namespace OpenGL {
 	SkyBoxCubeMapProgram::CubeMapTexture::CubeMapTexture()
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glGenTextures(1, &ID);
+		glGenTextures(1, &getID());
 	}
 
 	SkyBoxCubeMapProgram::CubeMapTexture::~CubeMapTexture()
 	{
 		UnBind();
-		glDeleteTextures(1, &ID);
+		glDeleteTextures(1, &getID());
 	}
 
 	void SkyBoxCubeMapProgram::CubeMapTexture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(getType(), ID);
+		glBindTexture(getType(), getID());
 	}
 
 	void SkyBoxCubeMapProgram::CubeMapTexture::UnBind()

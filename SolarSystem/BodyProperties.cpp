@@ -15,17 +15,6 @@ std::map<CString, std::shared_ptr<CImage>> BodyProperties::texturesMap = {};
 std::map<std::tuple<CString, int, int>, std::shared_ptr<OpenGL::Texture>> BodyProperties::glTexturesMap = {};
 
 
-BodyProperties::BodyProperties()
-	: isSun(false), isMoon(false), color(0), tilt(0), scale(1.), scaleDistance(1.), texture(NULL), transparentTexture(NULL), shadowTexture(NULL), specularTexture(NULL), normalTexture(NULL), transparentTextureAlpha(false), bumpParam(2.), parentIndex(-1)
-{
-}
-
-
-BodyProperties::~BodyProperties()
-{
-}
-
-
 bool BodyProperties::LoadTexture()
 {
 	CleanTexture();
@@ -50,7 +39,7 @@ bool BodyProperties::LoadTexture()
 					if (!(dim % 2))
 					{
 						transparentTexture = std::make_shared<OpenGL::Texture>();
-						unsigned char* buf = NULL;
+						unsigned char* buf = nullptr;
 
 						if (skin->GetPitch() < 0)
 							buf = static_cast<unsigned char*>(skin->GetPixelAddress(0, skin->GetHeight() - 1));
@@ -152,7 +141,7 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgF
 	{
 		try {
 			auto skin = Load(imgFile);
-			if (!skin || skin->GetBPP() != bpp) return NULL;
+			if (!skin || skin->GetBPP() != bpp) return nullptr;
 
 			// ideally they should be power of 2 but even values should do
 
@@ -160,14 +149,14 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadTexture(const CString& imgF
 
 			// check if it's even
 			unsigned int dim = skin->GetWidth();
-			if (dim % 2) return NULL;
+			if (dim % 2) return nullptr;
 
 			// check if it's even
 			dim = skin->GetHeight();
-			if (dim % 2) return NULL;
+			if (dim % 2) return nullptr;
 
 			texture = std::make_shared<OpenGL::Texture>();
-			unsigned char* buf = NULL;
+			unsigned char* buf = nullptr;
 
 			if (skin->GetPitch() < 0)
 				buf = static_cast<unsigned char*>(skin->GetPixelAddress(0, skin->GetHeight() - 1));
@@ -211,7 +200,7 @@ std::shared_ptr<OpenGL::Texture> BodyProperties::LoadNormalTexture(const CString
 					if (!(dim % 2))
 					{
 						normalTexture = std::make_shared<OpenGL::Texture>();
-						unsigned char* buf = NULL;
+						unsigned char* buf = nullptr;
 
 						if (skin->GetBPP() == 24)
 						{

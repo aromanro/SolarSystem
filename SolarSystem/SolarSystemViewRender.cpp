@@ -61,7 +61,7 @@ void CSolarSystemView::MoonHack(const BodyList::iterator& bit, const BodyPropLis
 
 void CSolarSystemView::RenderScene()
 {
-	if (NULL == program) return;
+	if (nullptr == program) return;
 
 	CSolarSystemDoc* doc = GetDocument();
 	if (!doc) return;
@@ -74,7 +74,7 @@ void CSolarSystemView::RenderScene()
 
 	Uniforms params(doc->m_SolarSystem, m_BodiesPosition, *program, program->nrlights);
 
-	glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
+	glUniform3f(program->viewPosLocation, static_cast<float>(camera.GetEyePos().X), static_cast<float>(camera.GetEyePos().Y), static_cast<float>(camera.GetEyePos().Z));
 	glUniform1f(program->gammaLoc, (float)(theApp.options.gammaCorrection == 2 ? theApp.options.gammaCorrectionCoeff : 1.));
 	glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 
@@ -94,7 +94,7 @@ void CSolarSystemView::RenderScene()
 		// need to have the 'billboard' drawn over the 'spaceship', too, so that's why it's here like that
 		program->Use();
 
-		glUniform3f(program->viewPosLocation, static_cast<float>(camera.eyePos.X), static_cast<float>(camera.eyePos.Y), static_cast<float>(camera.eyePos.Z));
+		glUniform3f(program->viewPosLocation, static_cast<float>(camera.GetEyePos().X), static_cast<float>(camera.GetEyePos().Y), static_cast<float>(camera.GetEyePos().Z));
 		glUniformMatrix4fv(program->matLocation, 1, GL_FALSE, value_ptr(mat));
 	}
 
@@ -209,7 +209,7 @@ void CSolarSystemView::SetTextures(const BodyPropList::iterator& pit)
 
 void CSolarSystemView::RenderShadowScene()
 {
-	if (NULL == shadowProgram) return;
+	if (nullptr == shadowProgram) return;
 
 	CSolarSystemDoc* doc = GetDocument();
 	if (!doc) return;
@@ -291,9 +291,9 @@ void CSolarSystemView::RenderSpaceship(glm::mat4& mat)
 
 		glUniformMatrix4fv(spaceshipProgram->matLocation, 1, GL_FALSE, value_ptr(mat));
 
-		const double cameraX = camera.eyePos.X;
-		const double cameraY = camera.eyePos.Y;
-		const double cameraZ = camera.eyePos.Z;
+		const double cameraX = camera.GetEyePos().X;
+		const double cameraY = camera.GetEyePos().Y;
+		const double cameraZ = camera.GetEyePos().Z;
 		const glm::dvec3 cameraVector = glm::dvec3(cameraX, cameraY, cameraZ);
 
 		// the translation vector for the spaceship from the camera position, in the looking direction:
@@ -388,7 +388,7 @@ void CSolarSystemView::DisplayBilboard()
 	const Vector3D<double> up = camera.getNormalizedUp();
 	pos -= 0.038 * glm::dvec3(up.X, up.Y, up.Z);
 
-	const glm::dvec3 cameraVector = glm::dvec3(camera.eyePos.X, camera.eyePos.Y, camera.eyePos.Z);
+	const glm::dvec3 cameraVector = glm::dvec3(camera.GetEyePos().X, camera.GetEyePos().Y, camera.GetEyePos().Z);
 	const glm::dvec3 billboardPos = cameraVector + pos;
 
 	const double scale = 0.0025f;

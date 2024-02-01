@@ -41,7 +41,7 @@ END_MESSAGE_MAP()
 // CSolarSystemView construction/destruction
 
 CSolarSystemView::CSolarSystemView()
-	: timer(NULL), slowTimer(NULL), program(NULL), sphere(NULL), billboardRectangle(NULL), billboardTexture(NULL), inited(false), skyProgram(NULL), shadowProgram(NULL), spaceshipProgram(NULL),
+	: timer(0), slowTimer(0), program(nullptr), sphere(nullptr), billboardRectangle(nullptr), billboardTexture(nullptr), inited(false), skyProgram(nullptr), shadowProgram(nullptr), spaceshipProgram(nullptr),
 	keyDown(false), ctrl(false), shift(false), wheelAccumulator(0),
 	movement(OpenGL::Camera::Movements::noMove), m_hRC(0), m_hDC(0),
 	Width(0), Height(0)
@@ -90,7 +90,7 @@ BOOL CSolarSystemView::PreCreateWindow(CREATESTRUCT& cs)
 		{
 			wndcls.lpszClassName = className;
 			wndcls.style |= CS_OWNDC;
-			wndcls.hbrBackground = NULL;
+			wndcls.hbrBackground = nullptr;
 
 			if (!AfxRegisterClass(&wndcls))
 				return FALSE;
@@ -147,7 +147,7 @@ void CSolarSystemView::OnDraw(CDC* /*pDC*/)
 
 		//glFlush(); // not really needed, SwapBuffers should take care of things
 		SwapBuffers(m_hDC);
-		wglMakeCurrent(NULL, NULL);
+		wglMakeCurrent(nullptr, nullptr);
 	}
 }
 
@@ -207,9 +207,9 @@ int CSolarSystemView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetPixelFormat(m_hDC, nPixelFormat, &pfd);
 
 	// aprox 60 frames/sec
-	timer = SetTimer(1, msFrame, NULL);
+	timer = SetTimer(1, msFrame, nullptr);
 
-	slowTimer = SetTimer(2, 1000, NULL);
+	slowTimer = SetTimer(2, 1000, nullptr);
 
 	return 0;
 }
@@ -252,7 +252,7 @@ BOOL CSolarSystemView::OnEraseBkgnd(CDC* /*pDC*/)
 void CSolarSystemView::InitializePalette(void)
 {
 	PIXELFORMATDESCRIPTOR pfd;
-	LOGPALETTE *pPal = NULL;
+	LOGPALETTE *pPal = nullptr;
 	BYTE RedRng = 0, GreenRng = 0, BlueRng = 0;
 
 	int nPixelFormat = GetPixelFormat(m_hDC);
@@ -281,7 +281,7 @@ void CSolarSystemView::InitializePalette(void)
 			pPal->palPalEntry[i].peGreen = static_cast<unsigned char>(pPal->palPalEntry[i].peGreen * 255.0 / GreenRng);
 			pPal->palPalEntry[i].peBlue = static_cast<BYTE>((i >> pfd.cBlueShift) & BlueRng);
 			pPal->palPalEntry[i].peBlue = static_cast<unsigned char>(pPal->palPalEntry[i].peBlue * 255.0 / BlueRng);
-			pPal->palPalEntry[i].peFlags = static_cast<unsigned char>(NULL);
+			pPal->palPalEntry[i].peFlags = 0;
 		}
 
 		m_GLPalette.CreatePalette(pPal);
@@ -299,7 +299,7 @@ BOOL CSolarSystemView::OnQueryNewPalette()
 	{
 		SelectPalette(m_hDC, (HPALETTE)m_GLPalette, FALSE);
 		const unsigned int nRet = RealizePalette(m_hDC);
-		InvalidateRect(NULL, FALSE);
+		InvalidateRect(nullptr, FALSE);
 
 		return nRet ? TRUE : FALSE;
 	}
@@ -310,7 +310,7 @@ BOOL CSolarSystemView::OnQueryNewPalette()
 
 void CSolarSystemView::OnPaletteChanged(CWnd* pFocusWnd)
 {
-	if (((HPALETTE)m_GLPalette != NULL) && (pFocusWnd != this))
+	if (((HPALETTE)m_GLPalette != nullptr) && (pFocusWnd != this))
 	{
 		SelectPalette(m_hDC, (HPALETTE)m_GLPalette, FALSE);
 		RealizePalette(m_hDC);
@@ -593,7 +593,7 @@ Vector3D<double> CSolarSystemView::GetTowardsVector(CPoint& point, const Vector3
 	point.y -= rect.Height() / 2;
 	point.y = -point.y;
 
-	const Vector3D<double> right = (forward % camera.up).Normalize();
+	const Vector3D<double> right = (forward % camera.GetUp()).Normalize();
 	const Vector3D<double> up = (right % forward).Normalize();
 
 	return (nearPlaneDistance * forward + pixelSize * point.x * right + pixelSize * point.y * up).Normalize();
@@ -643,27 +643,27 @@ void CSolarSystemView::OnLButtonDown(UINT nFlags, CPoint point)
 void CSolarSystemView::ClearProgram()
 {
 	delete program;
-	program = NULL;
+	program = nullptr;
 }
 
 
 void CSolarSystemView::ClearSkyProgram()
 {
 	delete skyProgram;
-	skyProgram = NULL;
+	skyProgram = nullptr;
 }
 
 
 void CSolarSystemView::ClearShadowProgram()
 {
 	delete shadowProgram;
-	shadowProgram = NULL;
+	shadowProgram = nullptr;
 }
 
 void CSolarSystemView::ClearSpaceshipProgram()
 {
 	delete spaceshipProgram;
-	spaceshipProgram = NULL;
+	spaceshipProgram = nullptr;
 }
 
 void CSolarSystemView::SetSpeeds(double translate, double rotate)
@@ -680,5 +680,5 @@ void CSolarSystemView::SetBillboardText(const char* text)
 
 	wglMakeCurrent(m_hDC, m_hRC);
 	memoryBitmap.SetIntoTexture(*billboardTexture);
-	wglMakeCurrent(NULL, NULL);
+	wglMakeCurrent(nullptr, nullptr);
 }

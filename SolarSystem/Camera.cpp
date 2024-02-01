@@ -19,13 +19,8 @@
 namespace OpenGL {
 
 	Camera::Camera()
-		: rotateAngle(0), translateDist(0), eyePos(60., 220., 160.), up(0, 0, 1), lookAt(0,0,0)
 	{
 		SetSpeeds(theApp.options.translationSpeed, theApp.options.rotationSpeed);
-	}
-
-	Camera::~Camera()
-	{
 	}
 
 	void Camera::SetSpeeds(double translate, double angle)

@@ -265,7 +265,6 @@
     <ClInclude Include="VertexBufferRenderable.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Body.cpp" />
     <ClCompile Include="BodyProperties.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraPropertyPage.cpp" />

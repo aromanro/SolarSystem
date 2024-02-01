@@ -15,9 +15,6 @@ class ObjLoader
 public:
 	using Polygon = std::vector<std::tuple<size_t, long long int, long long int>>;
 
-	ObjLoader();
-	~ObjLoader();
-
 	static void LeftTrim(std::string& str);
 
 	bool Load(const std::string& name, bool center = true);

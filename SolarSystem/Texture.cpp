@@ -11,25 +11,25 @@ namespace OpenGL {
 
 	Texture::Texture()
 	{
-		glGenTextures(1, &ID);
+		glGenTextures(1, &getID());
 	}
 
 	Texture::~Texture()
 	{
 		UnBind();
-		glDeleteTextures(1, &ID);
+		glDeleteTextures(1, &getID());
 	}
 
 	void Texture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(getType(), ID);	
+		glBindTexture(getType(), getID());
 	}
 
 	void Texture::Bind(int nr)
 	{
 		glActiveTexture(GL_TEXTURE0 + nr);
-		glBindTexture(getType(), ID);
+		glBindTexture(getType(), getID());
 	}
 
 	void Texture::UnBind()
@@ -97,6 +97,6 @@ namespace OpenGL {
 	void TextureWithPixelBuffer::Draw()
 	{
 		if (pixelBuffer)
-			pixelBuffer->Draw(ID, m_width, m_height, m_nrBytes == 3, m_nrBytes == 3);
+			pixelBuffer->Draw(getID(), m_width, m_height, m_nrBytes == 3, m_nrBytes == 3);
 	}
 }

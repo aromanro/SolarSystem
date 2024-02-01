@@ -11,14 +11,14 @@ namespace OpenGL {
 
 	Program::Program()
 	{
-		ID = glCreateProgram();
+		getID() = glCreateProgram();
 	}
 
 
 	Program::~Program()
 	{
 		UnUse();
-		glDeleteProgram(ID);
+		glDeleteProgram(getID());
 	}
 
 	void Program::UnUse()
@@ -33,7 +33,7 @@ namespace OpenGL {
 
 	void Program::Bind()
 	{
-		glLinkProgram(ID);
+		glLinkProgram(getID());
 		DetachShaders();
 	}
 	
@@ -44,7 +44,7 @@ namespace OpenGL {
 
 	void Program::Attach(const Shader& shader)
 	{
-		glAttachShader(ID, shader.getID());
+		glAttachShader(getID(), shader.getID());
 		shaders.emplace_back(shader.getID());
 	}
 
@@ -53,7 +53,7 @@ namespace OpenGL {
 	{
 		GLint Result = GL_FALSE;
 
-		glGetProgramiv(ID, GL_LINK_STATUS, &Result);
+		glGetProgramiv(getID(), GL_LINK_STATUS, &Result);
 
 		return Result == GL_TRUE;
 	}
@@ -61,13 +61,13 @@ namespace OpenGL {
 	const char* Program::getStatusMessage()
 	{
 		int InfoLength = 0;
-		glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &InfoLength);
+		glGetProgramiv(getID(), GL_INFO_LOG_LENGTH, &InfoLength);
 
 		if (InfoLength > 0)
 		{
 			getErrorMsg().resize(static_cast<unsigned int>(InfoLength + 1ULL));
 			getErrorMsg()[0] = 0;
-			glGetProgramInfoLog(ID, InfoLength, NULL, &getErrorMsg()[0]);
+			glGetProgramInfoLog(getID(), InfoLength, nullptr, &getErrorMsg()[0]);
 
 			return &getErrorMsg()[0];
 		}
@@ -77,7 +77,7 @@ namespace OpenGL {
 
 	void Program::DetachShaders()
 	{
-		GLuint id = ID;
+		GLuint id = getID();
 
 		std::for_each(shaders.begin(), shaders.end(), [id](GLuint shader) { 
 			glDetachShader(id, shader); 
@@ -88,6 +88,6 @@ namespace OpenGL {
 
 	void Program::Use()
 	{
-		glUseProgram(ID);
+		glUseProgram(getID());
 	}
 }

@@ -18,11 +18,6 @@ SolarSystemGLProgram::SolarSystemGLProgram()
 }
 
 
-SolarSystemGLProgram::~SolarSystemGLProgram()
-{
-}
-
-
 void SolarSystemGLProgram::SetupLights(BodyPropList& BodyProperties)
 {
 //	nrlights = 0;

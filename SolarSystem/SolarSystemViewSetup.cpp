@@ -136,7 +136,7 @@ bool CSolarSystemView::SetupSkyBox()
 {
 	if (!theApp.options.showSkyBox) return true;
 
-	if (NULL == skyProgram)
+	if (nullptr == skyProgram)
 	{
 		OpenGL::SkySphereProgram* skySphereProgram = new OpenGL::SkySphereProgram();
 		skyProgram = skySphereProgram;
@@ -161,7 +161,7 @@ bool CSolarSystemView::SetupSkyBox()
 		}
 	}
 
-	if (NULL == skyProgram)
+	if (nullptr == skyProgram)
 	{
 		OpenGL::SkyBoxCubeMapProgram* skyBoxProgram = new OpenGL::SkyBoxCubeMapProgram();
 		skyProgram = skyBoxProgram;
@@ -195,7 +195,7 @@ bool CSolarSystemView::SetupShadows()
 {
 	if (!theApp.options.drawShadows) return true;
 
-	if (NULL == shadowProgram)
+	if (nullptr == shadowProgram)
 	{
 		shadowProgram = new OpenGL::ShadowCubeMapProgram();
 		if (!shadowProgram->SetShaders())
@@ -224,11 +224,11 @@ bool CSolarSystemView::SetupShadows()
 
 bool CSolarSystemView::SetupSpaceship()
 {
-	if (spaceship == NULL) return false;
+	if (spaceship == nullptr) return false;
 
-	if (NULL == spaceshipProgram)
+	if (nullptr == spaceshipProgram)
 	{
-		if (NULL == program) return false;
+		if (nullptr == program) return false;
 
 		spaceshipProgram = new OpenGL::SpaceshipProgram();
 		if (!spaceshipProgram->SetShaders(program->nrlights))
@@ -330,7 +330,7 @@ void CSolarSystemView::Setup()
 	if (!font.GetSafeHandle())
 	{
 		const int fontSize = static_cast<int>(height * 0.8);
-		const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(NULL))->GetDeviceCaps(LOGPIXELSY), 72);
+		const int fontHeight = -MulDiv(fontSize, CDC::FromHandle(::GetDC(nullptr))->GetDeviceCaps(LOGPIXELSY), 72);
 		font.CreateFont(fontHeight, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_MODERN, _T("Courier New"));
 	}
 
@@ -363,7 +363,7 @@ void CSolarSystemView::Setup()
 
 	if (spaceship) SetupSpaceship();
 
-	wglMakeCurrent(NULL, NULL);
+	wglMakeCurrent(nullptr, nullptr);
 
 	SetBillboardText("");
 
@@ -374,16 +374,16 @@ void CSolarSystemView::Setup()
 void CSolarSystemView::Reset()
 {
 	delete sphere;
-	sphere = NULL;
+	sphere = nullptr;
 
 	delete billboardRectangle;
-	billboardRectangle = NULL;
+	billboardRectangle = nullptr;
 
 	delete billboardTexture;
-	billboardTexture = NULL;
+	billboardTexture = nullptr;
 
 	delete spaceship;
-	spaceship = NULL;
+	spaceship = nullptr;
 
 	ClearProgram();
 	ClearShadowProgram();

@@ -30,37 +30,7 @@ namespace OpenGL {
 			rotateTowards
 		};
 
-	protected:
-		double rotateAngle;
-		double translateDist;
-
-		struct Movement {
-			Movements movement;
-			Vector3D<double> towardsVec;
-			int ticks;
-			bool fromMouse;
-
-			Movement(Movements move, int nrticks = 5, bool mouse = false)
-				: movement(move), ticks(nrticks), fromMouse(mouse)
-			{}
-		};
-
-		std::list<Movement> movements;
-
-		static bool NeedsRotation(Movements movement);
-		static bool NeedsTranslation(Movements movement);
-
-		void Rotate(Movements movement);
-		void Translate(Movements movement, bool fromMouse);
-
-	public:
 		Camera();
-		~Camera();
-
-		
-		Vector3D<double> eyePos;
-		Vector3D<double> lookAt;
-		Vector3D<double> up;
 
 		void MoveForward(double amount);
 		void MoveBackward(double amount);
@@ -103,10 +73,41 @@ namespace OpenGL {
 			return glm::lookAt(glm::dvec3(eyePos.X, eyePos.Y, eyePos.Z), glm::dvec3(lookAt.X, lookAt.Y, lookAt.Z), glm::dvec3(up.X, up.Y, up.Z));
 		}
 
-		inline operator glm::mat4() const { return getMatrix(); };
-		inline operator glm::dmat4() const { return getMatrixDouble(); };
+		inline explicit operator glm::mat4() const { return getMatrix(); };
+		inline explicit operator glm::dmat4() const { return getMatrixDouble(); };
 
 		void SetSpeeds(double translate, double angle);
+
+		const Vector3D<double>& GetEyePos() const { return eyePos; }
+		const Vector3D<double>& GetLookAt() const { return lookAt; }
+		const Vector3D<double>& GetUp() const { return up; }
+
+	private:
+		Vector3D<double> eyePos{ 60., 220., 160. };
+		Vector3D<double> lookAt;
+		Vector3D<double> up{ 0, 0, 1 };
+
+		double rotateAngle = 0;
+		double translateDist = 0;
+
+		struct Movement {
+			Movements movement;
+			Vector3D<double> towardsVec;
+			int ticks;
+			bool fromMouse;
+
+			Movement(Movements move, int nrticks = 5, bool mouse = false)
+				: movement(move), ticks(nrticks), fromMouse(mouse)
+			{}
+		};
+
+		std::list<Movement> movements;
+
+		static bool NeedsRotation(Movements movement);
+		static bool NeedsTranslation(Movements movement);
+
+		void Rotate(Movements movement);
+		void Translate(Movements movement, bool fromMouse);
 	};
 
 

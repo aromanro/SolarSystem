@@ -68,8 +68,8 @@ public:
 
 	const unsigned char* GetData() const { return data; }
 
-	void Draw(CDC* pDC);
-	void Draw(CDC* pDC, CRect& rect, int origWidth = 0, int origHeight = 0);
+	void Draw(CDC* pDC) const;
+	void Draw(CDC* pDC, CRect& rect, int origWidth = 0, int origHeight = 0) const;
 
 	void WriteText(const char* text, CFont& font, DWORD color = RGB(0, 0, 255), DWORD bkcolor = RGB(0, 0, 0));
 

@@ -9,8 +9,8 @@ class OptionsPropertySheet : public CMFCPropertySheet
 	DECLARE_DYNAMIC(OptionsPropertySheet)
 
 public:
-	OptionsPropertySheet(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	OptionsPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	OptionsPropertySheet(UINT nIDCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	OptionsPropertySheet(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	~OptionsPropertySheet() override;
 
 protected:

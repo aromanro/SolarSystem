@@ -6,7 +6,7 @@ namespace OpenGL
 
 	PixelBuffer::PixelBuffer(unsigned int imageBufferSize)
 	{
-		glGenBuffersARB(1, &ID);
+		glGenBuffersARB(1, &getID());
 
 		Bind();
 		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER, imageBufferSize, 0, GL_STREAM_DRAW);
@@ -15,12 +15,12 @@ namespace OpenGL
 
 	PixelBuffer::~PixelBuffer()
 	{
-		glDeleteBuffersARB(1, &ID);
+		glDeleteBuffersARB(1, &getID());
 	}
 
 	void PixelBuffer::Bind()
 	{
-		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, ID);
+		glBindBufferARB(GL_PIXEL_UNPACK_BUFFER, getID());
 	}
 
 	void PixelBuffer::UnBind()
@@ -36,7 +36,7 @@ namespace OpenGL
 
 	void PixelBuffer::Upload(const void* buf, unsigned int curBufSize)
 	{
-		if (NULL == buf || 0 == curBufSize)	return;
+		if (nullptr == buf || 0 == curBufSize)	return;
 
 		Bind();
 		glBufferDataARB(GL_PIXEL_UNPACK_BUFFER, curBufSize, 0, GL_STREAM_DRAW);
@@ -67,7 +67,7 @@ namespace OpenGL
 				0,
 				bgr ? GL_BGR_EXT : GL_RGB,
 				GL_UNSIGNED_BYTE,
-				NULL);
+				nullptr);
 		else
 			glTexImage2D(GL_TEXTURE_2D,
 				0,
@@ -77,7 +77,7 @@ namespace OpenGL
 				0,
 				GL_LUMINANCE,
 				GL_UNSIGNED_BYTE,
-				NULL);
+				nullptr);
 
 
 		UnBind();

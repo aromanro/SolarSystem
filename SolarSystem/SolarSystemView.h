@@ -75,7 +75,7 @@ private:
 	OpenGL::ShadowCubeMapProgram *shadowProgram;
 
 	OpenGL::SpaceshipProgram *spaceshipProgram;
-	OpenGL::ComplexObjectCompositeMaterials* spaceship = NULL;
+	OpenGL::ComplexObjectCompositeMaterials* spaceship = nullptr;
 
 	SpaceshipOrientation spaceshipOrientation;
 

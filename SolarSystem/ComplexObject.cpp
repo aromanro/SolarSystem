@@ -10,12 +10,6 @@
 
 namespace OpenGL {
 
-	ComplexObject::ComplexObject()
-		: VertexBufferRenderable()
-	{
-	}
-
-
 	int ComplexObject::Load(const ObjLoader& loader, int startIndex)
 	{
 		if (loader.triangles.size() <= startIndex) return startIndex;

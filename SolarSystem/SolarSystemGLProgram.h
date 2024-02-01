@@ -10,7 +10,6 @@ class SolarSystemGLProgram :
 {
 public:
 	SolarSystemGLProgram();
-	~SolarSystemGLProgram() override;
 
 	bool SetupShaders(unsigned int nrlights = 1);
 

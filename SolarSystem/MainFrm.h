@@ -17,20 +17,22 @@ protected: // create from serialization only
 public:
 // Operations
 // Overrides
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = NULL, CCreateContext* pContext = NULL);
+	BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = nullptr, CCreateContext* pContext = nullptr) override;
 
 // Implementation
-	virtual ~CMainFrame();
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-#endif
+	CSolarSystemView* getView();
+	afx_msg void OnSimulateRun();
 
+#ifdef _DEBUG
+	void AssertValid() const override;
+	void Dump(CDumpContext& dc) const override;
+#endif
 
 	CMFCToolBar m_wndToolBar;
 
-protected:  // control bar embedded members
+private:  
+// control bar embedded members
 	CMFCMenuBar       m_wndMenuBar;
 	CMFCStatusBar     m_wndStatusBar;
 	CMFCToolBarImages m_UserImages;
@@ -46,16 +48,13 @@ protected:  // control bar embedded members
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
-public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 	afx_msg void OnViewFullscreen();
 	afx_msg void OnUpdateViewFullscreen(CCmdUI *pCmdUI);
-	afx_msg void OnSimulateRun();
 	afx_msg void OnUpdateSimulateRun(CCmdUI *pCmdUI);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnFileOpen();
 	afx_msg void OnSimulateOptions();
-	CSolarSystemView* getView();
 };
 
 

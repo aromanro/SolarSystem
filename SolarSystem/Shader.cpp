@@ -9,17 +9,17 @@ namespace OpenGL {
 
 	Shader::Shader(GLuint type)
 	{
-		ID = glCreateShader(type);
+		getID() = glCreateShader(type);
 	}
 
 	Shader::~Shader()
 	{
-		glDeleteShader(ID);
+		glDeleteShader(getID());
 	}
 
 	void Shader::Bind() 
 	{
-		glCompileShader(ID);
+		glCompileShader(getID());
 	}
 
 	void Shader::UnBind()
@@ -32,7 +32,7 @@ namespace OpenGL {
 	{
 		GLint Result = GL_FALSE;
 
-		glGetShaderiv(ID, GL_COMPILE_STATUS, &Result);
+		glGetShaderiv(getID(), GL_COMPILE_STATUS, &Result);
 
 		return Result == GL_TRUE;
 	}
@@ -40,13 +40,13 @@ namespace OpenGL {
 	const char* Shader::getStatusMessage()
 	{
 		GLint InfoLength = 0;
-		glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &InfoLength);
+		glGetShaderiv(getID(), GL_INFO_LOG_LENGTH, &InfoLength);
 
 		if (InfoLength > 0)
 		{
 			getErrorMsg().resize(static_cast<unsigned int>(InfoLength + 1ULL));
 			getErrorMsg()[0] = 0;
-			glGetShaderInfoLog(ID, static_cast<GLsizei>(InfoLength), NULL, &getErrorMsg()[0]);
+			glGetShaderInfoLog(getID(), static_cast<GLsizei>(InfoLength), nullptr, &getErrorMsg()[0]);
 
 			return &getErrorMsg()[0];
 		}
@@ -56,7 +56,7 @@ namespace OpenGL {
 
 	void Shader::setSource(const char* src)
 	{
-		glShaderSource(ID, 1, &src, NULL);
+		glShaderSource(getID(), 1, &src, nullptr);
 		Bind();
 	}
 

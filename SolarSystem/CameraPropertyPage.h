@@ -11,7 +11,6 @@ class CameraPropertyPage : public CMFCPropertyPage
 
 public:
 	CameraPropertyPage();
-	virtual ~CameraPropertyPage();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

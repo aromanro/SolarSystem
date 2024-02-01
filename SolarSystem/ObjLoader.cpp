@@ -12,17 +12,6 @@
 
 #include <filesystem>
 
-
-ObjLoader::ObjLoader()
-{
-}
-
-
-ObjLoader::~ObjLoader()
-{
-}
-
-
 bool ObjLoader::Load(const std::string& name, bool center)
 {
 	std::filesystem::path dirName(name);

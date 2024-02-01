@@ -15,8 +15,8 @@ namespace OpenGL {
 	{
 		glActiveTexture(GL_TEXTURE10);
 
-		glGenTextures(1, &ID);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+		glGenTextures(1, &getID());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, getID());
 		
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -27,7 +27,7 @@ namespace OpenGL {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
 
 		for (GLuint i = 0; i < 6; ++i)
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
 		UnBind();
 	}
@@ -35,13 +35,13 @@ namespace OpenGL {
 	ShadowCubeMapProgram::CubeMapTexture::~CubeMapTexture()
 	{
 		UnBind();
-		glDeleteTextures(1, &ID);
+		glDeleteTextures(1, &getID());
 	}
 
 	void ShadowCubeMapProgram::CubeMapTexture::Bind()
 	{
 		glActiveTexture(GL_TEXTURE10);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, getID());
 	}
 
 	void ShadowCubeMapProgram::CubeMapTexture::UnBind()
