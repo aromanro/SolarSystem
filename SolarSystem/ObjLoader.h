@@ -15,30 +15,21 @@ class ObjLoader
 public:
 	using Polygon = std::vector<std::tuple<size_t, long long int, long long int>>;
 
-	static void LeftTrim(std::string& str);
-
 	bool Load(const std::string& name, bool center = true);
 
-	bool LoadMaterial(const std::string& name, const std::string& dir);
-
-	static bool IsConcaveVertex(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int pointIndex, double& sine);
-	static bool IsConcave(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int& pointIndex);
-
-	// TODO: add rotate, scale, translate...
-	void Translate(const Vector3D<double>& t)
+	void Translate(const Vector3D<double>& t) const
 	{
 		for (auto& obj : triangles)
 			obj->Translate(t);
 	}
 
-	void RotateAround(const Vector3D<double>& v, double angle)
+	void RotateAround(const Vector3D<double>& v, double angle) const
 	{
 		for (auto& obj : triangles)
 			obj->RotateAround(v, angle);
 	}
 
-
-	void Scale(double s)
+	void Scale(double s) const
 	{
 		for (auto& obj : triangles)
 			obj->Scale(s);
@@ -49,7 +40,14 @@ public:
 	std::unordered_map<std::string, ObjMaterial> materials;
 	std::vector<std::shared_ptr<OpenGL::MaterialTriangle>> triangles;
 
-protected:
+private:
+	bool LoadMaterial(const std::string& name, const std::string& dir);
+
+	static bool IsConcaveVertex(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int pointIndex, double& sine);
+	static bool IsConcave(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, int& pointIndex);
+
+	static void LeftTrim(std::string& str);
+
 	static void LoadVertexInfo(std::string& line, std::vector<Vector3D<double>>& vertices, std::vector<Vector3D<double>>& normals, std::vector<std::pair<double, double>>& textureCoords, Vector3D<double>& centerCoord);
 	static void LoadFace(std::string& line, const std::string& curMaterial, std::vector<std::pair<Polygon, std::string>>& polygons, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords);
 
