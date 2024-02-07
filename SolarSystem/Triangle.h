@@ -100,9 +100,16 @@ namespace OpenGL {
 			return normal;
 		}
 
-		Vector3D<double> A, B, C;
+		Vector3D<double> A;
+		Vector3D<double> B;
+		Vector3D<double> C;
 
-		double U1, V1, U2, V2, U3, V3;
+		double U1 = -1;
+		double V1 = -1;
+		double U2 = -1;
+		double V2 = -1;
+		double U3 = -1;
+		double V3 = -1;
 
 	protected:
 		void Init();
@@ -124,7 +131,7 @@ namespace OpenGL {
 		Vector3D<double> edge1;
 		Vector3D<double> edge2;
 
-		bool useInterpolation;
+		bool useInterpolation = false;
 	};
 
 
