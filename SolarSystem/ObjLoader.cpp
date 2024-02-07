@@ -227,16 +227,11 @@ void ObjLoader::SetTriangles(const std::vector<std::pair<double, double>>& textu
 
 	// it won't work for all polygons, works for convex ones and some concave ones
 
-	for (const auto& polygonpair : polygons)
-	{
-		Polygon polygon = polygonpair.first;
-		const std::string& matName = polygonpair.second;
-
+	for (const auto& [polygon, matName] : polygons)
 		if (!SplitPolygon(polygon, vertices, normals, textureCoords, matName, whiteMaterial)) break;
-	}
 }
 
-bool ObjLoader::SplitPolygon(Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const std::string& matName, ObjMaterial& whiteMaterial)
+bool ObjLoader::SplitPolygon(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<Vector3D<double>>& normals, const std::vector<std::pair<double, double>>& textureCoords, const std::string& matName, ObjMaterial& whiteMaterial)
 {
 	ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
 
@@ -277,13 +272,13 @@ bool ObjLoader::SplitPolygon(Polygon& polygon, const std::vector<Vector3D<double
 	if (indexnormal2 >= static_cast<long long int>(normals.size())) return false;
 	if (indexnormal3 >= static_cast<long long int>(normals.size())) return false;
 
-	const Vector3D<double> firstPoint = vertices[indexvertex1];
+	const Vector3D firstPoint(vertices[indexvertex1]);
 	const long long int firstIndexTex = indextex1;
-	const Vector3D<double> firstNormal = normals[indexnormal1];
+	const Vector3D firstNormal(normals[indexnormal1]);
 
-	Vector3D<double> lastPoint(vertices[indexvertex3]);
+	Vector3D lastPoint(vertices[indexvertex3]);
 	long long int lastIndexTex = indextex3;
-	Vector3D<double> lastNormal(normals[indexnormal3]);
+	Vector3D lastNormal(normals[indexnormal3]);
 
 	AddTriangle(firstPoint, vertices[indexvertex2], lastPoint, firstNormal, normals[indexnormal2], lastNormal, *material, textureCoords, firstIndexTex, indextex2, lastIndexTex);
 
@@ -315,7 +310,7 @@ bool ObjLoader::SplitPolygon(Polygon& polygon, const std::vector<Vector3D<double
 }
 
 
-bool ObjLoader::SplitPolygonNoNormals(Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<std::pair<double, double>>& textureCoords, const std::string& matName, ObjMaterial& whiteMaterial)
+bool ObjLoader::SplitPolygonNoNormals(const Polygon& polygon, const std::vector<Vector3D<double>>& vertices, const std::vector<std::pair<double, double>>& textureCoords, const std::string& matName, ObjMaterial& whiteMaterial)
 {
 	ObjMaterial* material = materials.find(matName) == materials.end() ? &whiteMaterial : &materials[matName];
 
@@ -377,7 +372,7 @@ bool ObjLoader::SplitPolygonNoNormals(Polygon& polygon, const std::vector<Vector
 
 void ObjLoader::AddTriangle(const Vector3D<double>& firstPoint, const Vector3D<double>& secondPoint, const Vector3D<double>& lastPoint, const Vector3D<double>& firstNormal, const Vector3D<double>& secondNormal, const Vector3D<double>& lastNormal, ObjMaterial& material, const std::vector<std::pair<double, double>>& textureCoords, long long int firstIndexTex, long long int indextex2, long long int lastIndexTex)
 {
-	std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, secondPoint, lastPoint, firstNormal, secondNormal, lastNormal, material);
+	auto triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, secondPoint, lastPoint, firstNormal, secondNormal, lastNormal, material);
 
 	if (firstIndexTex >= 0)
 	{
@@ -419,7 +414,7 @@ void ObjLoader::AddTriangle(const Vector3D<double>& firstPoint, const Vector3D<d
 
 void ObjLoader::AddTriangleNoNormals(const Vector3D<double>& firstPoint, const Vector3D<double>& secondPoint, const Vector3D<double>& lastPoint, ObjMaterial& material, const std::vector<std::pair<double, double>>& textureCoords, long long int firstIndexTex, long long int indextex2, long long int lastIndexTex)
 {
-	std::shared_ptr<OpenGL::MaterialTriangle> triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, secondPoint, lastPoint, material);
+	auto triangle = std::make_shared<OpenGL::MaterialTriangle>(firstPoint, secondPoint, lastPoint, material);
 
 	if (firstIndexTex >= 0)
 	{
@@ -467,20 +462,20 @@ bool ObjLoader::IsConcaveVertex(const Polygon& polygon, const std::vector<Vector
 	const size_t np = (cp == polygon.size()) - 1 ? 0 : 1ULL + cp;
 
 	const size_t indpp = std::get<0>(polygon[pp]);
-	if (indpp < 0 || indpp >= vertices.size()) return false;
+	if (indpp >= vertices.size()) return false;
 
 	const size_t indcp = std::get<0>(polygon[cp]);
-	if (indcp < 0 || indcp >= vertices.size()) return false;
+	if (indcp >= vertices.size()) return false;
 
 	const size_t indnp = std::get<0>(polygon[np]);
-	if (indnp < 0 || indnp >= vertices.size()) return false;
+	if (indnp >= vertices.size()) return false;
 
-	const Vector3D<double> prevPoint = vertices[indpp];
-	const Vector3D<double> curPoint = vertices[indcp];
-	const Vector3D<double> nextPoint = vertices[indnp];
+	const Vector3D prevPoint = vertices[indpp];
+	const Vector3D curPoint = vertices[indcp];
+	const Vector3D nextPoint = vertices[indnp];
 
-	const Vector3D<double> edge1 = (prevPoint - curPoint).Normalize();
-	const Vector3D<double> edge2 = (nextPoint - curPoint).Normalize();
+	const Vector3D edge1 = (prevPoint - curPoint).Normalize();
+	const Vector3D edge2 = (nextPoint - curPoint).Normalize();
 
 	sine = (edge1 % edge2).Length();
 
@@ -534,7 +529,7 @@ bool ObjLoader::IsConcave(const Polygon& polygon, const std::vector<Vector3D<dou
 
 				if (sine < worstSine)
 				{
-					worstSine = sine;
+					//worstSine = sine;
 					pointIndex = cp;
 					return true; // just pick up the first one
 				}
