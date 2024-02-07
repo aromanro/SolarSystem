@@ -341,10 +341,10 @@ bool ObjLoader::SplitPolygonNoNormals(const Polygon& polygon, const std::vector<
 	if (indexvertex2 >= vertices.size()) return false;
 	if (indexvertex3 >= vertices.size()) return false;
 
-	const Vector3D<double> firstPoint = vertices[indexvertex1];
+	const Vector3D firstPoint(vertices[indexvertex1]);
 	const long long int firstIndexTex = indextex1;
 
-	Vector3D<double> lastPoint(vertices[indexvertex3]);
+	Vector3D lastPoint(vertices[indexvertex3]);
 	long long int lastIndexTex = indextex3;
 
 	AddTriangleNoNormals(firstPoint, vertices[indexvertex2], lastPoint, *material, textureCoords, firstIndexTex, indextex2, lastIndexTex);
@@ -470,12 +470,12 @@ bool ObjLoader::IsConcaveVertex(const Polygon& polygon, const std::vector<Vector
 	const size_t indnp = std::get<0>(polygon[np]);
 	if (indnp >= vertices.size()) return false;
 
-	const Vector3D prevPoint = vertices[indpp];
-	const Vector3D curPoint = vertices[indcp];
-	const Vector3D nextPoint = vertices[indnp];
+	const Vector3D prevPoint(vertices[indpp]);
+	const Vector3D curPoint(vertices[indcp]);
+	const Vector3D nextPoint(vertices[indnp]);
 
-	const Vector3D edge1 = (prevPoint - curPoint).Normalize();
-	const Vector3D edge2 = (nextPoint - curPoint).Normalize();
+	const Vector3D edge1((prevPoint - curPoint).Normalize());
+	const Vector3D edge2((nextPoint - curPoint).Normalize());
 
 	sine = (edge1 % edge2).Length();
 
