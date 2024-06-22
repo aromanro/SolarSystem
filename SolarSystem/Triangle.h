@@ -14,7 +14,7 @@ namespace OpenGL {
 	class Triangle
 	{
 	public:
-		Triangle() : area(0), U1(-1), V1(-1), U2(-1), V2(-1), U3(-1), V3(-1), useInterpolation(true), threeNormals(true) {}
+		Triangle() = default;
 		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c);
 		Triangle(const Vector3D<double>& a, const Vector3D<double>& b, const Vector3D<double>& c, const Vector3D<double>& n1, const Vector3D<double>& n2, const Vector3D<double>& n3);
 		virtual ~Triangle() = default;
@@ -114,9 +114,9 @@ namespace OpenGL {
 	protected:
 		void Init();
 
-		bool threeNormals;
+		bool threeNormals = true;
 
-		double area;
+		double area = 0.;
 		Vector3D<double> normal; // the computed normal, it's the real one
 
 	public:
