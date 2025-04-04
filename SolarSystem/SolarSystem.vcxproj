@@ -84,7 +84,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\LIBs\glfw-3.2.1\include;C:\LIBs\glm\glm;C:\LIBs\glew-2.0.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(VCInstallDir)PlatformSDK\lib\amd64;$(VSInstallDir)SDK\v2.0\lib\amd64;C:\LIBs\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(VCInstallDir)PlatformSDK\lib\amd64;$(VSInstallDir)SDK\v2.0\lib\amd64;C:\LIBs\glew-2.0.0\lib\Release\x64;C:\LIBs\lib;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
