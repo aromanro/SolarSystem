@@ -244,11 +244,9 @@ void OpenGL::Camera::ProgressiveMove(Movements movement, int nrticks, bool fromM
 
 void OpenGL::Camera::ProgressiveRotate(const Vector3D<double>& towards, int nrticks)
 {
-	if (movements.empty())
-	{
-		movements.emplace_back(Movement(Movements::rotateTowards, nrticks));
-		movements.back().towardsVec = towards;
-	}
+	movements.clear();
+	movements.emplace_back(Movement(Movements::rotateTowards, nrticks));
+	movements.back().towardsVec = towards;
 }
 
 
